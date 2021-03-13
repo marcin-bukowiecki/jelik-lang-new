@@ -1,0 +1,2 @@
+fun expr(a Long) -> Long { val b = 10 
+ ret -a % b }

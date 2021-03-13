@@ -1,0 +1,2 @@
+fun expr(a Int) -> Short { val b = 10 
+ ret (a band b) as Short }

@@ -1,0 +1,2 @@
+fun expr() -> String {
+   val a = ["a","b","c"]   ret a[2]}

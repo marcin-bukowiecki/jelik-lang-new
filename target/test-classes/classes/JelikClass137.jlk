@@ -1,0 +1,1 @@
+fun expr(a Object) -> Boolean { ret a is String }

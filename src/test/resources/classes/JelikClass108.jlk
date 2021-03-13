@@ -1,0 +1,1 @@
+fun expr(a Long) -> Float { ret a as Float }

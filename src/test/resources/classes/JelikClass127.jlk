@@ -1,0 +1,1 @@
+fun expression(a Int, b Int) -> Int { ret a + b }

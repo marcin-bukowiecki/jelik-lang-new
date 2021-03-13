@@ -1,0 +1,1 @@
+fun expr(a Float) -> Boolean { ret a < 0 }

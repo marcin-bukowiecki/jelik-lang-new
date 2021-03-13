@@ -1,0 +1,1 @@
+fun expr(a Double, b Int) -> Int {   ret a as Int / b}

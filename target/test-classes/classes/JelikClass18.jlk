@@ -1,0 +1,1 @@
+fun expr() -> []Byte {   ret [1 as Byte, 2 as Byte, 3 as Byte]}

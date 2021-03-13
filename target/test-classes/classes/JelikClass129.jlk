@@ -1,0 +1,2 @@
+fun expr() -> Int { System.out.println("Hello world")
+ ret 0 }

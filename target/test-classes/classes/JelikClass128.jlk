@@ -1,0 +1,1 @@
+fun expression(a Long, b Long) -> Long { ret a + b }

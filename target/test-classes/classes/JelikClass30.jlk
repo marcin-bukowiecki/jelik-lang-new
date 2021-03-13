@@ -1,0 +1,5 @@
+fun expr(a Object, b Object) -> Boolean { 
+ if a.equals(b) == True then 
+   ret True 
+else    ret False
+end }

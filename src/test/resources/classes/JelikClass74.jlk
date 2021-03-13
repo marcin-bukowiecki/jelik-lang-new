@@ -1,0 +1,2 @@
+fun expr(b Float) -> Boolean { val a = .5f 
+ ret b != a }

@@ -1,0 +1,1 @@
+fun expr(a String) -> Boolean { ret Null != a }

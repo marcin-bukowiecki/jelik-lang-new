@@ -1,0 +1,2 @@
+fun assignValue(b Int) -> String {    val a = "-> year" 
+   ret (a = "foo" + a)}
