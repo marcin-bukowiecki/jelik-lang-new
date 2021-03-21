@@ -1,1 +1,2 @@
-fun expr(a Float) -> Long { ret a as Long }
+fun expr(a Double, b Double) -> Boolean {
+   ret a == b}

@@ -19,7 +19,7 @@ public class FunctionInt32Test {
 
     @Test
     public void shouldSubInts_1() {
-        var expr = "fun expr(a Int) -> Int { val b = 10 \n ret a - b }";
+        var expr = "fun expr(a Int) -> Int { val b = 10 \n var c = 111 \n ret a - b }";
         FunctionCompiler.getInstance()
                 .compile(expr)
                 .invoke("expr", 123)

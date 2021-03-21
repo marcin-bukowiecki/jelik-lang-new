@@ -1,1 +1,2 @@
-fun expression(a Long, b Long) -> Long { ret a + b }
+fun expr(a Long) -> Long { val b = 10 
+ ret a / b }

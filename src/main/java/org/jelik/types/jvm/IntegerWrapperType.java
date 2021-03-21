@@ -57,7 +57,7 @@ public class IntegerWrapperType extends NumberType {
 
     @Override
     public NumberType getWrapperType() {
-        throw new UnsupportedOperationException("Integer wrapper is already a wrapper!!!");
+        return this;
     }
 
     @Override

@@ -5,6 +5,7 @@ import org.jelik.compiler.locals.LocalVariable;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.ast.expression.ExpressionReferencingType;
 import org.jelik.parser.token.LiteralToken;
+import org.jelik.types.Type;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -20,6 +21,16 @@ public class StoreLocalNode extends ExpressionReferencingType implements WithLoc
         this.literalToken = literalToken;
         this.localVariable = localVariable;
         this.typedRefNodeContext.setTypeRef(localVariable.getTypeRef());
+    }
+
+    @Override
+    public Type getType() {
+        return getLocalVariable().getType();
+    }
+
+    @Override
+    public Type getGenericType() {
+        return getLocalVariable().getGenericType();
     }
 
     public LocalVariable getLocalVariable() {

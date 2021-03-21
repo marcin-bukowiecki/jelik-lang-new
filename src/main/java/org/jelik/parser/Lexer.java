@@ -1,5 +1,6 @@
 package org.jelik.parser;
 
+import com.google.common.annotations.VisibleForTesting;
 import lombok.Getter;
 import org.jelik.parser.token.Token;
 
@@ -17,6 +18,11 @@ public class Lexer {
 
     public Lexer(Scanner scanner) {
         this.scanner = scanner;
+    }
+
+    @VisibleForTesting
+    public static Lexer of(String expr) {
+        return new Lexer(new Scanner(new CharPointer(expr)));
     }
 
     public boolean hasNextToken() {

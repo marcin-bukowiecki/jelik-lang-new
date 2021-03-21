@@ -43,12 +43,12 @@ public class SingleTypeNode extends TypeNode {
 
     @Override
     public String toString() {
-        return token.toString();
+        return token.toString() + getQuestionMarkToken();
     }
 
     @Override
     public void visit(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
-        astVisitor.visit(this, compilationContext);
+        astVisitor.visitSingleTypeNode(this, compilationContext);
     }
 
     @Override

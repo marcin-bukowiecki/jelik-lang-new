@@ -1,1 +1,1 @@
-fun expr(a Long, b Long) -> Long { ret a band b }
+fun expr(a Int) -> Long { ret a as Long }

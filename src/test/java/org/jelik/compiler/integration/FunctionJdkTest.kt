@@ -13,7 +13,7 @@ class FunctionJdkTest {
         val expr = "fun expr() -> Int { System.out.println(\"Hello world\")\n ret 0 }"
         FunctionCompiler.getInstance()
                 .compile(expr)
-                .invoke("expr")
+                .invoke<Any>("expr")
                 .isEqualTo(0)
     }
 }

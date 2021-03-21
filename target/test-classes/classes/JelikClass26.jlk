@@ -1,1 +1,3 @@
-fun expr(a Object, b Object, c Object) -> Boolean { ret a == b or a == c }
+fun expr() -> Byte {   val a = [1 as Byte, 2 as Byte, 3 as Byte] 
+ a[2] = 6 as Byte 
+ ret a[2]}

@@ -40,4 +40,35 @@ public class CollectionsTest {
                 .invoke("expr",11, 22)
                 .isEqualTo(List.of());
     }
+
+    @Test
+    public void shouldCreateList_3() {
+        var content = "" +
+                "import java.util.List\n" +
+                "\n" +
+                "fun expr(a Int, b Int) -> List<Int> {\n" +
+                "   ret List.of()\n" +
+                "}";
+
+        FunctionCompiler.getInstance()
+                .compile(content)
+                .invoke("expr",11, 22)
+                .isEqualTo(List.of());
+    }
+
+    @Test
+    public void shouldCreateList_4() {
+        var content = "" +
+                "import java.util.List\n" +
+                "import java.util.ArrayList\n" +
+                "\n" +
+                "fun expr(a Int, b Int) -> List<Int> {\n" +
+                "   ret List.of(b)\n" +
+                "}";
+
+        FunctionCompiler.getInstance()
+                .compile(content)
+                .invoke("expr",11, 22)
+                .isEqualTo(List.of(22));
+    }
 }

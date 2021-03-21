@@ -1,1 +1,4 @@
-fun expr(a Object, b Object) -> Boolean { ret a.equals(b) }
+fun toCall() -> Int { ret 123 }
+fun expr(a Int) -> Int {
+   val b = toCall
+   ret b() + a}

@@ -19,7 +19,8 @@ public class CompilationResult {
         this.compiledClass = compiledClass;
     }
 
-    public StaticInvocationResult invoke(String methodName, Object... args) {
+    @SuppressWarnings("unchecked")
+    public <T> StaticInvocationResult<T> invoke(String methodName, Object... args) {
         List<Method> collect = Arrays.stream(compiledClass.getDeclaredMethods())
                 .filter(m -> m.getName().equals(methodName))
                 .collect(Collectors.toList());
@@ -31,18 +32,17 @@ public class CompilationResult {
         Method method = collect.get(0);
 
         try {
-            return new StaticInvocationResult(method.invoke(this, args));
+            return new StaticInvocationResult<T>(((T) method.invoke(this, args)));
         } catch (Throwable ex) {
             throw new RuntimeException(ex);
         }
     }
 
-    public void invokeAndExpectError(String expr, String message, Object... args) {
+    public void invokeAndExpectError(String expr, Class<?> exceptionType, Object... args) {
         try {
             invoke(expr, args);
-        } catch (CompileException ex) {
-            ex.printErrorMessage();
-            Assertions.assertThat(ex.getMessage()).isEqualTo(message);
+        } catch (Throwable ex) {
+            Assertions.assertThat(ex.getClass()).isEqualTo(exceptionType);
         }
     }
 }

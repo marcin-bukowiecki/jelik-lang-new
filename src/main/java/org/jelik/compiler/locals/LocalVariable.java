@@ -1,11 +1,9 @@
 package org.jelik.compiler.locals;
 
-import lombok.Getter;
 import lombok.Setter;
 import org.jelik.parser.ast.labels.LabelNode;
+import org.jelik.parser.ast.types.AbstractTypeRef;
 import org.jelik.parser.ast.types.TypeNode;
-import org.jelik.parser.ast.types.TypeNodeRef;
-import org.jelik.parser.ast.types.TypeRef;
 import org.jelik.types.Type;
 
 /**
@@ -13,7 +11,6 @@ import org.jelik.types.Type;
  *
  * @author Marcin Bukowiecki
  */
-@Getter
 public class LocalVariable {
 
     //name of local variable
@@ -28,7 +25,7 @@ public class LocalVariable {
      * See:
      * {@link org.jelik.parser.ast.types.TypeNodeRef} or {@link org.jelik.parser.ast.types.InferredTypeRef}
      */
-    private TypeRef typeRef;
+    private AbstractTypeRef typeRef;
 
     //Index of this local variable in locals table
     @Setter
@@ -42,7 +39,7 @@ public class LocalVariable {
     @Setter
     private LabelNode end;
 
-    public LocalVariable(String name, TypeRef typeRef, boolean parameter) {
+    public LocalVariable(String name, AbstractTypeRef typeRef, boolean parameter) {
         this.name = name;
         this.parameter = parameter;
         this.typeRef = typeRef;
@@ -77,7 +74,31 @@ public class LocalVariable {
         return typeRef.getType().isLong();
     }
 
-    public void setTypeRef(TypeNodeRef typeNodeRef) {
-        this.typeRef = typeNodeRef;
+    public void setTypeRef(AbstractTypeRef ref) {
+        this.typeRef = ref;
+    }
+
+    public boolean isFunctionReference() {
+        return this.typeRef.isFunctionReference();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public AbstractTypeRef getTypeRef() {
+        return typeRef;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public LabelNode getStart() {
+        return start;
+    }
+
+    public LabelNode getEnd() {
+        return end;
     }
 }

@@ -5,6 +5,7 @@ import org.jelik.compiler.exceptions.TypeCompileException;
 import org.jelik.parser.ast.functions.FunctionDeclaration;
 import org.jelik.parser.ast.functions.CodeEvent;
 import org.jelik.parser.ast.operators.AddExpr;
+import org.jelik.parser.ast.resolvers.CastToVisitor;
 import org.jelik.parser.ast.strings.StringBuilderAppend;
 import org.jelik.parser.ast.strings.StringBuilderInit;
 import org.jelik.types.JVMIntType;
@@ -32,6 +33,9 @@ public class AddOperatorTypeResolver {
                     case string:
                         setupStringBuilder(functionDeclaration, addExpr, compilationContext);
                         return JVMStringType.INSTANCE;
+                    case int32Wrapper:
+                        rightType.visit(new CastToVisitor(addExpr.getRight(), JVMIntType.INSTANCE), compilationContext);
+                        return JVMIntType.INSTANCE;
                     default:
                         throw createException(leftType, rightType, addExpr, compilationContext);
                 }

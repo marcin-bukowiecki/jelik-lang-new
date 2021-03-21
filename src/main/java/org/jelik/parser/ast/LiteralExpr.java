@@ -2,8 +2,7 @@ package org.jelik.parser.ast;
 
 import org.jelik.CompilationContext;
 import org.jelik.parser.ast.context.NodeContext;
-import org.jelik.parser.ast.types.TypeNode;
-import org.jelik.parser.ast.types.UndefinedTypeNode;
+import org.jelik.parser.ast.types.TypeParameterListNode;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.token.LiteralToken;
 import org.jelik.types.Type;
@@ -16,10 +15,20 @@ public class LiteralExpr extends Expression {
 
     private final LiteralToken literalToken;
 
+    private TypeParameterListNode typeParameterListNode = TypeParameterListNode.Companion.getEMPTY();
+
     private final NodeContext nodeContext = new NodeContext();
 
     public LiteralExpr(LiteralToken literalToken) {
         this.literalToken = literalToken;
+    }
+
+    public void setTypeParameterListNode(TypeParameterListNode typeParameterListNode) {
+        this.typeParameterListNode = typeParameterListNode;
+    }
+
+    public TypeParameterListNode getTypeParameterListNode() {
+        return typeParameterListNode;
     }
 
     @Override
@@ -39,11 +48,6 @@ public class LiteralExpr extends Expression {
 
     public LiteralToken getLiteralToken() {
         return literalToken;
-    }
-
-    @Override
-    public String toString() {
-        return literalToken + (furtherExpression == null ? "" : furtherExpression.toString());
     }
 
     @Override
@@ -94,5 +98,12 @@ public class LiteralExpr extends Expression {
     @Override
     public int getStartRow() {
         return literalToken.getRow();
+    }
+
+    @Override
+    public String toString() {
+        return literalToken
+                + (typeParameterListNode == TypeParameterListNode.Companion.getEMPTY() ? "" : typeParameterListNode.toString())
+                + (furtherExpression == null ? "" : furtherExpression.toString());
     }
 }

@@ -1,8 +1,6 @@
 package org.jelik.parser.ast;
 
 import org.jelik.parser.ast.context.NodeContext;
-import org.jelik.parser.ast.types.TypeNode;
-import org.jelik.parser.ast.types.UndefinedTypeNode;
 import org.jelik.types.Type;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,20 +15,10 @@ public abstract class Expression extends ASTNode {
 
     protected Expression furtherExpression;
 
-    private TypeNode genericTypeNode = UndefinedTypeNode.UNDEFINED_TYPE_NODE;
-
     public boolean ignored;
 
     public Expression() {
 
-    }
-
-    public void setGenericTypeNode(TypeNode genericTypeNode) {
-        this.genericTypeNode = genericTypeNode;
-    }
-
-    public TypeNode getGenericTypeNode() {
-        return genericTypeNode;
     }
 
     public void replace(Expression newNode) {

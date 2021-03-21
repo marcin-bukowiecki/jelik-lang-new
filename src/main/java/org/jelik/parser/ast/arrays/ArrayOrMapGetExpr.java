@@ -3,6 +3,7 @@ package org.jelik.parser.ast.arrays;
 import lombok.Getter;
 import lombok.Setter;
 import org.jelik.CompilationContext;
+import org.jelik.parser.ast.ASTNode;
 import org.jelik.parser.ast.Expression;
 import org.jelik.parser.ast.expression.ExpressionWithType;
 import org.jelik.parser.ast.visitors.AstVisitor;
@@ -19,15 +20,22 @@ public class ArrayOrMapGetExpr extends ExpressionWithType {
     private final LeftBracketToken leftBracketToken;
 
     @Setter
+    private Expression leftExpr;
+
+    @Setter
     private Expression expression;
 
     private final RightBracketToken rightBracketToken;
 
     public boolean arrayGet = false;
 
-    public ArrayOrMapGetExpr(@NotNull LeftBracketToken leftBracketToken,
+    public ArrayOrMapGetExpr(@NotNull Expression leftExpr,
+                             @NotNull LeftBracketToken leftBracketToken,
                              @NotNull Expression expression,
                              @NotNull RightBracketToken rightBracketToken) {
+
+        this.leftExpr = leftExpr;
+        leftExpr.setParent(this);
         this.leftBracketToken = leftBracketToken;
         this.expression = expression;
         expression.setParent(this);
@@ -35,8 +43,19 @@ public class ArrayOrMapGetExpr extends ExpressionWithType {
     }
 
     @Override
+    public ASTNode getParent() {
+        return super.getParent();
+    }
+
+    @Override
     public void replaceWith(@NotNull Expression oldNode, @NotNull Expression newNode) {
-        this.expression = newNode;
+        if (oldNode == leftExpr) {
+            leftExpr = newNode;
+        } else if (oldNode == expression) {
+            expression = newNode;
+        } else {
+            super.replaceWith(oldNode, newNode);
+        }
     }
 
     @Override
@@ -66,7 +85,8 @@ public class ArrayOrMapGetExpr extends ExpressionWithType {
 
     @Override
     public String toString() {
-        return leftBracketToken.toString() +
+        return leftExpr.toString() +
+                leftBracketToken.toString() +
                 expression.toString() +
                 rightBracketToken.toString() +
                 getFurtherExpressionOpt().map(Object::toString).orElse("");

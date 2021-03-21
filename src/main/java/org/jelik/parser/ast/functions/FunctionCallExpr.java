@@ -1,15 +1,15 @@
 package org.jelik.parser.ast.functions;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.jelik.CompilationContext;
 import org.jelik.parser.ast.ASTNode;
-import org.jelik.parser.ast.visitors.AstVisitor;
+import org.jelik.parser.ast.DotCallExpr;
 import org.jelik.parser.ast.Expression;
 import org.jelik.parser.ast.LiteralExpr;
 import org.jelik.parser.ast.arguments.Argument;
 import org.jelik.parser.ast.arguments.ArgumentList;
 import org.jelik.parser.ast.expression.ExpressionWithType;
+import org.jelik.parser.ast.utils.ASTUtils;
+import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.types.Type;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,26 +19,41 @@ import java.util.stream.Collectors;
 /**
  * @author Marcin Bukowiecki
  */
-@Getter
 public class FunctionCallExpr extends ExpressionWithType implements FunctionCall {
 
     private final LiteralExpr literalExpr;
 
     private final ArgumentList argumentList;
 
-    @Getter
-    @Setter
-    private TargetFunctionCall targetFunctionCall;
+    protected TargetFunctionCallProvider<?> targetFunctionCall;
 
-    @Getter
-    @Setter
-    private Type owner;
+    protected Type owner;
 
     public FunctionCallExpr(LiteralExpr literalExpr, ArgumentList argumentList) {
         this.literalExpr = literalExpr;
         this.argumentList = argumentList;
         literalExpr.setParent(this);
         argumentList.setParent(this);
+    }
+
+    public LiteralExpr getLiteralExpr() {
+        return literalExpr;
+    }
+
+    public ArgumentList getArgumentList() {
+        return argumentList;
+    }
+
+    public TargetFunctionCallProvider<?> getTargetFunctionCall() {
+        return targetFunctionCall;
+    }
+
+    public void setOwner(Type owner) {
+        this.owner = owner;
+    }
+
+    public Type getOwner() {
+        return owner;
     }
 
     @Override
@@ -66,7 +81,7 @@ public class FunctionCallExpr extends ExpressionWithType implements FunctionCall
         return literalExpr.toString() + argumentList.toString() + (furtherExpression == null ? "" : furtherExpression.toString());
     }
 
-    public void setTargetFunctionCall(TargetFunctionCall targetFunctionCall) {
+    public void setTargetFunctionCall(TargetFunctionCallProvider<?> targetFunctionCall) {
         this.targetFunctionCall = targetFunctionCall;
     }
 
@@ -80,7 +95,11 @@ public class FunctionCallExpr extends ExpressionWithType implements FunctionCall
     }
 
     public ASTNode getCaller() {
-        return parent.getParent();
+        if (parent instanceof DotCallExpr) {
+            return ((DotCallExpr) parent).getSubject();
+        } else {
+            return parent;
+        }
     }
 
     @Override

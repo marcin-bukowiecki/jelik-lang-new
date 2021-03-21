@@ -1,7 +1,9 @@
 package org.jelik.types;
 
 import org.jelik.CompilationContext;
+import org.jelik.compiler.asm.visitor.TypeVisitor;
 import org.jelik.compiler.common.TypeEnum;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Marcin Bukowiecki
@@ -15,7 +17,12 @@ public class JVMNullType extends Type {
     }
 
     @Override
-    public boolean isAssignableTo(Type type, CompilationContext compilationContext) {
+    public void visit(TypeVisitor typeVisitor, CompilationContext compilationContext) {
+        typeVisitor.visit(this, compilationContext);
+    }
+
+    @Override
+    public boolean isAssignableTo(@NotNull Type type, @NotNull CompilationContext compilationContext) {
         return true;
     }
 

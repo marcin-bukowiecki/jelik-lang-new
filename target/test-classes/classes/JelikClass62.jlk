@@ -1,3 +1,1 @@
-fun expr(a Double, b Float) -> Double {
-   val c = 11 as Double
-   ret a / b + (-c)}
+fun expr(a Double, b Double) -> Double {   ret a / b}

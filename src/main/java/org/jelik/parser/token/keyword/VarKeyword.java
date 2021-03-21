@@ -9,14 +9,15 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Marcin Bukowiecki
  */
-public class VarKeyword extends Token {
+public class VarKeyword extends Token implements Modifier {
+
     public VarKeyword(int row, int col) {
         super("var", row, col, ElementType.varKeyword);
     }
 
     @Override
     public void visit(@NotNull ParseVisitor<?> parseVisitor, @NotNull ParseContext parseContext) {
-        parseVisitor.visit(this, parseContext);
+        parseVisitor.visitVarKeyword(this, parseContext);
     }
 
     @Override

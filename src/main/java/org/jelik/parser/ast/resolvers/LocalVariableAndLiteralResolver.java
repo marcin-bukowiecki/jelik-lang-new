@@ -7,9 +7,11 @@ import org.jelik.parser.ast.DotCallExpr;
 import org.jelik.parser.ast.Expression;
 import org.jelik.parser.ast.GetFieldNode;
 import org.jelik.parser.ast.LiteralExpr;
+import org.jelik.parser.ast.MapCreateExpr;
 import org.jelik.parser.ast.arguments.Argument;
 import org.jelik.parser.ast.arrays.ArrayCreateExpr;
 import org.jelik.parser.ast.arrays.ArrayOrMapGetExpr;
+import org.jelik.parser.ast.arrays.ArrayOrMapSetExpr;
 import org.jelik.parser.ast.expression.CatchExpression;
 import org.jelik.parser.ast.expression.ParenthesisExpression;
 import org.jelik.parser.ast.expression.TryExpression;
@@ -18,16 +20,21 @@ import org.jelik.parser.ast.functions.FunctionCallExpr;
 import org.jelik.parser.ast.functions.FunctionDeclaration;
 import org.jelik.parser.ast.functions.FunctionParameter;
 import org.jelik.parser.ast.locals.ValueDeclaration;
+import org.jelik.parser.ast.locals.VariableDeclaration;
+import org.jelik.parser.ast.locals.WithLocalVariableDeclaration;
 import org.jelik.parser.ast.operators.AssignExpr;
 import org.jelik.parser.ast.types.InferredTypeRef;
 import org.jelik.parser.ast.types.TypeAccessNode;
 import org.jelik.parser.ast.types.TypeNode;
 import org.jelik.parser.ast.types.TypeNodeRef;
-import org.jelik.parser.ast.types.TypeRef;
+import org.jelik.parser.ast.types.AbstractTypeRef;
 import org.jelik.parser.ast.types.UndefinedTypeNode;
 import org.jelik.parser.ast.visitors.AstVisitor;
-import org.jelik.parser.exceptions.SyntaxException;
+import org.jelik.compiler.exceptions.SyntaxException;
+import org.jelik.parser.token.operators.AssignOperator;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 /**
  * @author Marcin Bukowiecki
@@ -48,28 +55,43 @@ public class LocalVariableAndLiteralResolver extends AstVisitor {
     }
 
     @Override
-    public void visitValueDeclaration(@NotNull ValueDeclaration valueDeclaration, @NotNull CompilationContext compilationContext) {
-        assert valueDeclaration.getFurtherExpressionOpt().isPresent();
-
-        valueDeclaration.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
-        TypeNode typeNode = valueDeclaration.getTypeNode();
-        TypeRef typeRef;
-        if (typeNode == UndefinedTypeNode.UNDEFINED_TYPE_NODE) {
-            typeRef = new TypeNodeRef(valueDeclaration.getTypeNode());
-        } else {
-            typeRef = new InferredTypeRef(valueDeclaration.getFurtherExpressionOpt().get());
-        }
-        LocalVariable localVariable = new LocalVariable(valueDeclaration.getLiteralToken().getText(), typeRef, false);
-        compilationContext.blockStack.getLast().getBlockContext().addLocal(localVariable.getName(), localVariable);
-        FunctionDeclaration functionDeclaration = (FunctionDeclaration) compilationContext.currentCompilationUnit();
-        functionDeclaration.getFunctionContext().addLocalVariable(localVariable);
-        valueDeclaration.setLocalVariable(localVariable);
+    public void visitValueDeclaration(@NotNull ValueDeclaration valueDeclaration,
+                                      @NotNull CompilationContext compilationContext) {
+        visitWithLocalVariable(valueDeclaration, compilationContext);
     }
 
     @Override
-    public void visit(@NotNull BasicBlock basicBlock, @NotNull CompilationContext compilationContext) {
+    public void visitVariableDeclaration(@NotNull VariableDeclaration variableDeclaration,
+                                         @NotNull CompilationContext compilationContext) {
+        visitWithLocalVariable(variableDeclaration, compilationContext);
+    }
+
+    @Override
+    public void visitWithLocalVariable(@NotNull WithLocalVariableDeclaration withLocalVariable,
+                                       @NotNull CompilationContext compilationContext) {
+        Objects.requireNonNull(withLocalVariable.getFurtherExpression());
+        withLocalVariable.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
+        TypeNode typeNode = withLocalVariable.getTypeNode();
+        AbstractTypeRef typeRef;
+        if (typeNode == UndefinedTypeNode.UNDEFINED_TYPE_NODE) {
+            typeRef = new TypeNodeRef(withLocalVariable.getTypeNode());
+        } else {
+            typeRef = new InferredTypeRef(withLocalVariable.getFurtherExpressionOpt().get());
+        }
+        LocalVariable localVariable = new LocalVariable(withLocalVariable.getLiteralToken().getText(), typeRef, false);
+        compilationContext.blockStack.getLast().getBlockContext().addLocal(localVariable.getName(), localVariable);
+        FunctionDeclaration functionDeclaration = (FunctionDeclaration) compilationContext.currentCompilationUnit();
+        functionDeclaration.getFunctionContext().addLocalVariable(localVariable);
+        withLocalVariable.setLocalVariable(localVariable);
+    }
+
+    @Override
+    public void visit(@NotNull BasicBlock basicBlock,
+                      @NotNull CompilationContext compilationContext) {
         if (compilationContext.blockStack.isEmpty()) {
-            for (LocalVariable localsAsParameter : ((FunctionDeclaration) compilationContext.currentCompilationUnit()).getFunctionContext().getLocalsAsParameters()) {
+            for (LocalVariable localsAsParameter : ((FunctionDeclaration) compilationContext.currentCompilationUnit())
+                    .getFunctionContext()
+                    .getLocalsAsParameters()) {
                 basicBlock.getBlockContext().addLocal(localsAsParameter.getName(), localsAsParameter);
             }
         }
@@ -96,7 +118,7 @@ public class LocalVariableAndLiteralResolver extends AstVisitor {
 
     @Override
     public void visit(@NotNull LiteralExpr literalExpr, @NotNull CompilationContext compilationContext) {
-        if (literalExpr.getParent() instanceof DotCallExpr && literalExpr.getParent().getParent() instanceof TypeAccessNode) {
+        if (literalExpr.getParent() instanceof DotCallExpr && ((DotCallExpr) literalExpr.getParent()).getSubject() instanceof TypeAccessNode) {
             final GetFieldNode getFieldNode = new GetFieldNode(literalExpr.getLiteralToken());
             literalExpr.getParent().replaceWith(literalExpr, getFieldNode);
             literalExpr.getFurtherExpressionOpt().ifPresent(expr -> {
@@ -106,15 +128,11 @@ public class LocalVariableAndLiteralResolver extends AstVisitor {
         } else {
             Expression newExpr = new NumberResolver(literalExpr).resolve(compilationContext).getNewNode();
             if (newExpr == null) {
-                FindSymbolResult findResult = compilationContext
+                newExpr = compilationContext
                         .currentCompilationUnit()
-                        .findSymbol(literalExpr.getLiteralToken().getText(), compilationContext);
-
-                if (findResult == null) {
-                    throw new SyntaxException("Could not resolve symbol", literalExpr, compilationContext.getCurrentModule());
-                }
-
-                newExpr = findResult.replaceNode(literalExpr);
+                        .findSymbol(literalExpr.getLiteralToken().getText(), compilationContext)
+                        .map(s -> s.replaceNode(literalExpr))
+                        .orElseThrow(() -> new SyntaxException("Could not resolve symbol", literalExpr, compilationContext.getCurrentModule()));
             }
             newExpr.visit(this, compilationContext);
         }
@@ -122,9 +140,24 @@ public class LocalVariableAndLiteralResolver extends AstVisitor {
 
     @Override
     public void visit(@NotNull ArrayOrMapGetExpr arrayOrMapGetExpr, @NotNull CompilationContext compilationContext) {
-        if (arrayOrMapGetExpr.parent instanceof ArrayCreateExpr) {
+        if (arrayOrMapGetExpr.parent instanceof AssignExpr) {
+            var newExpr = new ArrayOrMapSetExpr(arrayOrMapGetExpr.getLeftExpr(),
+                    arrayOrMapGetExpr.getLeftBracketToken(),
+                    arrayOrMapGetExpr.getExpression(),
+                    arrayOrMapGetExpr.getRightBracketToken(),
+                    ((AssignOperator) ((AssignExpr) arrayOrMapGetExpr.parent).getOp()),
+                    ((AssignExpr) arrayOrMapGetExpr.parent).getRight());
+            arrayOrMapGetExpr.parent.parent.replaceWith(((AssignExpr) arrayOrMapGetExpr.parent), newExpr);
+            newExpr.visit(this, compilationContext);
+            return;
+        }
+        if (arrayOrMapGetExpr.getLeftExpr() instanceof ArrayCreateExpr) {
             arrayOrMapGetExpr.arrayGet = true;
         }
+        if (arrayOrMapGetExpr.getLeftExpr() instanceof MapCreateExpr) {
+            arrayOrMapGetExpr.arrayGet = false;
+        }
+        arrayOrMapGetExpr.getLeftExpr().visit(this, compilationContext);
         arrayOrMapGetExpr.getExpression().visit(this, compilationContext);
         arrayOrMapGetExpr.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
     }
@@ -150,7 +183,7 @@ public class LocalVariableAndLiteralResolver extends AstVisitor {
     }
 
     @Override
-    public void visit(AssignExpr assignExpr, CompilationContext compilationContext) {
+    public void visit(@NotNull AssignExpr assignExpr, @NotNull CompilationContext compilationContext) {
         super.visit(assignExpr, compilationContext);
     }
 }

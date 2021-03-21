@@ -19,6 +19,7 @@ package org.jelik.types.jvm;
 import org.jelik.CompilationContext;
 import org.jelik.compiler.common.TypeEnum;
 import org.jelik.types.Type;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Marcin Bukowiecki
@@ -37,7 +38,7 @@ public class LongWrapperType extends IntegerWrapperType {
     }
 
     @Override
-    public boolean isAssignableTo(Type type, CompilationContext compilationContext) {
+    public boolean isAssignableTo(@NotNull Type type, @NotNull CompilationContext compilationContext) {
         switch (type.getTypeEnum()) {
             case float64:
             case float64Wrapper:

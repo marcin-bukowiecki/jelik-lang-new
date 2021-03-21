@@ -16,6 +16,7 @@ import org.jelik.parser.ast.functions.FunctionParameter;
 import org.jelik.parser.ast.labels.LabelNode;
 import org.jelik.parser.ast.locals.GetLocalNode;
 import org.jelik.parser.ast.locals.ValueDeclaration;
+import org.jelik.parser.ast.locals.VariableDeclaration;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,21 +30,34 @@ import java.util.Objects;
 public class BlockLabelsResolver extends AstVisitor {
 
     @Override
-    public void visitValueDeclaration(@NotNull ValueDeclaration valueDeclaration, @NotNull CompilationContext compilationContext) {
+    public void visitValueDeclaration(@NotNull ValueDeclaration valueDeclaration,
+                                      @NotNull CompilationContext compilationContext) {
         LabelNode labelNode = compilationContext.labelStack.getLast();
         valueDeclaration.getLocalVariable().setStart(labelNode);
+        valueDeclaration.getLocalVariable().setEnd(labelNode);
         valueDeclaration.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
     }
 
     @Override
-    public void visitFunctionDeclaration(@NotNull FunctionDeclaration functionDeclaration, @NotNull CompilationContext compilationContext) {
+    public void visitVariableDeclaration(@NotNull VariableDeclaration variableDeclaration,
+                                         @NotNull CompilationContext compilationContext) {
+        LabelNode labelNode = compilationContext.labelStack.getLast();
+        variableDeclaration.getLocalVariable().setStart(labelNode);
+        variableDeclaration.getLocalVariable().setEnd(labelNode);
+        variableDeclaration.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
+    }
+
+    @Override
+    public void visitFunctionDeclaration(@NotNull FunctionDeclaration functionDeclaration,
+                                         @NotNull CompilationContext compilationContext) {
         compilationContext.pushCompilationUnit(functionDeclaration);
         functionDeclaration.getFunctionBody().visit(this, compilationContext);
         compilationContext.popCompilationUnit();
     }
 
     @Override
-    public void visit(@NotNull FunctionBodyBlock fb, @NotNull CompilationContext compilationContext) {
+    public void visit(@NotNull FunctionBodyBlock fb,
+                      @NotNull CompilationContext compilationContext) {
         fb.setStartLabel(compilationContext.createLabel("entry-block"));
         compilationContext.labelStack.addLast(fb.getStartLabel());
         fb.getBb().visit(this, compilationContext);
@@ -75,7 +89,7 @@ public class BlockLabelsResolver extends AstVisitor {
     }
 
     @Override
-    public void visit(IfExpression ifExpression, CompilationContext compilationContext) {
+    public void visit(@NotNull IfExpression ifExpression, @NotNull CompilationContext compilationContext) {
         ifExpression.getConditionExpression().visit(this, compilationContext);
         ifExpression.getBasicBlock().visit(this, compilationContext);
         IfNodeContext ifNodeContext = ((IfNodeContext) ifExpression.getNodeContext());
@@ -86,15 +100,31 @@ public class BlockLabelsResolver extends AstVisitor {
     }
 
     @Override
-    public void visit(ElseExpression elseExpression, CompilationContext compilationContext) {
+    public void visit(@NotNull ElseExpression elseExpression, @NotNull CompilationContext compilationContext) {
         elseExpression.getBasicBlock().visit(this, compilationContext);
     }
 
     @Override
     public void visit(@NotNull TryExpression tryExpression, @NotNull CompilationContext compilationContext) {
         ((FunctionDeclaration) compilationContext.currentCompilationUnit()).getFunctionContext().addTryCatchBlock(tryExpression);
+        tryExpression.setStartLabel(compilationContext.createLabel("try-start"));
         tryExpression.getBlock().visit(this, compilationContext);
-        tryExpression.getFurtherExpression().visit(this, compilationContext);
+        tryExpression.setEndLabel(compilationContext.createLabel("try-end"));
+
+        final CatchExpression catchExpression = (CatchExpression) tryExpression.getFurtherExpression();
+        final LabelNode startLabel = compilationContext.createLabel("catch-start");
+        final LabelNode endLabel = compilationContext.createLabel("catch-end");
+        catchExpression.setStartLabel(startLabel);
+        catchExpression.setEndLabel(endLabel);
+        if (!catchExpression.getBlock().getExpressions().isEmpty()) {
+            final LabelNode inner = compilationContext.createLabel("catch-inner");
+            catchExpression.setInnerLabel(compilationContext.createLabel("catch-inner"));
+            for (FunctionParameter functionParameter : catchExpression.getArgs().getFunctionParameters()) {
+                functionParameter.localVariableRef.setStart(inner);
+                functionParameter.localVariableRef.setEnd(endLabel);
+            }
+        }
+        catchExpression.visit(this, compilationContext);
     }
 
     @Override

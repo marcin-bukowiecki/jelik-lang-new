@@ -11,7 +11,7 @@ import org.jelik.parser.ast.visitors.AstVisitor
  */
 open class CastToNode : ExpressionWithType, ConsumingExpression {
 
-    val subject: Expression
+    var subject: Expression
 
     constructor(subject: Expression) {
         this.subject = subject
@@ -25,6 +25,20 @@ open class CastToNode : ExpressionWithType, ConsumingExpression {
         }
         this.subject = subject
         this.subject.parent = this
+    }
+
+    override fun replaceWith(oldNode: Expression, newNode: Expression) {
+        when {
+            subject == oldNode -> {
+                subject = newNode
+            }
+            furtherExpression == oldNode -> {
+                furtherExpression = newNode
+            }
+            else -> {
+                super.replaceWith(oldNode, newNode)
+            }
+        }
     }
 
     override fun visit(astVisitor: AstVisitor, compilationContext: CompilationContext) {

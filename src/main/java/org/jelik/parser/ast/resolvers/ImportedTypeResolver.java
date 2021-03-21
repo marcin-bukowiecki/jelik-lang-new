@@ -16,13 +16,14 @@ import java.util.List;
 public class ImportedTypeResolver extends AstVisitor {
 
     @Override
-    public void visit(@NotNull SingleTypeNode typeNode, @NotNull CompilationContext compilationContext) {
+    public void visitSingleTypeNode(@NotNull SingleTypeNode typeNode, @NotNull CompilationContext compilationContext) {
         ClassDeclaration currentModule = compilationContext.getCurrentModule();
         List<ImportDeclaration> importDeclarations = currentModule.getModuleDeclaration().getImports();
         for (ImportDeclaration importDeclaration : importDeclarations) {
             Type typeInImport = findTypeInImport(typeNode, importDeclaration);
             if (typeInImport != null) {
                 typeNode.setType(typeInImport);
+                typeNode.setGenericType(typeInImport.deepGenericCopy());
                 break;
             }
         }

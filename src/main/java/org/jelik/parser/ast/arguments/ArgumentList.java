@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
  *
  * @author Marcin Bukowiecki
  */
-@Getter
 public class ArgumentList extends ExpressionReferencingType {
 
     public static ArgumentList EMPTY = new ArgumentList(new LeftParenthesisToken(-1,-1), Collections.emptyList(), new RightParenthesisToken(-1, -1));
@@ -35,6 +34,18 @@ public class ArgumentList extends ExpressionReferencingType {
         for (Argument argument : arguments) {
             argument.parent = parent;
         }
+    }
+
+    public LeftParenthesisToken getLeftParenthesisToken() {
+        return leftParenthesisToken;
+    }
+
+    public List<Argument> getArguments() {
+        return arguments;
+    }
+
+    public RightParenthesisToken getRightParenthesisToken() {
+        return rightParenthesisToken;
     }
 
     @Override
@@ -68,5 +79,9 @@ public class ArgumentList extends ExpressionReferencingType {
                 arguments.stream().map(Object::toString).collect(Collectors.joining()) +
                 rightParenthesisToken.toString() +
                 getFurtherExpressionOpt().map(Object::toString).orElse("");
+    }
+
+    public String getArgumentsDescriptor() {
+        return "(" + arguments.stream().map(arg -> arg.getGenericReturnType().getInternalName()).collect(Collectors.joining()) + ")";
     }
 }

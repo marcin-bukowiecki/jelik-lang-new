@@ -55,7 +55,7 @@ public class FunctionArrayTest {
     @Test
     public void getIntFromArrayVar() {
         var expr = "fun expr() -> Int {\n" +
-                "   val a = [1,2,3,4]" +
+                "   val a = [1,2,3,4]\n" +
                 "   ret a[3]" +
                 "}";
         FunctionCompiler.getInstance()
@@ -100,7 +100,7 @@ public class FunctionArrayTest {
     @Test
     public void getStringFromArrayVar() {
         var expr = "fun expr() -> String {\n" +
-                "   val a = [\"a\",\"b\",\"c\"]" +
+                "   val a = [\"a\",\"b\",\"c\"]\n" +
                 "   ret a[2]" +
                 "}";
         FunctionCompiler.getInstance()

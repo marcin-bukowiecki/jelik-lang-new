@@ -1,2 +1,2 @@
-fun expr(a Char) -> Int { val b = 10 
- ret a - b }
+fun expr(a Integer) -> Int { ++a 
+ ret a }

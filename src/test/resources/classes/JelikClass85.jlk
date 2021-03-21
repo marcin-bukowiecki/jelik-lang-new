@@ -1,1 +1,2 @@
-fun expr(a Int) -> Short { ret a as Short }
+fun expr(a Integer) -> Int { 
+ ret ++a }

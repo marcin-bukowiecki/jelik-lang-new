@@ -1,1 +1,2 @@
-fun adder Int
+fun a:Int
+ { let}

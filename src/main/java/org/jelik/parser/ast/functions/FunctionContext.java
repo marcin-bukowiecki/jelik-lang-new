@@ -30,7 +30,9 @@ public class FunctionContext {
 
     private List<LocalVariable> localVariableList = Lists.newArrayList();
 
-    private Map<String, TypeNode> genericTypesMap = Maps.newHashMap();
+    private Map<String, TypeNode> typeParametersMap = Maps.newHashMap();
+
+    private Map<String, TypeNode> genericTypeParametersMap = Maps.newHashMap();
 
     private int localCounter;
 
@@ -57,10 +59,6 @@ public class FunctionContext {
             }
         }
         return false;
-    }
-
-    public Map<String, TypeNode> getGenericTypesMap() {
-        return genericTypesMap;
     }
 
     public CodeEvent popCodeEvent() {
@@ -91,5 +89,13 @@ public class FunctionContext {
 
     public List<TryExpression> getTryExpressionList() {
         return Collections.unmodifiableList(tryExpressionList);
+    }
+
+    public Map<String, TypeNode> getGenericTypesMap() {
+        return typeParametersMap;
+    }
+
+    public Map<String, TypeNode> getGenericTypeParametersMappings() {
+        return genericTypeParametersMap;
     }
 }

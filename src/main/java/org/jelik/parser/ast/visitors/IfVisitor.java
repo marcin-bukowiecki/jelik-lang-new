@@ -8,7 +8,7 @@ import org.jelik.parser.ast.ParseVisitor;
 import org.jelik.parser.ast.branching.ElseExpression;
 import org.jelik.parser.ast.branching.IfConditionExpression;
 import org.jelik.parser.ast.branching.IfExpression;
-import org.jelik.parser.exceptions.SyntaxException;
+import org.jelik.compiler.exceptions.SyntaxException;
 import org.jelik.parser.token.ElementType;
 import org.jelik.parser.token.Token;
 import org.jelik.parser.token.keyword.ElseKeyword;
@@ -67,7 +67,7 @@ public class IfVisitor implements ParseVisitor<IfExpression> {
     }
 
     @Override
-    public void visit(ElseKeyword elseKeyword, ParseContext parseContext) {
+    public void visitElseKeyword(ElseKeyword elseKeyword, ParseContext parseContext) {
         this.ifExpression = new IfExpression(ifKeyword, condition, thenKeyword, block, null);
         var elseBlock = new ConditionBlockVisitor().visit(parseContext);
         var endKeyword = ((EndKeyword) parseContext.getLexer().getCurrent());

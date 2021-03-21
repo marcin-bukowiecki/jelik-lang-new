@@ -17,7 +17,7 @@ public class ElseKeyword extends Token {
 
     @Override
     public void visit(@NotNull ParseVisitor<?> parseVisitor, @NotNull ParseContext parseContext) {
-        parseVisitor.visit(this, parseContext);
+        parseVisitor.visitElseKeyword(this, parseContext);
     }
 
     @Override

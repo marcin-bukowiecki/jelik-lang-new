@@ -20,6 +20,26 @@ public class Int32Node extends ExpressionWithType {
         this.value = value;
     }
 
+    @Override
+    public int getStartRow() {
+        return literalToken.getRow();
+    }
+
+    @Override
+    public int getStartCol() {
+        return literalToken.getCol();
+    }
+
+    @Override
+    public int getEndRow() {
+        return literalToken.getEndRow();
+    }
+
+    @Override
+    public int getEndCol() {
+        return literalToken.getEndCol();
+    }
+
     public int getValue() {
         return value;
     }

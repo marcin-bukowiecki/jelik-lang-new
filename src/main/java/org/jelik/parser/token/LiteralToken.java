@@ -13,6 +13,10 @@ public class LiteralToken extends Token {
         super(text, row, col, ElementType.literal);
     }
 
+    public LiteralToken(int row, int col, String text, ElementType empty) {
+        super(text, row, col, empty);
+    }
+
     @Override
     public void visit(@NotNull ParseVisitor<?> parseVisitor, @NotNull ParseContext parseContext) {
         parseVisitor.visitLiteral(this, parseContext);

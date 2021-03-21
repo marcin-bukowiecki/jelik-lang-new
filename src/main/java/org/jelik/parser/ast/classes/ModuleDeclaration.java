@@ -8,6 +8,7 @@ import org.jelik.parser.ast.PackageDeclaration;
 import org.jelik.parser.ast.functions.FunctionDeclaration;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.token.LiteralToken;
+import org.jelik.parser.token.keyword.ClassKeyword;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -30,7 +31,13 @@ public class ModuleDeclaration extends ClassDeclaration implements CompilationUn
                              List<FunctionDeclaration> functionDeclarations,
                              List<ClassDeclaration> classes,
                              PackageDeclaration packageDeclaration) {
-        super(absolutePath, new LiteralToken(-1, -1, name), functionDeclarations, Collections.emptyList());
+        super(absolutePath,
+                new ClassKeyword(-1, -1),
+                new LiteralToken(-1, -1, name),
+                Collections.emptyList(),
+                functionDeclarations,
+                Collections.emptyList());
+
         for (ImportDeclaration importDeclaration : importDeclarations) {
             importDeclaration.parent = this;
         }

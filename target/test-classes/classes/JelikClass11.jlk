@@ -1,1 +1,5 @@
-fun expr() -> []String {   ret ["foo","bar"]}
+fun expr() -> String {
+   val a = ["a","b","c"]
+   a[2] = "foo"
+   ret a[2]
+}

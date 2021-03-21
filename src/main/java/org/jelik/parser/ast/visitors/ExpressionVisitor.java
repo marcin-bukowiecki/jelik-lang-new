@@ -5,50 +5,54 @@ import org.jelik.parser.ParseContext;
 import org.jelik.parser.ast.ASTNode;
 import org.jelik.parser.ast.DotCallExpr;
 import org.jelik.parser.ast.Expression;
+import org.jelik.parser.ast.KeyValueExpr;
 import org.jelik.parser.ast.LiteralExpr;
+import org.jelik.parser.ast.MapCreateExpr;
 import org.jelik.parser.ast.NullExpr;
 import org.jelik.parser.ast.ParseVisitor;
 import org.jelik.parser.ast.arguments.ArgumentListVisitor;
 import org.jelik.parser.ast.arrays.ArrayCreateExpr;
 import org.jelik.parser.ast.arrays.ArrayOrMapGetExpr;
 import org.jelik.parser.ast.arrays.TypedArrayCreateExpr;
+import org.jelik.parser.ast.expression.EmptyExpression;
 import org.jelik.parser.ast.expression.ParenthesisExpression;
 import org.jelik.parser.ast.functions.FunctionCallExpr;
 import org.jelik.parser.ast.numbers.FalseNode;
 import org.jelik.parser.ast.numbers.TrueNode;
 import org.jelik.parser.ast.operators.NegExpr;
 import org.jelik.parser.ast.strings.StringParser;
-import org.jelik.parser.exceptions.SyntaxException;
+import org.jelik.parser.ast.types.TypeParameterListNode;
+import org.jelik.parser.ast.utils.ASTUtils;
+import org.jelik.compiler.exceptions.SyntaxException;
 import org.jelik.parser.token.ApostropheToken;
+import org.jelik.parser.token.ColonToken;
+import org.jelik.parser.token.CommaToken;
 import org.jelik.parser.token.DotToken;
 import org.jelik.parser.token.ElementType;
 import org.jelik.parser.token.EofTok;
 import org.jelik.parser.token.FalseToken;
 import org.jelik.parser.token.LeftBracketToken;
-import org.jelik.parser.token.NullToken;
-import org.jelik.parser.token.RightBracketToken;
-import org.jelik.parser.token.TrueToken;
-import org.jelik.parser.token.operators.AbstractOperator;
-import org.jelik.parser.token.operators.AndOperator;
-import org.jelik.parser.token.operators.AsOperator;
-import org.jelik.parser.token.operators.BitAndOperator;
-import org.jelik.parser.token.operators.BitOrOperator;
-import org.jelik.parser.token.operators.BitXorOperator;
-import org.jelik.parser.token.operators.DivideOperator;
-import org.jelik.parser.token.operators.GreaterOperator;
+import org.jelik.parser.token.LeftCurlToken;
 import org.jelik.parser.token.LeftParenthesisToken;
 import org.jelik.parser.token.LiteralToken;
-import org.jelik.parser.token.NewLineToken;
-import org.jelik.parser.token.keyword.ReturnKeyword;
+import org.jelik.parser.token.NullToken;
+import org.jelik.parser.token.RightBracketToken;
 import org.jelik.parser.token.RightCurlToken;
 import org.jelik.parser.token.RightParenthesisToken;
 import org.jelik.parser.token.Token;
-import org.jelik.parser.token.keyword.ElseKeyword;
-import org.jelik.parser.token.keyword.EndKeyword;
+import org.jelik.parser.token.TrueToken;
+import org.jelik.parser.token.operators.AbstractOperator;
 import org.jelik.parser.token.operators.AddOperator;
+import org.jelik.parser.token.operators.AndOperator;
+import org.jelik.parser.token.operators.AsOperator;
 import org.jelik.parser.token.operators.AssignOperator;
+import org.jelik.parser.token.operators.BitAndOperator;
+import org.jelik.parser.token.operators.BitOrOperator;
+import org.jelik.parser.token.operators.BitXorOperator;
 import org.jelik.parser.token.operators.DecrOperator;
+import org.jelik.parser.token.operators.DivideOperator;
 import org.jelik.parser.token.operators.EqualOperator;
+import org.jelik.parser.token.operators.GreaterOperator;
 import org.jelik.parser.token.operators.GreaterOrEqualOperator;
 import org.jelik.parser.token.operators.IncrOperator;
 import org.jelik.parser.token.operators.IsOperator;
@@ -90,28 +94,30 @@ public class ExpressionVisitor implements ParseVisitor<Expression> {
     }
 
     @Override
-    public void visit(EofTok eofTok, ParseContext parseContext) {
-
+    public void visitLeftCurl(@NotNull LeftCurlToken leftCurlToken, @NotNull ParseContext parseContext) {
+        final Lexer lexer = parseContext.getLexer();
+        var expressions = new ArrayList<KeyValueExpr>();
+        while (lexer.hasNextToken()) {
+            final Expression key = new ExpressionVisitor(lexer.nextToken()).visit(parseContext);
+            final ColonToken colonToken = ((ColonToken) lexer.getCurrent());
+            final Expression value = new ExpressionVisitor(lexer.nextToken()).visit(parseContext);
+            expressions.add(new KeyValueExpr(key, colonToken, value));
+            if (lexer.peekNext() instanceof RightCurlToken) {
+                lexer.nextToken();
+                break;
+            }
+        }
+        setAndGoFurther(new MapCreateExpr(leftCurlToken, expressions, ((RightCurlToken) lexer.getCurrent())), parseContext);
     }
 
     @Override
-    public void visit(ApostropheToken apostropheToken, ParseContext parseContext) {
+    public void visit(@NotNull ApostropheToken apostropheToken, @NotNull ParseContext parseContext) {
         var expr = new StringParser(apostropheToken).visit(parseContext);
         setAndGoFurther(expr, parseContext);
     }
 
     @Override
-    public void visitRightParenthesis(RightParenthesisToken rightParenthesisToken, ParseContext parseContext) {
-
-    }
-
-    @Override
-    public void visitReturnKeyword(@NotNull ReturnKeyword returnKeyword, @NotNull ParseContext parseContext) {
-
-    }
-
-    @Override
-    public void visitLeftParenthesis(LeftParenthesisToken leftParenthesisToken, ParseContext parseContext) {
+    public void visitLeftParenthesis(@NotNull LeftParenthesisToken leftParenthesisToken, @NotNull ParseContext parseContext) {
         var expr = new ArgumentListVisitor(leftParenthesisToken).visit(parseContext);
         if (this.currentExpression instanceof LiteralExpr) {
             if (this.currentExpression.getParent() == null) {
@@ -164,7 +170,18 @@ public class ExpressionVisitor implements ParseVisitor<Expression> {
     }
 
     @Override
-    public void visit(@NotNull  LesserOperator lesserOperator, @NotNull  ParseContext parseContext) {
+    public void visit(@NotNull LesserOperator lesserOperator, @NotNull  ParseContext parseContext) {
+        try {
+            if (this.currentExpression instanceof LiteralExpr) {
+                final TypeParameterListNode visit = new TypeParameterListVisitor(lesserOperator).visit(parseContext);
+                ((LiteralExpr) this.currentExpression).setTypeParameterListNode(visit);
+                parseContext.getLexer().nextToken().visit(this, parseContext);
+                return;
+            }
+        } catch (Exception ignored) {
+
+        }
+        parseContext.getLexer().recover(lesserOperator);
         this.expression = new OpExpressionVisitor(this.expression, lesserOperator).visit(parseContext);
     }
 
@@ -225,7 +242,7 @@ public class ExpressionVisitor implements ParseVisitor<Expression> {
     }
 
     @Override
-    public void visitSubtract(SubtractOperator subtractOperator, ParseContext parseContext) {
+    public void visitSubtract(@NotNull SubtractOperator subtractOperator, @NotNull ParseContext parseContext) {
         if (this.expression == null) {
             var expr = new NegExpr(subtractOperator, new ExpressionVisitor(parseContext.getLexer().nextToken()).visit(parseContext));
             setAndGoFurther(expr, parseContext);
@@ -235,39 +252,20 @@ public class ExpressionVisitor implements ParseVisitor<Expression> {
     }
 
     @Override
-    public void visitMul(MulOperator mulOperator, ParseContext parseContext) {
+    public void visitMul(@NotNull MulOperator mulOperator, @NotNull ParseContext parseContext) {
         this.expression = new OpExpressionVisitor(this.expression, mulOperator).visit(parseContext);
     }
 
     @Override
-    public void visitDivide(DivideOperator divideOperator, ParseContext parseContext) {
+    public void visitDivide(@NotNull DivideOperator divideOperator, @NotNull ParseContext parseContext) {
         this.expression = new OpExpressionVisitor(this.expression, divideOperator).visit(parseContext);
     }
 
     @Override
-    public void visitDot(DotToken dotToken, ParseContext parseContext) {
-        var expr =  new DotCallExpr(dotToken);
-        setAndGoFurther(expr, parseContext);
-    }
-
-    @Override
-    public void visitNewLine(@NotNull NewLineToken newLineToken, @NotNull ParseContext parseContext) {
-
-    }
-
-    @Override
-    public void visitRightCurl(RightCurlToken rightCurlToken, ParseContext parseContext) {
-
-    }
-
-    @Override
-    public void visit(ElseKeyword elseKeyword, ParseContext parseContext) {
-
-    }
-
-    @Override
-    public void visit(EndKeyword endKeyword, ParseContext parseContext) {
-
+    public void visitDot(@NotNull DotToken dotToken, @NotNull ParseContext parseContext) {
+        this.expression = new DotCallExpr(this.expression == null ? EmptyExpression.INSTANCE : this.expression, dotToken);
+        this.currentExpression = this.expression;
+        parseContext.getLexer().nextToken().visit(this, parseContext);
     }
 
     @Override
@@ -286,7 +284,13 @@ public class ExpressionVisitor implements ParseVisitor<Expression> {
         Lexer lexer = parseContext.getLexer();
         if (this.expression != null) {
             Expression expr = new ExpressionVisitor(lexer.nextToken()).visit(parseContext);
-            setAndGoFurther(new ArrayOrMapGetExpr(leftBracketToken, expr, ((RightBracketToken) lexer.getCurrent())), parseContext);
+            ArrayOrMapGetExpr arrayOrMapGetExpr = new ArrayOrMapGetExpr(this.currentExpression,
+                    leftBracketToken,
+                    expr,
+                    ((RightBracketToken) lexer.getCurrent()));
+            this.currentExpression = null;
+            this.expression = null;
+            setAndGoFurther(arrayOrMapGetExpr, parseContext);
             return;
         }
         var args = new ArrayList<Expression>();
@@ -323,6 +327,31 @@ public class ExpressionVisitor implements ParseVisitor<Expression> {
         this.expression = new FalseNode(falseToken);
     }
 
+    @Override
+    public void visit(EofTok eofTok, ParseContext parseContext) {
+
+    }
+
+    @Override
+    public void visit(@NotNull CommaToken commaToken, @NotNull ParseContext parseContext) {
+
+    }
+
+    @Override
+    public void visit(@NotNull RightBracketToken rightBracketToken, @NotNull ParseContext parseContext) {
+
+    }
+
+    @Override
+    public void visitRightParenthesis(@NotNull RightParenthesisToken rightParenthesisToken, @NotNull ParseContext parseContext) {
+
+    }
+
+    @Override
+    public void visitColon(@NotNull ColonToken colonToken, @NotNull ParseContext parseContext) {
+
+    }
+
     private void checkLeftExpression(@NotNull AbstractOperator op, @NotNull ParseContext parseContext) {
         if (this.expression == null) {
             throw new SyntaxException("Expected left expression for " + op.getText() + " operator", op, parseContext.getCurrentFilePath());
@@ -335,6 +364,7 @@ public class ExpressionVisitor implements ParseVisitor<Expression> {
         } else {
             this.currentExpression.setFurtherExpression(expr);
         }
+
         this.currentExpression = expr;
 
         if (this.currentExpression instanceof DotCallExpr) {
@@ -343,12 +373,14 @@ public class ExpressionVisitor implements ParseVisitor<Expression> {
         }
 
         Token peekedNext = parseContext.getLexer().peekNext();
+
         switch (peekedNext.getTokenType()) {
             case returnKeyword:
             case valKeyword:
             case varKeyword:
-            case rightCurl:
             case ifKeyword:
+                ASTUtils.checkNewLine(this.currentExpression, peekedNext, parseContext);
+            case rightCurl:
             case elseKeyword:
             case elifKeyword:
             case thenKeyword:
@@ -359,6 +391,7 @@ public class ExpressionVisitor implements ParseVisitor<Expression> {
         if (peekedNext.getRow() != this.currentExpression.getEndRow()) {
             return;
         }
+
         parseContext.getLexer().nextToken().visit(this, parseContext);
     }
 }

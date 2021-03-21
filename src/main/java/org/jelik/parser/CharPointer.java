@@ -17,7 +17,7 @@
 package org.jelik.parser;
 
 import lombok.Getter;
-import org.jelik.parser.exceptions.SyntaxException;
+import org.jelik.compiler.exceptions.SyntaxException;
 import org.jelik.parser.token.LiteralToken;
 
 import java.io.BufferedReader;

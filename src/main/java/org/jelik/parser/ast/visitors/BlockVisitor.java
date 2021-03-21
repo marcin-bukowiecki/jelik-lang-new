@@ -6,14 +6,12 @@ import org.jelik.parser.ParseContext;
 import org.jelik.parser.ast.BasicBlock;
 import org.jelik.parser.ast.Expression;
 import org.jelik.parser.ast.ParseVisitor;
-import org.jelik.parser.ast.arguments.ArgumentList;
-import org.jelik.parser.ast.arguments.ArgumentListVisitor;
 import org.jelik.parser.ast.branching.IfExpression;
 import org.jelik.parser.ast.expression.CatchExpression;
 import org.jelik.parser.ast.expression.ThrowExpression;
 import org.jelik.parser.ast.expression.TryExpression;
 import org.jelik.parser.ast.functions.FunctionParameterList;
-import org.jelik.parser.exceptions.SyntaxException;
+import org.jelik.compiler.exceptions.SyntaxException;
 import org.jelik.parser.token.ElementType;
 import org.jelik.parser.token.LeftParenthesisToken;
 import org.jelik.parser.token.LiteralToken;
@@ -63,13 +61,13 @@ public class BlockVisitor implements ParseVisitor<BasicBlock> {
     }
 
     @Override
-    public void visit(ValKeyword valKeyword, ParseContext parseContext) {
+    public void visitValKeyword(@NotNull ValKeyword valKeyword, @NotNull ParseContext parseContext) {
         var visit = new ValueVisitor(valKeyword).visit(parseContext);
         expressionList.add(visit);
     }
 
     @Override
-    public void visit(VarKeyword varKeyword, ParseContext parseContext) {
+    public void visitVarKeyword(@NotNull VarKeyword varKeyword, @NotNull ParseContext parseContext) {
         var visit = new VariableVisitor(varKeyword).visit(parseContext);
         expressionList.add(visit);
     }
@@ -93,7 +91,7 @@ public class BlockVisitor implements ParseVisitor<BasicBlock> {
     }
 
     @Override
-    public void visit(IfKeyword ifKeyword, ParseContext parseContext) {
+    public void visitIfKeyword(@NotNull IfKeyword ifKeyword, @NotNull ParseContext parseContext) {
         IfExpression visit = new IfVisitor(ifKeyword).visit(parseContext);
         expressionList.add(visit);
     }
@@ -127,9 +125,9 @@ public class BlockVisitor implements ParseVisitor<BasicBlock> {
         nextToken = lexer.nextToken();
         BasicBlock catchBlock = new BlockVisitor().visit(parseContext);
         if (catchBlock.getExpressions().isEmpty()) {
-            throw new SyntaxException("Empty try block", tryKeyword, parseContext.getCurrentFilePath());
+            throw new SyntaxException("Empty catch block", catchKeyword, parseContext.getCurrentFilePath());
         }
-        nextToken = lexer.nextToken();
+        nextToken = lexer.getCurrent();
 
         TryExpression tryExpression = new TryExpression(tryKeyword, tryBlock);
         CatchExpression catchExpression = new CatchExpression(catchKeyword, args, catchBlock);

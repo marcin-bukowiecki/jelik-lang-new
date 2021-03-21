@@ -20,6 +20,7 @@ import org.jelik.CompilationContext;
 import org.jelik.compiler.asm.visitor.TypeVisitor;
 import org.jelik.compiler.common.TypeEnum;
 import org.jelik.types.Type;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents JVM long type
@@ -50,7 +51,7 @@ public class JVMLongType extends NumberType {
     }
 
     @Override
-    public boolean isAssignableTo(Type number, CompilationContext compilationContext) {
+    public boolean isAssignableTo(@NotNull Type number, @NotNull CompilationContext compilationContext) {
         switch (number.getTypeEnum()) {
             case int64:
             case int64Wrapper:

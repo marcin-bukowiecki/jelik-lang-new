@@ -1,1 +1,2 @@
-fun expr(a Object) -> Boolean { ret a is Int }
+fun expression(a Int, b Int) -> Int {    val c = a + b
+   ret c }

@@ -1,10 +1,18 @@
 package org.jelik.parser.ast.resolvers;
 
+import org.jelik.CompilationContext;
+import org.jelik.compiler.data.MethodData;
 import org.jelik.parser.ast.Expression;
 import org.jelik.parser.ast.LiteralExpr;
+import org.jelik.parser.ast.functions.FunctionCall;
 import org.jelik.parser.ast.types.TypeAccessNode;
 import org.jelik.types.Type;
 
+import java.util.List;
+
+/**
+ * @author Marcin Bukowiecki
+ */
 public class TypeAccessSymbolResult implements FindSymbolResult {
 
     private final Type type;
@@ -19,18 +27,11 @@ public class TypeAccessSymbolResult implements FindSymbolResult {
         literalExpr.parent.replaceWith(literalExpr, typeAccessNode);
         typeAccessNode.setFurtherExpression(literalExpr.getFurtherExpression());
         return typeAccessNode;
+    }
 
-        /*
-        return literalExpr.getFurtherExpressionOpt().map(expr -> {
-            if (expr instanceof DotCallExpr) {
-                TypeAccessNode typeAccessNode = new TypeAccessNode(literalExpr.getLiteralToken(), type, type.deepGenericCopy());
-                typeAccessNode.setFurtherExpression(expr);
-                literalExpr.parent.replaceWith(literalExpr, typeAccessNode);
-                return typeAccessNode;
-            } else {
-                return null;
-            }
-        }).orElse(null);*/
+    @Override
+    public List<MethodData> findMethodData(FunctionCall caller, CompilationContext compilationContext) {
+        return type.findMethodData(caller.getName(), compilationContext);
     }
 
     public Type getType() {

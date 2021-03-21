@@ -9,6 +9,9 @@ import org.jelik.parser.token.ElementType;
 import org.jelik.parser.token.Token;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * @author Marcin Bukowiecki
+ */
 public class AssignOperator extends AbstractOperator {
 
     public AssignOperator(int row, int col) {

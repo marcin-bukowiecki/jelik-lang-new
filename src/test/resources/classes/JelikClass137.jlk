@@ -1,1 +1,1 @@
-fun expr(a Object) -> Boolean { ret a is String }
+fun expression(a Int, b Int) -> Int { ret a + b }

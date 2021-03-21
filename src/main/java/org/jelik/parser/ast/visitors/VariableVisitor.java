@@ -3,8 +3,8 @@ package org.jelik.parser.ast.visitors;
 import org.jelik.parser.ParseContext;
 import org.jelik.parser.ast.Expression;
 import org.jelik.parser.ast.ParseVisitor;
-import org.jelik.parser.ast.types.TypeNode;
 import org.jelik.parser.ast.locals.VariableDeclaration;
+import org.jelik.parser.ast.types.TypeNode;
 import org.jelik.parser.ast.types.UndefinedTypeNode;
 import org.jelik.parser.token.LiteralToken;
 import org.jelik.parser.token.keyword.VarKeyword;
@@ -44,7 +44,7 @@ public class VariableVisitor implements ParseVisitor<VariableDeclaration> {
     @Override
     public void visitLiteral(@NotNull LiteralToken literalToken, @NotNull ParseContext parseContext) {
         this.typeNode = new TypeNodeVisitor(literalToken).visit(parseContext);
-        parseContext.getLexer().getCurrent().visit(this, parseContext);
+        parseContext.getLexer().nextToken().visit(this, parseContext);
     }
 
     @Override

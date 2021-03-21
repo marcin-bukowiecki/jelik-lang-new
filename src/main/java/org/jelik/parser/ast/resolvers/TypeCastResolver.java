@@ -2,11 +2,13 @@ package org.jelik.parser.ast.resolvers;
 
 import org.jelik.CompilationContext;
 import org.jelik.parser.ast.Expression;
+import org.jelik.parser.ast.KeyValueExpr;
+import org.jelik.parser.ast.MapCreateExpr;
 import org.jelik.parser.ast.ReturnExpr;
 import org.jelik.parser.ast.arguments.Argument;
+import org.jelik.parser.ast.arrays.ArrayOrMapGetExpr;
 import org.jelik.parser.ast.functions.FunctionCallExpr;
 import org.jelik.parser.ast.functions.FunctionDeclaration;
-import org.jelik.parser.ast.functions.TargetFunctionCall;
 import org.jelik.parser.ast.operators.EqualExpr;
 import org.jelik.parser.ast.operators.GreaterExpr;
 import org.jelik.parser.ast.operators.GreaterOrEqualExpr;
@@ -23,6 +25,7 @@ import org.jelik.parser.ast.strings.StringBuilderAppend;
 import org.jelik.parser.ast.strings.StringBuilderInit;
 import org.jelik.parser.ast.strings.StringBuilderToStringNode;
 import org.jelik.parser.ast.visitors.AstVisitor;
+import org.jelik.types.JVMObjectType;
 import org.jelik.types.Type;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,21 +41,22 @@ public class TypeCastResolver extends AstVisitor {
     public void visitReturnExpr(@NotNull ReturnExpr returnExpr, @NotNull CompilationContext compilationContext) {
         returnExpr.getFurtherExpression().visit(this, compilationContext);
         FunctionDeclaration functionDeclaration = (FunctionDeclaration) compilationContext.currentCompilationUnit();
-        Type returnType = functionDeclaration.getReturnType();
-        Type genericReturnType = functionDeclaration.getGenericReturnType();
-        genericReturnType.visit(new CastToVisitor(returnExpr.getFurtherExpression(), returnType), compilationContext);
+        Type targetType = functionDeclaration.getReturnType();
+        returnExpr.getFurtherExpression().getGenericReturnType().visit(new CastToVisitor(
+                returnExpr.getFurtherExpression(),
+                targetType), compilationContext);
     }
 
     @Override
-    public void visit(StringBuilderInit stringBuilderInit, CompilationContext compilationContext) {
+    public void visit(@NotNull StringBuilderInit stringBuilderInit, @NotNull CompilationContext compilationContext) {
         stringBuilderInit.getFurtherExpression().visit(this, compilationContext);
         stringBuilderInit.parent.replaceWith(stringBuilderInit, new StringBuilderToStringNode(stringBuilderInit));
     }
 
     @Override
-    public void visit(StringBuilderAppend stringBuilderAppend, CompilationContext compilationContext) {
+    public void visit(@NotNull StringBuilderAppend stringBuilderAppend, @NotNull CompilationContext compilationContext) {
         Expression subject = stringBuilderAppend.getSubject();
-        TargetFunctionCall targetFunctionCall = stringBuilderAppend.getTargetFunctionCall();
+        var targetFunctionCall = stringBuilderAppend.getTargetFunctionCall();
         Type target = targetFunctionCall.getMethodData().getParameterTypes().get(0);
         subject.getReturnType().visit(new CastToVisitor(subject, target), compilationContext);
     }
@@ -114,5 +118,27 @@ public class TypeCastResolver extends AstVisitor {
     public void visit(@NotNull NotEqualExpr notEqualExpr, @NotNull CompilationContext compilationContext) {
         super.visit(notEqualExpr, compilationContext);
         NotEqualOpTypeDecoder.INSTANCE.decode(notEqualExpr, compilationContext);
+    }
+
+    @Override
+    public void visitMapCreateExpr(@NotNull MapCreateExpr mapCreateExpr, @NotNull CompilationContext compilationContext) {
+        Type target = JVMObjectType.INSTANCE;
+
+        for (KeyValueExpr entry : mapCreateExpr.getEntries()) {
+            Expression subject = entry.getKey();
+            subject.getReturnType().visit(new CastToVisitor(subject, target), compilationContext);
+
+            subject = entry.getValue();
+            subject.getReturnType().visit(new CastToVisitor(subject, target), compilationContext);
+        }
+    }
+
+    @Override
+    public void visit(@NotNull ArrayOrMapGetExpr arrayOrMapGetExpr, @NotNull CompilationContext compilationContext) {
+        arrayOrMapGetExpr.getLeftExpr().visit(this, compilationContext);
+        arrayOrMapGetExpr.getExpression().visit(this, compilationContext);
+        final Type returnType = arrayOrMapGetExpr.getReturnType();
+        final Type genericReturnType = arrayOrMapGetExpr.getGenericReturnType();
+        returnType.visit(new CastToVisitor(arrayOrMapGetExpr, genericReturnType), compilationContext);
     }
 }

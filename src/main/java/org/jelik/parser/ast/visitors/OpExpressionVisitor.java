@@ -4,12 +4,8 @@ import org.jelik.parser.Lexer;
 import org.jelik.parser.ParseContext;
 import org.jelik.parser.ast.Expression;
 import org.jelik.parser.ast.ParseVisitor;
-import org.jelik.parser.ast.operators.AbstractOpExpr;
-import org.jelik.parser.ast.types.TypeNode;
 import org.jelik.parser.token.Token;
 import org.jelik.parser.token.operators.AbstractOperator;
-import org.jelik.parser.token.operators.GreaterOperator;
-import org.jelik.parser.token.operators.LesserOperator;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -34,17 +30,6 @@ public class OpExpressionVisitor implements ParseVisitor<Expression> {
         Token nextToken = lexer.nextToken();
 
         var rightHand = new RightHandExpressionVisitor(nextToken).visit(parseContext);
-
-        if (operator instanceof LesserOperator && parseContext.getLexer().getCurrent() instanceof GreaterOperator) {
-            parseContext.getLexer().recover(operator);
-            nextToken = parseContext.getLexer().nextToken();
-            final TypeNode typeNode = new TypeNodeVisitor(nextToken).visit(parseContext);
-            leftHand.setGenericTypeNode(typeNode);
-            final ExpressionVisitor expressionVisitor = new ExpressionVisitor(leftHand, leftHand);
-            parseContext.getLexer().nextToken();
-            parseContext.getLexer().nextToken().visit(expressionVisitor, parseContext);
-            return expressionVisitor.currentExpression;
-        }
 
         if (!lexer.getCurrent().isOperator()) {
             return operator.toAst(leftHand, rightHand);

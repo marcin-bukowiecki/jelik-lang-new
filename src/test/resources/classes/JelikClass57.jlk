@@ -1,1 +1,2 @@
-fun expr(a Double, b Double) -> Double {   ret a * b}
+fun expr(a Double, b Double) -> Boolean {
+   ret a != b}

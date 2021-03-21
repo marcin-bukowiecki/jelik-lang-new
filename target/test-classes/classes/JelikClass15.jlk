@@ -1,1 +1,1 @@
-fun expr() -> Int {   ret len([1,2,3,4])}
+fun expr() -> []Char {   ret [1 as Char, 2 as Char, 3 as Char]}

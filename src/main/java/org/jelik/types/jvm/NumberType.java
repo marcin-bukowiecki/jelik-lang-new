@@ -20,6 +20,7 @@ import org.jelik.CompilationContext;
 import org.jelik.compiler.common.TypeEnum;
 import org.jelik.types.JVMObjectType;
 import org.jelik.types.Type;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Marcin Bukowiecki
@@ -43,7 +44,7 @@ public abstract class NumberType extends Type {
     }
 
     @Override
-    public boolean isAssignableTo(Type type, CompilationContext compilationContext) {
+    public boolean isAssignableTo(@NotNull Type type, @NotNull CompilationContext compilationContext) {
         if (type instanceof JVMObjectType) {
             return true;
         }

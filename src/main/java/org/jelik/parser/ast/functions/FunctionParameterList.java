@@ -50,7 +50,9 @@ public class FunctionParameterList extends ASTNode {
 
     @Override
     public String toString() {
-        return leftParenthesisToken.toString() + functionParameters.stream().map(FunctionParameter::toString).collect(Collectors.joining("")) + rightParenthesisToken.toString();
+        return leftParenthesisToken.toString() +
+                functionParameters.stream().map(FunctionParameter::toString).collect(Collectors.joining(" ")) +
+                rightParenthesisToken.toString();
     }
 
     @Override

@@ -1,1 +1,1 @@
-fun expr(a Int, b Int) -> Int { ret a xor b }
+fun expr(a Int, b Int) -> Boolean { ret a > b and a > b }

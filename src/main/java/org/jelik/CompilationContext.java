@@ -29,6 +29,9 @@ public class CompilationContext {
 
     public final LinkedList<JumpLabelContext> jumpLabelContexts = Lists.newLinkedList();
 
+    public CompilationContext() {
+    }
+
     public void pushCompilationUnit(CompilationUnit compilationUnit) {
         compilationStack.addLast(compilationUnit);
     }
@@ -77,5 +80,13 @@ public class CompilationContext {
             }
         }
         return Optional.empty();
+    }
+
+    public String getCompileDirectory() {
+        return "";
+    }
+
+    public String outputDirectory() {
+        return "";
     }
 }

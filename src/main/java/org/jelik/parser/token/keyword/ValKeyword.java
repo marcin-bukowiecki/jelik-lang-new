@@ -9,14 +9,15 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Marcin Bukowiecki
  */
-public class ValKeyword extends Token {
+public class ValKeyword extends Token implements Modifier {
+
     public ValKeyword(int row, int col) {
         super("val", row, col, ElementType.valKeyword);
     }
 
     @Override
     public void visit(@NotNull ParseVisitor<?> parseVisitor, @NotNull ParseContext parseContext) {
-        parseVisitor.visit(this, parseContext);
+        parseVisitor.visitValKeyword(this, parseContext);
     }
 
     @Override

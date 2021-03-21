@@ -21,6 +21,7 @@ import org.jelik.compiler.asm.visitor.TypeVisitor;
 import org.jelik.compiler.common.TypeEnum;
 import org.jelik.types.JVMIntType;
 import org.jelik.types.Type;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Marcin Bukowiecki
@@ -39,7 +40,7 @@ public class JVMByteType extends JVMIntType {
     }
 
     @Override
-    public boolean isAssignableTo(Type type, CompilationContext compilationContext) {
+    public boolean isAssignableTo(@NotNull Type type, @NotNull CompilationContext compilationContext) {
         switch (type.typeEnum) {
             case charT:
             case int8:

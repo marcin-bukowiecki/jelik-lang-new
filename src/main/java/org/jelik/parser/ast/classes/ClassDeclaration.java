@@ -15,16 +15,20 @@ import org.jelik.parser.ast.functions.FunctionDeclaration;
 import org.jelik.parser.ast.resolvers.BuiltinTypeRegister;
 import org.jelik.parser.ast.resolvers.DefaultImportedTypeResolver;
 import org.jelik.parser.ast.resolvers.FindSymbolResult;
+import org.jelik.parser.ast.resolvers.FunctionReferenceResult;
 import org.jelik.parser.ast.resolvers.TypeAccessSymbolResult;
 import org.jelik.parser.ast.types.SingleTypeNode;
+import org.jelik.parser.ast.types.TypeNode;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.token.LiteralToken;
+import org.jelik.parser.token.keyword.ClassKeyword;
 import org.jelik.types.JVMObjectType;
 import org.jelik.types.Type;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -33,21 +37,29 @@ import java.util.stream.Collectors;
  */
 public class ClassDeclaration extends ASTNode implements CompilationUnit, ClassData {
 
+    private final ClassKeyword classKeyword;
+
     private final LiteralToken name;
 
     public final ModuleContext moduleContext = new ModuleContext();
+
+    private final List<FieldDeclaration> fieldDeclarations;
 
     private final List<FunctionDeclaration> functionDeclarations;
 
     private final List<ConstructorDeclaration> constructorDeclarations;
 
     public ClassDeclaration(final String absoluteFilePath,
+                            final ClassKeyword classKeyword,
                             final LiteralToken name,
+                            final List<FieldDeclaration> fieldDeclarations,
                             final List<FunctionDeclaration> functionDeclarations,
                             final List<ConstructorDeclaration> constructorDeclarations) {
 
+        this.classKeyword = classKeyword;
         this.name = name;
         this.moduleContext.setFileAbsolutePath(absoluteFilePath);
+        this.fieldDeclarations = fieldDeclarations;
         this.functionDeclarations = functionDeclarations;
         this.functionDeclarations.forEach(f -> f.setParent(this));
         if (constructorDeclarations.isEmpty()) {
@@ -86,22 +98,21 @@ public class ClassDeclaration extends ASTNode implements CompilationUnit, ClassD
     }
 
     @Override
-    public FindSymbolResult findSymbol(String text, CompilationContext compilationContext) {
-        //TODO fields
-
+    public Optional<FindSymbolResult> findSymbol(String text, CompilationContext compilationContext) {
         for (ImportDeclaration importDeclaration : getModuleDeclaration().getImports()) {
             if (importDeclaration.getType().getName().equals(text)) {
-                return new TypeAccessSymbolResult(importDeclaration.getType());
+                return Optional.of(new TypeAccessSymbolResult(importDeclaration.getType()));
             }
         }
 
-        return BuiltinTypeRegister.INSTANCE.checkForBuiltinByName(text)
-                .map(TypeAccessSymbolResult::new)
-                .orElse(DefaultImportedTypeResolver.getTypeOpt(text).map(TypeAccessSymbolResult::new).orElse(null));
+        final List<? extends MethodData> byName = findByName(text, compilationContext);
+        if (!byName.isEmpty()) {
+            return Optional.of(new FunctionReferenceResult(byName));
+        }
 
-/*
-        //TODO in same package
-        return null;*/
+        return Optional.ofNullable(BuiltinTypeRegister.INSTANCE.checkForBuiltinByName(text)
+                .map(TypeAccessSymbolResult::new)
+                .orElse(DefaultImportedTypeResolver.getTypeOpt(text).map(TypeAccessSymbolResult::new).orElse(null)));
     }
 
     @Override
@@ -147,7 +158,26 @@ public class ClassDeclaration extends ASTNode implements CompilationUnit, ClassD
         return Optional.empty();
     }
 
+    @Override
+    public Map<String, TypeNode> getTypeParametersMappings() {
+        return Collections.emptyMap();
+    }
+
+    @Override
+    public Map<String, TypeNode> getGenericTypeParametersMappings() {
+        return Collections.emptyMap();
+    }
+
+    public List<FieldDeclaration> getFieldDeclarations() {
+        return Collections.unmodifiableList(fieldDeclarations);
+    }
+
     private boolean typeMatches(SingleTypeNode typeNode) {
         return typeNode.getText().equals(getSimpleName());
+    }
+
+    @Override
+    public String toString() {
+        return this.classKeyword + " " + this.name.getText();
     }
 }

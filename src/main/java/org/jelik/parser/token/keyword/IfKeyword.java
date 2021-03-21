@@ -17,7 +17,7 @@ public class IfKeyword extends Token {
 
     @Override
     public void visit(@NotNull ParseVisitor<?> parseVisitor, @NotNull ParseContext parseContext) {
-        parseVisitor.visit(this, parseContext);
+        parseVisitor.visitIfKeyword(this, parseContext);
     }
 
     @Override

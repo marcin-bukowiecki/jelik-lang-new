@@ -1,1 +1,1 @@
-fun expr(a Long, b Long) -> Long { ret a xor b }
+fun expr(a Long, b Long) -> Long { ret a bor b }

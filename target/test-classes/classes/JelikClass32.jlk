@@ -1,1 +1,1 @@
-fun expr(a String) -> Boolean { ret Null != a }
+fun expr(a Object, b Object, c Object) -> Boolean { ret a == b or a == c }

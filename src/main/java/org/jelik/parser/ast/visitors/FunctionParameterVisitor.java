@@ -4,7 +4,7 @@ import org.jelik.parser.ParseContext;
 import org.jelik.parser.ast.functions.FunctionParameter;
 import org.jelik.parser.ast.ParseVisitor;
 import org.jelik.parser.ast.types.TypeNode;
-import org.jelik.parser.exceptions.SyntaxException;
+import org.jelik.compiler.exceptions.SyntaxException;
 import org.jelik.parser.token.LiteralToken;
 import org.jelik.parser.token.Token;
 import org.jelik.parser.token.ElementType;
@@ -27,7 +27,8 @@ public class FunctionParameterVisitor implements ParseVisitor<FunctionParameter>
         if (name.getTokenType() != ElementType.literal) {
             throw new SyntaxException("Expected parameter name.", name, parseContext.getCurrentFilePath());
         }
-        Token nextToken = parseContext.getLexer().nextToken();
-        return new FunctionParameter(typeNode, (LiteralToken) name, nextToken.getTokenType() == ElementType.comma ? nextToken : null);
+        return new FunctionParameter(typeNode, (LiteralToken) name,
+                parseContext.getLexer().peekNext().getTokenType() == ElementType.comma ?
+                        parseContext.getLexer().nextToken() : null);
     }
 }

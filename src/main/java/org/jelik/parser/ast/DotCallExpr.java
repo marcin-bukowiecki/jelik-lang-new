@@ -15,15 +15,43 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 public class DotCallExpr extends ExpressionReferencingType {
 
+    private Expression subject;
+
     private final DotToken dotToken;
 
-    public DotCallExpr(DotToken dotToken) {
+    public DotCallExpr(Expression subject, DotToken dotToken) {
+        this.subject = subject;
+        this.subject.setParent(this);
         this.dotToken = dotToken;
     }
 
     @Override
+    public int getStartRow() {
+        return subject.getStartRow();
+    }
+
+    @Override
+    public int getStartCol() {
+        return subject.getStartRow();
+    }
+
+    @Override
+    public int getEndCol() {
+        return getFurtherExpression().getEndCol();
+    }
+
+    @Override
+    public int getEndRow() {
+        return getFurtherExpression().getEndRow();
+    }
+
+    @Override
     public void replaceWith(@NotNull Expression oldNode, @NotNull Expression newNode) {
-        setFurtherExpression(newNode);
+        if (subject == oldNode) {
+            this.subject = newNode;
+        } else {
+            setFurtherExpression(newNode);
+        }
     }
 
     @Override
@@ -33,6 +61,6 @@ public class DotCallExpr extends ExpressionReferencingType {
 
     @Override
     public String toString() {
-        return dotToken.toString() + (furtherExpression == null ? "" : furtherExpression.toString());
+        return subject.toString() + dotToken.toString() + (furtherExpression == null ? "" : furtherExpression.toString());
     }
 }

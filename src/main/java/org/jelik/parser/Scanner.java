@@ -14,6 +14,7 @@ import org.jelik.parser.token.LeftParenthesisToken;
 import org.jelik.parser.token.LiteralToken;
 import org.jelik.parser.token.NewLineToken;
 import org.jelik.parser.token.NullToken;
+import org.jelik.parser.token.QuestionMarkToken;
 import org.jelik.parser.token.RightBracketToken;
 import org.jelik.parser.token.RightCurlToken;
 import org.jelik.parser.token.RightParenthesisToken;
@@ -22,6 +23,7 @@ import org.jelik.parser.token.TrueToken;
 import org.jelik.parser.token.WhitespaceToken;
 import org.jelik.parser.token.keyword.CatchKeyword;
 import org.jelik.parser.token.keyword.ClassKeyword;
+import org.jelik.parser.token.keyword.ConstructorKeyword;
 import org.jelik.parser.token.keyword.ElseKeyword;
 import org.jelik.parser.token.keyword.EndKeyword;
 import org.jelik.parser.token.keyword.FinallyKeyword;
@@ -29,6 +31,7 @@ import org.jelik.parser.token.keyword.FunKeyword;
 import org.jelik.parser.token.keyword.IfKeyword;
 import org.jelik.parser.token.keyword.ImportKeyword;
 import org.jelik.parser.token.keyword.ReturnKeyword;
+import org.jelik.parser.token.keyword.StaticKeyword;
 import org.jelik.parser.token.keyword.ThenKeyword;
 import org.jelik.parser.token.keyword.ThrowKeyword;
 import org.jelik.parser.token.keyword.TryKeyword;
@@ -254,6 +257,13 @@ public class Scanner {
                             nextToken = new GreaterOperator(cp.getLineNumber(), col);
                             break breakable;
                     }
+                case '?':
+                    if (sb.length() > 0) {
+                        break breakable;
+                    }
+                    nextChar = (char) cp.nextChar();
+                    nextToken = new QuestionMarkToken(row, col);
+                    break breakable;
                 case '[':
                     if (sb.length() > 0) {
                         break breakable;
@@ -408,6 +418,10 @@ public class Scanner {
             return new IsOperator(row, col);
         } else if ("class".equals(content)) {
             return new ClassKeyword(row, col);
+        } else if ("static".equals(content)) {
+            return new StaticKeyword(row, col);
+        } else if ("constructor".equals(content)) {
+            return new ConstructorKeyword(row, col);
         }
 
         return new LiteralToken(row, col, content);

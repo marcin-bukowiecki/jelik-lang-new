@@ -4,6 +4,7 @@ import org.jelik.CompilationContext
 import org.jelik.compiler.exceptions.CompileException
 import org.jelik.parser.ast.ReturnExpr
 import org.jelik.parser.ast.locals.ValueDeclaration
+import org.jelik.parser.ast.locals.VariableDeclaration
 import org.jelik.parser.ast.visitors.AstVisitor
 
 /**
@@ -13,6 +14,10 @@ object TypeChecker : AstVisitor() {
 
     override fun visitValueDeclaration(valueDeclaration: ValueDeclaration, compilationContext: CompilationContext) {
         valueDeclaration.furtherExpressionOpt.ifPresent { expr -> expr.visit(this, compilationContext) }
+    }
+
+    override fun visitVariableDeclaration(variableDeclaration: VariableDeclaration, compilationContext: CompilationContext) {
+        variableDeclaration.furtherExpressionOpt.ifPresent { expr -> expr.visit(this, compilationContext) }
     }
 
     override fun visitReturnExpr(re: ReturnExpr, compilationContext: CompilationContext) {

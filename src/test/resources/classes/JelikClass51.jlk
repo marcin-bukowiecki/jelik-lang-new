@@ -1,2 +1,1 @@
-fun expr(a Double, b Double) -> Boolean {
-   ret a != b}
+fun expr(a Int, b Int) -> Boolean { ret a != b and a != 100 }

@@ -4,6 +4,7 @@ import org.jelik.CompilationContext
 import org.jelik.compiler.asm.MethodVisitorAdapter
 import org.jelik.types.JVMBooleanType
 import org.jelik.types.JVMIntType
+import org.jelik.types.JVMNullType
 import org.jelik.types.JVMObjectType
 import org.jelik.types.Type
 import org.jelik.types.jvm.JVMByteType

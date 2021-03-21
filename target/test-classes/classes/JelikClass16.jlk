@@ -1,1 +1,1 @@
-fun expr() -> []Float {   ret [1f,2f,3f,4f]:Float}
+fun expr() -> Double {   ret [1 as Double, 2 as Double, 3 as Double][0]}

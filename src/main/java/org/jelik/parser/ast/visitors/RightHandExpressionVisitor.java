@@ -36,17 +36,17 @@ public class RightHandExpressionVisitor extends ExpressionVisitor {
     }
 
     @Override
-    public void visitMul(MulOperator op, ParseContext parseContext) {
+    public void visitMul(@NotNull MulOperator op, @NotNull ParseContext parseContext) {
 
     }
 
     @Override
-    public void visitDivide(DivideOperator divideOperator, ParseContext parseContext) {
+    public void visitDivide(@NotNull DivideOperator divideOperator, @NotNull ParseContext parseContext) {
 
     }
 
     @Override
-    public void visitSubtract(SubtractOperator subtractOperator, ParseContext parseContext) {
+    public void visitSubtract(@NotNull SubtractOperator subtractOperator, @NotNull ParseContext parseContext) {
 
     }
 

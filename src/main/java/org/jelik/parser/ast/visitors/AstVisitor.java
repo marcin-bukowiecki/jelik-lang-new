@@ -6,7 +6,9 @@ import org.jelik.parser.ast.DotCallExpr;
 import org.jelik.parser.ast.Expression;
 import org.jelik.parser.ast.GetFieldNode;
 import org.jelik.parser.ast.ImportDeclaration;
+import org.jelik.parser.ast.KeyValueExpr;
 import org.jelik.parser.ast.LiteralExpr;
+import org.jelik.parser.ast.MapCreateExpr;
 import org.jelik.parser.ast.NullExpr;
 import org.jelik.parser.ast.ReturnExpr;
 import org.jelik.parser.ast.arguments.Argument;
@@ -19,6 +21,7 @@ import org.jelik.parser.ast.branching.IfConditionExpression;
 import org.jelik.parser.ast.branching.IfExpression;
 import org.jelik.parser.ast.casts.CastObjectToObjectNode;
 import org.jelik.parser.ast.classes.ClassDeclaration;
+import org.jelik.parser.ast.classes.FieldDeclaration;
 import org.jelik.parser.ast.classes.ModuleDeclaration;
 import org.jelik.parser.ast.expression.CatchExpression;
 import org.jelik.parser.ast.expression.ParenthesisExpression;
@@ -31,11 +34,13 @@ import org.jelik.parser.ast.functions.FunctionCallExpr;
 import org.jelik.parser.ast.functions.FunctionDeclaration;
 import org.jelik.parser.ast.functions.FunctionParameter;
 import org.jelik.parser.ast.functions.FunctionParameterList;
+import org.jelik.parser.ast.functions.FunctionReferenceNode;
 import org.jelik.parser.ast.functions.FunctionReturn;
 import org.jelik.parser.ast.locals.GetLocalNode;
 import org.jelik.parser.ast.locals.StoreLocalNode;
 import org.jelik.parser.ast.locals.ValueDeclaration;
 import org.jelik.parser.ast.locals.VariableDeclaration;
+import org.jelik.parser.ast.locals.WithLocalVariableDeclaration;
 import org.jelik.parser.ast.numbers.CastToNode;
 import org.jelik.parser.ast.numbers.CharToInt32Node;
 import org.jelik.parser.ast.numbers.CharToInt64Node;
@@ -91,11 +96,13 @@ import org.jelik.parser.ast.strings.StringBuilderInit;
 import org.jelik.parser.ast.strings.StringBuilderToStringNode;
 import org.jelik.parser.ast.strings.StringExpression;
 import org.jelik.parser.ast.types.ArrayTypeNode;
+import org.jelik.parser.ast.types.CovariantTypeNode;
 import org.jelik.parser.ast.types.GenericTypeNode;
 import org.jelik.parser.ast.types.SingleTypeNode;
 import org.jelik.parser.ast.types.TypeAccessNode;
 import org.jelik.parser.ast.types.TypeParameterListNode;
 import org.jelik.parser.ast.types.TypeVariableNode;
+import org.jelik.parser.ast.types.WildCardTypeNode;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -143,7 +150,7 @@ public abstract class AstVisitor {
 
     }
 
-    public void visit(@NotNull SingleTypeNode typeNode, @NotNull CompilationContext compilationContext) {
+    public void visitSingleTypeNode(@NotNull SingleTypeNode typeNode, @NotNull CompilationContext compilationContext) {
 
     }
 
@@ -178,6 +185,7 @@ public abstract class AstVisitor {
     }
 
     public void visitDotCall(@NotNull DotCallExpr dotCallExpr, @NotNull CompilationContext compilationContext) {
+        dotCallExpr.getSubject().visit(this, compilationContext);
         dotCallExpr.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
     }
 
@@ -206,28 +214,33 @@ public abstract class AstVisitor {
         int32Node.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
     }
 
+    public void visitWithLocalVariable(@NotNull WithLocalVariableDeclaration withLocalVariable,
+                                       @NotNull CompilationContext compilationContext) {
+
+    }
+
     public void visit(@NotNull BasicBlock basicBlock, @NotNull CompilationContext compilationContext) {
         compilationContext.blockStack.addLast(basicBlock);
         basicBlock.getExpressions().forEach(e -> e.visit(this, compilationContext));
         compilationContext.blockStack.removeLast();
     }
 
-    public void visit(SubExpr subExpr, CompilationContext compilationContext) {
+    public void visit(@NotNull SubExpr subExpr, @NotNull CompilationContext compilationContext) {
         subExpr.getLeft().visit(this, compilationContext);
         subExpr.getRight().visit(this, compilationContext);
     }
 
-    public void visit(MulExpr mulExpr, CompilationContext compilationContext) {
+    public void visit(@NotNull MulExpr mulExpr, @NotNull CompilationContext compilationContext) {
         mulExpr.getLeft().visit(this, compilationContext);
         mulExpr.getRight().visit(this, compilationContext);
     }
 
-    public void visit(DivExpr divExpr, CompilationContext compilationContext) {
+    public void visit(@NotNull DivExpr divExpr, @NotNull CompilationContext compilationContext) {
         divExpr.getLeft().visit(this, compilationContext);
         divExpr.getRight().visit(this, compilationContext);
     }
 
-    public void visit(VariableDeclaration variableDeclaration, CompilationContext compilationContext) {
+    public void visitVariableDeclaration(@NotNull VariableDeclaration variableDeclaration, @NotNull CompilationContext compilationContext) {
         variableDeclaration.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
     }
 
@@ -235,13 +248,13 @@ public abstract class AstVisitor {
         valueDeclaration.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
     }
 
-    public void visit(IfExpression ifExpression, CompilationContext compilationContext) {
+    public void visit(@NotNull IfExpression ifExpression, @NotNull CompilationContext compilationContext) {
         ifExpression.getConditionExpression().visit(this, compilationContext);
         ifExpression.getBasicBlock().visit(this, compilationContext);
         ifExpression.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
     }
 
-    public void visit(ElseExpression elseExpression, CompilationContext compilationContext) {
+    public void visit(@NotNull ElseExpression elseExpression, @NotNull CompilationContext compilationContext) {
         elseExpression.getBasicBlock().visit(this, compilationContext);
     }
 
@@ -264,30 +277,30 @@ public abstract class AstVisitor {
         greaterOrEqualExpr.getRight().visit(this, compilationContext);
     }
 
-    public void visit(StringExpression stringExpression, CompilationContext compilationContext) {
+    public void visit(@NotNull StringExpression stringExpression, @NotNull CompilationContext compilationContext) {
 
     }
 
-    public void visit(AssignExpr assignExpr, CompilationContext compilationContext) {
+    public void visit(@NotNull AssignExpr assignExpr, @NotNull CompilationContext compilationContext) {
         assignExpr.getLeft().visit(this, compilationContext);
         assignExpr.getRight().visit(this, compilationContext);
     }
 
-    public void visit(StringBuilderInit stringBuilderInit, CompilationContext compilationContext) {
+    public void visit(@NotNull StringBuilderInit stringBuilderInit, @NotNull CompilationContext compilationContext) {
         stringBuilderInit.getFurtherExpression().visit(this, compilationContext);
     }
 
-    public void visit(StringBuilderAppend stringBuilderAppend, CompilationContext compilationContext) {
+    public void visit(@NotNull StringBuilderAppend stringBuilderAppend, @NotNull CompilationContext compilationContext) {
         stringBuilderAppend.getSubject().visit(this, compilationContext);
         stringBuilderAppend.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
     }
 
-    public void visit(Int32ToWrapperNode int32ToWrapperNode, CompilationContext compilationContext) {
+    public void visit(@NotNull Int32ToWrapperNode int32ToWrapperNode, @NotNull CompilationContext compilationContext) {
         int32ToWrapperNode.getSubject().visit(this, compilationContext);
         int32ToWrapperNode.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
     }
 
-    public void visit(ObjectToInt32Node objectToInt32Node, CompilationContext compilationContext) {
+    public void visit(@NotNull ObjectToInt32Node objectToInt32Node, @NotNull CompilationContext compilationContext) {
         objectToInt32Node.getSubject().visit(this, compilationContext);
         objectToInt32Node.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
     }
@@ -302,15 +315,15 @@ public abstract class AstVisitor {
         equalExpr.getRight().visit(this, compilationContext);
     }
 
-    public void visit(IfConditionExpression ifConditionExpression, CompilationContext compilationContext) {
+    public void visit(@NotNull IfConditionExpression ifConditionExpression, @NotNull CompilationContext compilationContext) {
         ifConditionExpression.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
     }
 
-    public void visit(IncrExpr incrExpr, CompilationContext compilationContext) {
+    public void visit(@NotNull IncrExpr incrExpr, @NotNull CompilationContext compilationContext) {
         incrExpr.getRight().visit(this, compilationContext);
     }
 
-    public void visit(DecrExpr decrExpr, CompilationContext compilationContext) {
+    public void visit(@NotNull DecrExpr decrExpr, @NotNull CompilationContext compilationContext) {
         //decrExpr.getRight().visit(this, compilationContext);
     }
 
@@ -319,12 +332,12 @@ public abstract class AstVisitor {
         notEqualExpr.getRight().visit(this, compilationContext);
     }
 
-    public void visit(IntegerWrapperToInt32Node integerWrapperToInt32Node, CompilationContext compilationContext) {
+    public void visit(@NotNull IntegerWrapperToInt32Node integerWrapperToInt32Node, @NotNull CompilationContext compilationContext) {
         integerWrapperToInt32Node.getSubject().visit(this, compilationContext);
         integerWrapperToInt32Node.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
     }
 
-    public void visit(WrapperToPrimitiveNode wrapperToPrimitiveNode, CompilationContext compilationContext) {
+    public void visit(@NotNull WrapperToPrimitiveNode wrapperToPrimitiveNode, @NotNull CompilationContext compilationContext) {
 
     }
 
@@ -364,6 +377,7 @@ public abstract class AstVisitor {
     }
 
     public void visit(@NotNull ArrayOrMapGetExpr arrayOrMapGetExpr, @NotNull CompilationContext compilationContext) {
+        arrayOrMapGetExpr.getLeftExpr().visit(this, compilationContext);
         arrayOrMapGetExpr.getExpression().visit(this, compilationContext);
         arrayOrMapGetExpr.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
     }
@@ -551,7 +565,35 @@ public abstract class AstVisitor {
         compilationContext.popCompilationUnit();
     }
 
-    public void visitDefaultConstructor(DefaultConstructorDeclaration defaultConstructorDeclaration, CompilationContext compilationContext) {
+    public void visitDefaultConstructor(@NotNull DefaultConstructorDeclaration defaultConstructorDeclaration, @NotNull CompilationContext compilationContext) {
         visitFunctionDeclaration(defaultConstructorDeclaration, compilationContext);
+    }
+
+    public void visitFunctionReference(@NotNull FunctionReferenceNode functionReferenceNode, @NotNull CompilationContext compilationContext) {
+        functionReferenceNode.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
+    }
+
+    public void visitWildCardTypeNode(@NotNull WildCardTypeNode wildCardTypeNode, @NotNull CompilationContext compilationContext) {
+
+    }
+
+    public void visitCovariantTypeNode(@NotNull CovariantTypeNode covariantTypeNode, @NotNull CompilationContext compilationContext) {
+
+    }
+
+    public void visitFieldDeclaration(@NotNull FieldDeclaration fieldDeclaration, @NotNull CompilationContext compilationContext) {
+        fieldDeclaration.getExpression().visit(this, compilationContext);
+    }
+
+    public void visitMapCreateExpr(@NotNull MapCreateExpr mapCreateExpr, @NotNull CompilationContext compilationContext) {
+        for (KeyValueExpr entry : mapCreateExpr.getEntries()) {
+            entry.visit(this, compilationContext);
+        }
+        mapCreateExpr.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
+    }
+
+    public void visitKeyValueExpr(@NotNull KeyValueExpr keyValueExpr, @NotNull CompilationContext compilationContext) {
+        keyValueExpr.getKey().visit(this, compilationContext);
+        keyValueExpr.getValue().visit(this, compilationContext);
     }
 }

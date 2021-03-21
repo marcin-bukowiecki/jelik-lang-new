@@ -1,2 +1,1 @@
-fun expr(b Float) -> Boolean { val a = .5f 
- ret b == a }
+fun expr(a Float) -> Int { ret a as Int }

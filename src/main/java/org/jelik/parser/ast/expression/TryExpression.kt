@@ -2,6 +2,7 @@ package org.jelik.parser.ast.expression
 
 import org.jelik.CompilationContext
 import org.jelik.parser.ast.BasicBlock
+import org.jelik.parser.ast.labels.LabelNode
 import org.jelik.parser.ast.visitors.AstVisitor
 import org.jelik.parser.token.keyword.TryKeyword
 import org.jelik.types.Type
@@ -13,8 +14,12 @@ import org.jelik.types.Type
  */
 class TryExpression(private val tryKeyword: TryKeyword, var block: BasicBlock): ExpressionReferencingType(), StackConsumer {
 
+    lateinit var startLabel: LabelNode
+
+    lateinit var endLabel: LabelNode
+
     init {
-        block.parent = this;
+        block.parent = this
     }
 
     override fun visit(astVisitor: AstVisitor, compilationContext: CompilationContext) {

@@ -20,6 +20,7 @@ import org.jelik.CompilationContext;
 import org.jelik.compiler.asm.visitor.TypeVisitor;
 import org.jelik.compiler.common.TypeEnum;
 import org.jelik.types.Type;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents JVM double type
@@ -60,7 +61,7 @@ public class JVMDoubleType extends NumberType {
     }
 
     @Override
-    public boolean isAssignableTo(Type type, CompilationContext compilationContext) {
+    public boolean isAssignableTo(@NotNull Type type, @NotNull CompilationContext compilationContext) {
         switch (type.getTypeEnum()) {
             case float64:
             case float64Wrapper:

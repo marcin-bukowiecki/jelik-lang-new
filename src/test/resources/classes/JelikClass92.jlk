@@ -1,1 +1,2 @@
-fun expr(a Int, b Int) -> Boolean { ret a > b or a > b }
+fun expr(a Int) -> Int { val b = 10 
+ ret -a * b }

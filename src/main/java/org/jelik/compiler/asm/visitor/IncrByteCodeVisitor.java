@@ -6,6 +6,7 @@ import org.jelik.compiler.exceptions.CompileException;
 import org.jelik.parser.ast.ConsumingExpression;
 import org.jelik.parser.ast.Expression;
 import org.jelik.parser.ast.locals.GetLocalNode;
+import org.jelik.parser.ast.operators.AbstractOpExpr;
 import org.jelik.parser.ast.operators.IncrExpr;
 import org.jelik.types.JVMBooleanType;
 import org.jelik.types.JVMIntType;
@@ -45,6 +46,9 @@ public class IncrByteCodeVisitor extends TypeVisitor {
             int index = ((GetLocalNode) subject).getLocalVariable().getIndex();
             methodVisitorAdapter.incr(index, 1);
             if (incrExpr.getParent() instanceof ConsumingExpression) {
+                methodVisitorAdapter.intLoad(index);
+            }
+            if (subject.parent instanceof ConsumingExpression || subject.parent instanceof AbstractOpExpr) {
                 methodVisitorAdapter.intLoad(index);
             }
         } else {

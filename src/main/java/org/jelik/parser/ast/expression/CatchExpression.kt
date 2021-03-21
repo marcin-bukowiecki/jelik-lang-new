@@ -16,6 +16,12 @@ class CatchExpression(private val catchKeyword: CatchKeyword,
                       val args: FunctionParameterList,
                       var block: BasicBlock): ExpressionReferencingType() {
 
+    lateinit var startLabel: LabelNode
+
+    var innerLabel: LabelNode? = null
+
+    lateinit var endLabel: LabelNode
+
     override fun visit(astVisitor: AstVisitor, compilationContext: CompilationContext) {
         astVisitor.visit(this, compilationContext)
     }

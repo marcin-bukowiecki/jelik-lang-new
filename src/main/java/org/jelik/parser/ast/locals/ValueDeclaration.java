@@ -5,11 +5,11 @@ import lombok.Setter;
 import org.jelik.CompilationContext;
 import org.jelik.compiler.locals.LocalVariable;
 import org.jelik.parser.ast.ASTNode;
-import org.jelik.parser.ast.expression.StackConsumer;
-import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.ast.Expression;
-import org.jelik.parser.ast.types.TypeNode;
 import org.jelik.parser.ast.expression.ExpressionReferencingType;
+import org.jelik.parser.ast.expression.StackConsumer;
+import org.jelik.parser.ast.types.TypeNode;
+import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.token.LiteralToken;
 import org.jelik.parser.token.keyword.ValKeyword;
 import org.jelik.parser.token.operators.AssignOperator;
@@ -18,23 +18,19 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Marcin Bukowiecki
  */
-public class ValueDeclaration extends ExpressionReferencingType implements WithLocalVariable, StackConsumer {
+@Getter
+public class ValueDeclaration extends ExpressionReferencingType implements WithLocalVariableDeclaration, StackConsumer {
 
-    @Getter
     private final ValKeyword valKeyword;
 
-    @Getter
     private final LiteralToken literalToken;
 
-    @Getter
+    private final TypeNode typeNode;
+
     private final AssignOperator assignOperator;
 
-    @Getter
     @Setter
     private LocalVariable localVariable;
-
-    @Getter
-    private final TypeNode typeNode;
 
     public ValueDeclaration(@NotNull ValKeyword valKeyword,
                             @NotNull LiteralToken literalToken,

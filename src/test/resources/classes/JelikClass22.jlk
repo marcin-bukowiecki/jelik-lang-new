@@ -1,2 +1,1 @@
-fun expr() -> String {
-   val a = ["a","b","c"]   ret a[2]}
+fun expr() -> Byte {   ret [1 as Byte, 2 as Byte, 3 as Byte][0]}

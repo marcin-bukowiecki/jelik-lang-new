@@ -8,6 +8,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 
+/**
+ * @author Marcin Bukowiecki
+ */
 public class JelikCompilerTest {
 
     @Test

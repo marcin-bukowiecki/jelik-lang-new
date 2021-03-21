@@ -2,10 +2,7 @@ package org.jelik.compiler.asm;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import lombok.val;
-import org.jelik.compiler.common.TypeEnum;
 import org.jelik.compiler.locals.LocalVariable;
-import org.jelik.parser.ast.Expression;
 import org.jelik.parser.ast.expression.CatchExpression;
 import org.jelik.parser.ast.expression.TryExpression;
 import org.jelik.parser.ast.functions.FunctionParameter;
@@ -13,14 +10,11 @@ import org.jelik.parser.ast.labels.LabelNode;
 import org.jelik.types.JVMBooleanType;
 import org.jelik.types.JVMIntType;
 import org.jelik.types.Type;
-import org.jelik.types.jvm.JVMByteType;
 import org.jelik.types.jvm.JVMCharType;
 import org.jelik.types.jvm.JVMDoubleType;
 import org.jelik.types.jvm.JVMFloatType;
-import org.jelik.types.jvm.JVMLongType;
-import org.jelik.types.jvm.JVMShortType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.objectweb.asm.Handle;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -166,51 +160,41 @@ public class MethodVisitorAdapter {
     }
 
     public void visitIntAdd() {
-        String left = stackMap.popFromStack();
-        String right = stackMap.popFromStack();
+        stackMap.popFromStack();
+        stackMap.popFromStack();
         decrStackSize(1);
-        assert "I".equals(left) : "left expected int for int add operation";
-        assert "I".equals(right) : "right expected int for int add operation";
         stackMap.pushOnStack("I");
         mv.visitInsn(Opcodes.IADD);
     }
 
     public void visitIntMul() {
-        String left = stackMap.popFromStack();
-        String right = stackMap.popFromStack();
+        stackMap.popFromStack();
+        stackMap.popFromStack();
         decrStackSize(1);
-        assert "I".equals(left) : "left expected int for int mul operation";
-        assert "I".equals(right) : "right expected int for int mul operation";
         stackMap.pushOnStack("I");
         mv.visitInsn(Opcodes.IMUL);
     }
 
     public void visitIntDiv() {
-        String left = stackMap.popFromStack();
-        String right = stackMap.popFromStack();
+        stackMap.popFromStack();
+        stackMap.popFromStack();
         decrStackSize(1);
-        assert "I".equals(left) : "left expected int for int div operation";
-        assert "I".equals(right) : "right expected int for int div operation";
         stackMap.pushOnStack("I");
         mv.visitInsn(Opcodes.IDIV);
     }
 
     public void visitFloatDiv() {
-        String left = stackMap.popFromStack();
-        String right = stackMap.popFromStack();
+        stackMap.popFromStack();
+        stackMap.popFromStack();
         decrStackSize(1);
-        assert "F".equals(left) : "left expected float for float div operation";
-        assert "F".equals(right) : "right expected float for float div operation";
         stackMap.pushOnStack("F");
         mv.visitInsn(Opcodes.FDIV);
     }
 
     public void visitIntMod() {
-        String left = stackMap.popFromStack();
-        String right = stackMap.popFromStack();
+        stackMap.popFromStack();
+        stackMap.popFromStack();
         decrStackSize(1);
-        assert "I".equals(left) : "left expected int for int rem operation";
-        assert "I".equals(right) : "right expected int for int rem operation";
         stackMap.pushOnStack("I");
         mv.visitInsn(Opcodes.IREM);
     }
@@ -218,7 +202,6 @@ public class MethodVisitorAdapter {
     public void visitIReturn() {
         String i = stackMap.popFromStack();
         decrStackSize(1);
-        //assert "I".equals(i) : "expected int for int return operation";
         mv.visitInsn(Opcodes.IRETURN);
     }
 
@@ -845,12 +828,12 @@ public class MethodVisitorAdapter {
         for (TryExpression tryExpression : tryExpressionList) {
             CatchExpression catchExpression = (CatchExpression) tryExpression.getFurtherExpression();
             for (FunctionParameter functionParameter : catchExpression.getArgs().getFunctionParameters()) {
-                String internalName = functionParameter.getTypeNode().getType().getInternalName();/*
+                String internalName = functionParameter.getTypeNode().getType().getInternalName();
                 mv.visitTryCatchBlock(
-                        Objects.requireNonNull(tryExpression.getBlock().startLabel).getLabel(),
-                        Objects.requireNonNull(tryExpression.getBlock().endLabel).getLabel(),
-                        Objects.requireNonNull(catchExpression.getBlock().startLabel).getLabel(),
-                        Objects.requireNonNull(internalName));*/
+                        Objects.requireNonNull(tryExpression.getStartLabel()).getLabel(),
+                        Objects.requireNonNull(tryExpression.getEndLabel()).getLabel(),
+                        Objects.requireNonNull(catchExpression.getStartLabel()).getLabel(),
+                        Objects.requireNonNull(internalName));
             }
         }
     }
@@ -1134,5 +1117,42 @@ public class MethodVisitorAdapter {
 
     public void instanceOf(@NotNull Type type) {
         mv.visitTypeInsn(Opcodes.INSTANCEOF, type.getInternalName());
+    }
+
+    public void visitInvokeDynamicInsn(@NotNull String name,
+                                       @NotNull String invokeDynamicSignature,
+                                       @NotNull Handle lambdaMetaFactoryHandler,
+                                       @NotNull org.objectweb.asm.Type methodType,
+                                       @NotNull Handle targetFunctionHandler,
+                                       @NotNull org.objectweb.asm.Type methodTyp2,
+                                       int size,
+                                       @NotNull Type instance) {
+        mv.visitInvokeDynamicInsn(
+                name,
+                invokeDynamicSignature,
+                lambdaMetaFactoryHandler,
+                methodType,
+                targetFunctionHandler,
+                methodTyp2
+        );
+
+        incrStackSize(1);
+        stackMap.pushOnStack(methodTyp2.getDescriptor());
+    }
+
+    public void invokeInterface(@NotNull String owner,
+                                @NotNull String name,
+                                @NotNull String descriptor,
+                                @NotNull Type returnType,
+                                @NotNull List<? extends Type> parameterTypes) {
+        mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, owner, name, descriptor, true);
+        if (returnType.isDouble() || returnType.isLong()) {
+            incrStackSize(2);
+            stackMap.pushOnStack(returnType.getDescriptor());
+            stackMap.pushOnStack(returnType.getDescriptor());
+        } else {
+            incrStackSize(1);
+            stackMap.pushOnStack(returnType.getDescriptor());
+        }
     }
 }

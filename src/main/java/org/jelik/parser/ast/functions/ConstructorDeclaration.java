@@ -1,13 +1,10 @@
 package org.jelik.parser.ast.functions;
 
 import org.jelik.parser.ast.classes.ClassDeclaration;
-import org.jelik.parser.ast.types.TypeNode;
-import org.jelik.parser.token.LiteralToken;
+import org.jelik.parser.ast.types.TypeParameterListNode;
+import org.jelik.parser.token.EmptyToken;
 import org.jelik.parser.token.Token;
-import org.jelik.parser.token.keyword.FunKeyword;
 import org.jelik.types.Type;
-
-import java.util.List;
 
 /**
  * @author Marcin Bukowiecki
@@ -16,10 +13,18 @@ public class ConstructorDeclaration extends FunctionDeclaration {
 
     public ConstructorDeclaration(Token keyword,
                                   FunctionParameterList functionParameterList,
-                                  FunctionReturn functionReturn,
-                                  FunctionBody functionBody,
-                                  List<TypeNode> generics) {
-        super(keyword, new LiteralToken(-1, -1, "<init>"), functionParameterList, functionReturn, functionBody, generics);
+                                  FunctionBody functionBody) {
+        super(keyword,
+                EmptyToken.INSTANCE,
+                functionParameterList,
+                MockFunctionReturn.INSTANCE,
+                functionBody,
+                TypeParameterListNode.Companion.getEMPTY());
+    }
+
+    @Override
+    public boolean isConstructor() {
+        return true;
     }
 
     @Override
@@ -30,5 +35,10 @@ public class ConstructorDeclaration extends FunctionDeclaration {
     @Override
     public Type getGenericReturnType() {
         return ((ClassDeclaration) parent).getType();
+    }
+
+    @Override
+    public String toString() {
+        return "" + getKeyword() + getFunctionParameterList() + getFunctionBody();
     }
 }

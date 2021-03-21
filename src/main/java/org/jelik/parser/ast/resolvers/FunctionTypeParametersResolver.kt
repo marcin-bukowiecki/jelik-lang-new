@@ -5,10 +5,9 @@ import org.jelik.compiler.exceptions.CompileException
 import org.jelik.parser.ast.functions.FunctionDeclaration
 import org.jelik.parser.ast.functions.FunctionParameter
 import org.jelik.parser.ast.functions.FunctionReturn
+import org.jelik.parser.ast.types.CovariantTypeNode
 import org.jelik.parser.ast.types.SingleTypeNode
 import org.jelik.parser.ast.visitors.AstVisitor
-import org.jelik.parser.exceptions.SyntaxException
-import org.jelik.types.JVMObjectType
 
 /**
  * @author Marcin Bukowiecki
@@ -20,16 +19,14 @@ object FunctionTypeParametersResolver : AstVisitor() {
         generics.forEach { it.visit(this, compilationContext) }
     }
 
-    override fun visit(t: SingleTypeNode, compilationContext: CompilationContext) {
-        //TODO find
-        if (false) {
+    override fun visitCovariantTypeNode(covariantTypeNode: CovariantTypeNode, compilationContext: CompilationContext) {
+        covariantTypeNode.parentTypeNode.visit(this, compilationContext)
+        compilationContext.currentFunction()
+                .functionContext.genericTypesMap[covariantTypeNode.typeNode.symbol] = covariantTypeNode.parentTypeNode
+    }
 
-        } else {
-            val currentFunction = compilationContext.currentFunction()
-            t.type = JVMObjectType.INSTANCE
-            t.genericType = JVMObjectType.INSTANCE
-            currentFunction.functionContext.genericTypesMap[t.symbol] = t
-        }
+    override fun visitSingleTypeNode(t: SingleTypeNode, compilationContext: CompilationContext) {
+
     }
 
     override fun visit(fr: FunctionReturn, compilationContext: CompilationContext) {

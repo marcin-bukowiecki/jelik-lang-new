@@ -1,9 +1,2 @@
-fun expr(a Int) -> Int {
-   try {
-       a = a / 0 
-   } catch (e Throwable) { 
-       e.printStackTrace() 
-       ret 111
-   }
-   ret 123
-}
+fun expr(a Long) -> Long { val b = 10 as Long 
+ ret a - b }

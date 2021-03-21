@@ -1,11 +1,13 @@
 package org.jelik.parser.ast.types;
 
-import lombok.Getter;
 import org.jelik.parser.ast.Expression;
+import org.jelik.parser.ast.functions.FunctionReferenceNode;
 import org.jelik.types.Type;
 
-@Getter
-public class InferredTypeRef extends TypeRef {
+/**
+ * @author Marcin Bukowiecki
+ */
+public class InferredTypeRef extends AbstractTypeRef {
 
     private final Expression ref;
 
@@ -31,5 +33,14 @@ public class InferredTypeRef extends TypeRef {
     @Override
     public void setGenericType(Type type) {
         throw new UnsupportedOperationException("Can't set type for inferred type");
+    }
+
+    @Override
+    public boolean isFunctionReference() {
+        return ref instanceof FunctionReferenceNode;
+    }
+
+    public Expression getRef() {
+        return ref;
     }
 }

@@ -1,7 +1,6 @@
 package org.jelik.compiler.integration;
 
 import org.jelik.compiler.utils.FunctionCompiler;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -27,9 +26,8 @@ public class FunctionIncrOperatorTest {
                 .isEqualTo(13);
     }
 
-    @Ignore
     @Test
-    public void returnBooleanFromSimpleExpr_3() {
+    public void intIncr_1() {
         var expr = "fun expr(a Int) -> Int {  \n ret ++a + 10 }";
         FunctionCompiler.getInstance()
                 .compile(expr)
@@ -37,9 +35,8 @@ public class FunctionIncrOperatorTest {
                 .isEqualTo(33);
     }
 
-    @Ignore
     @Test
-    public void returnBooleanFromSimpleExpr_4() {
+    public void intIncr_2() {
         var expr = "fun expr(a Int) -> Int {  \n ret 12 + (++a) + 10 }";
         FunctionCompiler.getInstance()
                 .compile(expr)
@@ -47,9 +44,8 @@ public class FunctionIncrOperatorTest {
                 .isEqualTo(45);
     }
 
-    @Ignore
     @Test
-    public void returnBooleanFromSimpleIntegerExpr_1() {
+    public void intIncr_3() {
         var expr = "fun expr(a Integer) -> Int { ++a \n ret a }";
         FunctionCompiler.getInstance()
                 .compile(expr)
@@ -57,9 +53,8 @@ public class FunctionIncrOperatorTest {
                 .isEqualTo(13);
     }
 
-    @Ignore
     @Test
-    public void returnBooleanFromSimpleIntegerExpr_2() {
+    public void intIncr_4() {
         var expr = "fun expr(a Integer) -> Int { \n ret ++a }";
         FunctionCompiler.getInstance()
                 .compile(expr)

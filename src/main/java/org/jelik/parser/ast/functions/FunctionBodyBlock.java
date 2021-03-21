@@ -59,6 +59,9 @@ public class FunctionBodyBlock extends FunctionBody {
 
     @Override
     public String toString() {
+        if (bb.getExpressions().isEmpty()) {
+            return "{}";
+        }
         return leftCurlToken.toString() + "\n" +
                bb.toString() +
                rightCurlToken.toString() + "\n";

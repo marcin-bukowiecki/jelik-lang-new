@@ -6,7 +6,7 @@ import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.ast.Expression;
 import org.jelik.parser.ast.expression.ExpressionWithType;
 import org.jelik.parser.ast.functions.FunctionCall;
-import org.jelik.parser.ast.functions.TargetFunctionCall;
+import org.jelik.parser.ast.functions.TargetFunctionCallProvider;
 import org.jelik.parser.ast.resolvers.DefaultImportedTypeResolver;
 import org.jelik.parser.ast.resolvers.FunctionCallResolver;
 import org.jelik.types.Type;
@@ -25,7 +25,7 @@ public class StringBuilderAppend extends ExpressionWithType implements FunctionC
 
     private Expression subject;
 
-    private final TargetFunctionCall targetFunctionCall;
+    private final TargetFunctionCallProvider targetFunctionCall;
 
     public StringBuilderAppend(Expression subject, CompilationContext compilationContext) {
         this.subject = subject;

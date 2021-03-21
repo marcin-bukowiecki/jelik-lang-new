@@ -60,7 +60,7 @@ public class DefaultImportedTypeResolver extends AstVisitor {
     private Type type;
 
     @Override
-    public void visit(@NotNull SingleTypeNode typeNode, @NotNull CompilationContext compilationContext) {
+    public void visitSingleTypeNode(@NotNull SingleTypeNode typeNode, @NotNull CompilationContext compilationContext) {
         String text = typeNode.getText();
         if (defaultClasses.containsKey(text)) {
             this.type = defaultClasses.get(text);

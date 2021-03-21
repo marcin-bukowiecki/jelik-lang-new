@@ -3,8 +3,11 @@ package org.jelik.parser.ast.types;
 import lombok.Getter;
 import org.jelik.types.Type;
 
+/**
+ * @author Marcin Bukowiecki
+ */
 @Getter
-public class TypeNodeRef extends TypeRef {
+public class TypeNodeRef extends AbstractTypeRef {
 
     private final TypeNode typeNode;
 

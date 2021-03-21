@@ -35,6 +35,38 @@ public class ExpressionVisitorTest {
     }
 
     @Test
+    public void testAb() {
+        ParseContext parseContext = new ParseContext("ret a.b");
+        Token nextToken = parseContext.getLexer().nextToken();
+        Assertions.assertThat(nextToken)
+                .hasFieldOrPropertyWithValue("elementType", ElementType.returnKeyword);
+        Expression expr = new ReturnExpressionVisitor(((ReturnKeyword) nextToken)).visit(parseContext);
+        System.out.println(expr);
+        Assertions.assertThat(expr.toString()).isEqualTo("ret a.b");
+        Assertions.assertThat(expr)
+                .isInstanceOf(ReturnExpr.class)
+                .matches(e -> e.getFurtherExpressionOpt().isPresent() &&
+                        e.getFurtherExpressionOpt().get() instanceof DotCallExpr);
+    }
+
+    @Test
+    public void testAbc() {
+        ParseContext parseContext = new ParseContext("ret a.b.c");
+        Token nextToken = parseContext.getLexer().nextToken();
+        Assertions.assertThat(nextToken)
+                .hasFieldOrPropertyWithValue("elementType", ElementType.returnKeyword);
+        Expression expr = new ReturnExpressionVisitor(((ReturnKeyword) nextToken)).visit(parseContext);
+        System.out.println(expr);
+        Assertions.assertThat(expr.toString()).isEqualTo("ret a.b.c");
+        Assertions.assertThat(expr)
+                .isInstanceOf(ReturnExpr.class)
+                .matches(e -> e.getFurtherExpressionOpt().isPresent() &&
+                        e.getFurtherExpressionOpt().get() instanceof DotCallExpr &&
+                        e.getFurtherExpressionOpt().get().getFurtherExpressionOpt().isPresent() &&
+                        e.getFurtherExpressionOpt().get().getFurtherExpressionOpt().get() instanceof LiteralExpr);
+    }
+
+    @Test
     public void testAbcd() {
         ParseContext parseContext = new ParseContext("ret a.b.c.d");
         Token nextToken = parseContext.getLexer().nextToken();
@@ -45,10 +77,7 @@ public class ExpressionVisitorTest {
         Assertions.assertThat(expr.toString()).isEqualTo("ret a.b.c.d");
         Assertions.assertThat(expr)
                 .isInstanceOf(ReturnExpr.class)
-                .matches(e -> e.getFurtherExpressionOpt().isPresent() &&
-                        e.getFurtherExpressionOpt().get() instanceof LiteralExpr &&
-                        e.getFurtherExpressionOpt().get().getFurtherExpressionOpt().isPresent() &&
-                        e.getFurtherExpressionOpt().get().getFurtherExpressionOpt().get() instanceof DotCallExpr);
+                .matches(e -> e.getFurtherExpression() instanceof DotCallExpr);
     }
 
     @Test
@@ -62,7 +91,7 @@ public class ExpressionVisitorTest {
         Assertions.assertThat(expr.toString()).isEqualTo("ret a.b.c().d");
         Assertions.assertThat(expr)
                 .isInstanceOf(ReturnExpr.class)
-                .matches(e -> e.getFurtherExpressionOpt().isPresent() && e.getFurtherExpressionOpt().get() instanceof LiteralExpr);
+                .matches(e -> e.getFurtherExpressionOpt().isPresent() && e.getFurtherExpressionOpt().get() instanceof DotCallExpr);
     }
 
     @Test
@@ -78,5 +107,37 @@ public class ExpressionVisitorTest {
                 .isInstanceOf(ReturnExpr.class)
                 .matches(e -> e.getFurtherExpression() instanceof AddExpr &&
                         ((AddExpr) e.getFurtherExpression()).getRight() instanceof AddExpr);
+    }
+
+    @Test
+    public void genericExpression_1() {
+        var parseContext = new ParseContext("literal<Int,String>");
+        var expr = new ExpressionVisitor(parseContext.getLexer().nextToken()).visit(parseContext);
+        Assertions.assertThat(expr.toString())
+                .isEqualTo("literal<Int,String>");
+    }
+
+    @Test
+    public void genericExpression_2() {
+        var parseContext = new ParseContext("literal<Int>");
+        var expr = new ExpressionVisitor(parseContext.getLexer().nextToken()).visit(parseContext);
+        Assertions.assertThat(expr.toString())
+                .isEqualTo("literal<Int>");
+    }
+
+    @Test
+    public void genericExpression_3() {
+        var parseContext = new ParseContext("literal<Int,foo<Int,Int>>");
+        var expr = new ExpressionVisitor(parseContext.getLexer().nextToken()).visit(parseContext);
+        Assertions.assertThat(expr.toString())
+                .isEqualTo("literal<Int,foo<Int,Int>>");
+    }
+
+    @Test
+    public void genericExpression_4() {
+        var parseContext = new ParseContext("literal<Int,String<*>>");
+        var expr = new ExpressionVisitor(parseContext.getLexer().nextToken()).visit(parseContext);
+        Assertions.assertThat(expr.toString())
+                .isEqualTo("literal<Int,String<*>>");
     }
 }

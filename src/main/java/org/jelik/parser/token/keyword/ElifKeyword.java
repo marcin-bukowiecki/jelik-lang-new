@@ -16,7 +16,7 @@ public class ElifKeyword extends Token {
 
     @Override
     public void visit(@NotNull ParseVisitor<?> parseVisitor, @NotNull ParseContext parseContext) {
-        parseVisitor.visit(this, parseContext);
+        parseVisitor.visitElifKeyword(this, parseContext);
     }
 
     @Override

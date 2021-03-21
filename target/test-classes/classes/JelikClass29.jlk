@@ -1,5 +1,4 @@
-fun expr(a Object, b Object) -> Boolean { 
- if a == b and a == "foo" then 
-   ret True 
-else    ret False
-end }
+fun toCall(a Int) -> Int { ret 123 + a}
+fun expr(a Int) -> Int {
+   val b = toCall
+   ret b(678) + a}

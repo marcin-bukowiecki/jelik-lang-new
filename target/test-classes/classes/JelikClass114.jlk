@@ -1,1 +1,1 @@
-fun expr(a Long) -> Int { ret a as Int }
+fun expr(a Int) -> Char { ret a as Char }

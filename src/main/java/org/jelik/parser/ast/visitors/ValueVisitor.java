@@ -33,12 +33,9 @@ public class ValueVisitor implements ParseVisitor<ValueDeclaration> {
     @Override
     public @NotNull ValueDeclaration visit(@NotNull ParseContext parseContext) {
         Lexer lexer = parseContext.getLexer();
-
         Token name = lexer.nextToken();
-
         Token nextToken = lexer.nextToken();
         nextToken.visit(this, parseContext);
-
         return new ValueDeclaration(valKeyword, (LiteralToken) name, typeNode, assignOperator, expression);
     }
 

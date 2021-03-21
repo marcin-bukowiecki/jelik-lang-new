@@ -1,2 +1,1 @@
-fun expr(a Int) -> Int { ++a 
- ret a }
+fun expr(a Float, b Float) -> Float { ret a / b }

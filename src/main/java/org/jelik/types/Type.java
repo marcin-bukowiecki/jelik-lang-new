@@ -5,6 +5,7 @@ import org.jelik.compiler.JelikCompiler;
 import org.jelik.compiler.asm.visitor.TypeVisitor;
 import org.jelik.compiler.common.TypeEnum;
 import org.jelik.compiler.data.ClassDataImpl;
+import org.jelik.compiler.data.MethodData;
 import org.jelik.parser.ast.Expression;
 import org.jelik.parser.ast.casts.CastObjectToObjectNode;
 import org.jelik.parser.ast.numbers.Int32ToWrapperNode;
@@ -13,6 +14,7 @@ import org.jelik.parser.ast.types.JelikWildCardType;
 import org.jelik.parser.ast.types.TypeMappingContext;
 import org.jelik.types.jvm.IntegerWrapperType;
 import org.jelik.types.resolver.TypeVariablesHelper;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -134,7 +136,7 @@ public class Type {
         );
     }
 
-    public ClassDataImpl findClassData(CompilationContext compilationContext) {
+    public ClassDataImpl findClassData(@NotNull CompilationContext compilationContext) {
         ClassDataImpl classData = JelikCompiler.INSTANCE.classDataRegister.get(this.canonicalName);
         if (classData != null) {
             return classData;
@@ -178,7 +180,7 @@ public class Type {
                 .collect(Collectors.joining(",")) + ">";
     }
 
-    public boolean isAssignableTo(Type type, CompilationContext compilationContext) {
+    public boolean isAssignableTo(@NotNull Type type, @NotNull CompilationContext compilationContext) {
         if (this.equals(type)) {
             return true;
         }
@@ -349,5 +351,13 @@ public class Type {
 
     public boolean isFloat() {
         return false;
+    }
+
+    public List<MethodData> findMethodData(@NotNull String name, @NotNull CompilationContext compilationContext) {
+        return findClassData(compilationContext).findByName(name, compilationContext);
+    }
+
+    public Type getWrapperType() {
+        return this;
     }
 }

@@ -11,6 +11,7 @@ import org.jelik.parser.ast.resolvers.LocalVariableAccessSymbolResult;
 import org.jelik.parser.ast.resolvers.TypeAccessSymbolResult;
 import org.jelik.parser.ast.types.SingleTypeNode;
 import org.jelik.parser.ast.types.TypeNode;
+import org.jelik.parser.ast.types.TypeParameterListNode;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.token.LiteralToken;
 import org.jelik.parser.token.Token;
@@ -19,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -40,18 +42,18 @@ public class FunctionDeclaration extends ASTNode implements CompilationUnit, Met
 
     private final FunctionContext functionContext = new FunctionContext();
 
-    private final List<TypeNode> generics;
+    private final TypeParameterListNode typeParameterListNode;
 
     public FunctionDeclaration(Token keyword,
                                LiteralToken name,
                                FunctionParameterList functionParameterList,
                                FunctionReturn functionReturn,
                                FunctionBody functionBody,
-                               List<TypeNode> generics) {
+                               TypeParameterListNode typeParameterListNode) {
 
         this.keyword = keyword;
         this.name = name;
-        this.generics = generics;
+        this.typeParameterListNode = typeParameterListNode;
         this.functionParameterList = functionParameterList;
         this.functionReturn = functionReturn;
         this.functionBody = functionBody;
@@ -63,7 +65,7 @@ public class FunctionDeclaration extends ASTNode implements CompilationUnit, Met
     }
 
     public List<TypeNode> getGenerics() {
-        return Collections.unmodifiableList(generics);
+        return Collections.unmodifiableList(typeParameterListNode.getTypes());
     }
 
     public Token getKeyword() {
@@ -97,19 +99,19 @@ public class FunctionDeclaration extends ASTNode implements CompilationUnit, Met
     }
 
     @Override
-    public FindSymbolResult findSymbol(String text, CompilationContext compilationContext) {
+    public Optional<FindSymbolResult> findSymbol(String text, CompilationContext compilationContext) {
         Optional<LocalVariable> local = compilationContext.findLocal(text);
         if (local.isPresent()) {
-            return new LocalVariableAccessSymbolResult(local.get());
+            return Optional.of(new LocalVariableAccessSymbolResult(local.get()));
         }
         final TypeNode typeNode = functionContext.getGenericTypesMap().get(text);
         if (typeNode != null) {
-            return new TypeAccessSymbolResult(typeNode.getType());
+            return Optional.of(new TypeAccessSymbolResult(typeNode.getType()));
         }
         return ((CompilationUnit) getParent()).findSymbol(text, compilationContext);
     }
 
-    public String getDescriptor() {
+    public @NotNull String getDescriptor() {
         var acc = new StringBuilder("(");
         for (FunctionParameter functionParameter : getFunctionParameterList().getFunctionParameters()) {
             acc.append(functionParameter.getTypeNode().getType().getDescriptor());
@@ -120,8 +122,10 @@ public class FunctionDeclaration extends ASTNode implements CompilationUnit, Met
     }
 
     @Override
-    public List<Type> getParameterTypes() {
-        return functionParameterList.getFunctionParameters().stream().map(p -> p.getTypeNode().getType()).collect(Collectors.toList());
+    public @NotNull List<Type> getParameterTypes() {
+        return functionParameterList.getFunctionParameters().stream()
+                .map(p -> p.getTypeNode().getType())
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -136,7 +140,14 @@ public class FunctionDeclaration extends ASTNode implements CompilationUnit, Met
 
     @Override
     public List<Type> getGenericParameterTypes() {
-        return functionParameterList.getFunctionParameters().stream().map(p -> p.getTypeNode().getGenericType()).collect(Collectors.toList());
+        return functionParameterList.getFunctionParameters().stream()
+                .map(p -> p.getTypeNode().getGenericType())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean isConstructor() {
+        return false;
     }
 
     public String getSignature() {
@@ -165,8 +176,23 @@ public class FunctionDeclaration extends ASTNode implements CompilationUnit, Met
     }
 
     @Override
+    public List<Type> getExpectedTypeParameters() {
+        return typeParameterListNode.getTypes().stream().map(TypeNode::getType).collect(Collectors.toList());
+    }
+
+    @Override
     public Optional<Type> findType(SingleTypeNode typeNode, CompilationContext compilationContext) {
         Objects.requireNonNull(parent);
         return ((ClassDeclaration) parent).findType(typeNode, compilationContext);
+    }
+
+    @Override
+    public Map<String, TypeNode> getTypeParametersMappings() {
+        return functionContext.getGenericTypesMap();
+    }
+
+    @Override
+    public Map<String, TypeNode> getGenericTypeParametersMappings() {
+        return functionContext.getGenericTypeParametersMappings();
     }
 }

@@ -7,10 +7,11 @@ import org.jelik.compiler.data.MethodData;
 import org.jelik.parser.ast.ImportDeclaration;
 import org.jelik.parser.ast.classes.ClassDeclaration;
 import org.jelik.parser.ast.functions.FunctionCall;
-import org.jelik.parser.ast.functions.TargetFunctionCall;
+import org.jelik.parser.ast.functions.TargetFunctionCallProvider;
 import org.jelik.types.Type;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.TreeMap;
@@ -37,8 +38,8 @@ public class FunctionCallResolver {
      * @param compilationContext {@link CompilationContext}
      * @return found method or null if the method wasn't found
      */
-    public Optional<TargetFunctionCall> resolveCall(final FunctionCall functionCall, final CompilationContext compilationContext) {
-        var argTypes = functionCall.getArgumentTypes();
+    public Optional<TargetFunctionCallProvider<?>> resolveCall(final FunctionCall functionCall, final CompilationContext compilationContext) {
+        var providedArgumentTypes = functionCall.getArgumentTypes();
 
         if (functionCall.getOwner() == null) {
             final List<? extends MethodData> byName = compilationContext
@@ -46,6 +47,9 @@ public class FunctionCallResolver {
                     .findByName(functionCall.getName(), compilationContext);
             final List<MethodData> result = new ArrayList<>(byName);
             result.addAll(JelikBuiltinFunctionsRegister.INSTANCE.findByName(functionCall.getName()));
+
+            result.addAll(compilationContext.currentFunction().findSymbol(functionCall.getName(), compilationContext)
+                    .map(frs -> frs.findMethodData(functionCall, compilationContext)).orElse(Collections.emptyList()));
 
             for (ImportDeclaration importDeclaration : compilationContext.getCurrentModule().getModuleDeclaration().getImports()) {
                 final Type type = importDeclaration.getType();
@@ -66,7 +70,7 @@ public class FunctionCallResolver {
                 }
             }
 
-            return resolveCall(compilationContext, argTypes, result);
+            return resolveCall(compilationContext, providedArgumentTypes, result);
         }
 
         List<MethodData> builtInFunctions = JelikBuiltinFunctionsRegister.INSTANCE.findByName(functionCall.getName());
@@ -75,27 +79,27 @@ public class FunctionCallResolver {
             var owner = functionCall.getOwner();
             var classData = owner.findClassData(compilationContext);
             var byName = classData.findByName(functionCall.getName(), compilationContext);
-            return resolveCall(compilationContext, argTypes, byName);
+            return resolveCall(compilationContext, providedArgumentTypes, byName);
         } else {
-            return resolveCall(compilationContext, argTypes, builtInFunctions)
-                    .map(Optional::of)
+            return resolveCall(compilationContext, providedArgumentTypes, builtInFunctions)
+                    .<Optional<TargetFunctionCallProvider<?>>>map(Optional::of)
                     .orElseGet(() -> {
                         var owner = functionCall.getOwner();
                         var classData = owner.findClassData(compilationContext);
                         var byName = classData.findByName(functionCall.getName(), compilationContext);
-                        return resolveCall(compilationContext, argTypes, byName);
+                        return resolveCall(compilationContext, providedArgumentTypes, byName);
             });
         }
     }
 
-    private Optional<TargetFunctionCall> resolveCall(final CompilationContext compilationContext,
-                                                     final List<Type> argTypes,
-                                                     final List<? extends MethodData> possibleMethods) {
+    public Optional<TargetFunctionCallProvider<?>> resolveCall(final CompilationContext compilationContext,
+                                                                final List<Type> providedArgumentTypes,
+                                                                final List<? extends MethodData> possibleMethods) {
 
         TreeMap<Integer, MethodData> matchingResult = new TreeMap<>();
 
         outerLoop: for (var methodData : possibleMethods) {
-            if (methodData.getParameterTypes().size() != argTypes.size()) {
+            if (methodData.getParameterTypes().size() != providedArgumentTypes.size()) {
                 continue;
             }
 
@@ -103,10 +107,10 @@ public class FunctionCallResolver {
             int score = 0;
 
             for (Type requiredType : methodData.getParameterTypes()) {
-                if (i >= argTypes.size()) {
+                if (i >= providedArgumentTypes.size()) {
                     continue outerLoop;
                 }
-                Type providedType = argTypes.get(i);
+                Type providedType = providedArgumentTypes.get(i);
                 if (!providedType.isAssignableTo(requiredType, compilationContext)) {
                     continue outerLoop;
                 } else {
@@ -124,7 +128,6 @@ public class FunctionCallResolver {
         }
 
         //get the first best matching method (lowest score is best)
-        final TargetFunctionCall targetFunctionCall = new TargetFunctionCall(matchingResult.firstEntry().getValue());
-        return Optional.of(targetFunctionCall);
+        return Optional.of(matchingResult.firstEntry().getValue().getCallProvider());
     }
 }

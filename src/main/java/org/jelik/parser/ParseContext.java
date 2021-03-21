@@ -1,9 +1,16 @@
 package org.jelik.parser;
 
+import com.google.common.collect.Lists;
+import org.jelik.parser.token.keyword.Modifier;
+
+import java.util.List;
+
 /**
  * @author Marcin Bukowiecki
  */
 public class ParseContext {
+
+    public List<Modifier> modifiersStack = Lists.newArrayList();
 
     private final Lexer lexer;
 

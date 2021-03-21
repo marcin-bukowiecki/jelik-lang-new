@@ -6,7 +6,6 @@ import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.types.Type;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -15,14 +14,18 @@ import java.util.stream.Collectors;
 public class GenericTypeNode extends TypeNode {
 
     @Getter
-    private final SingleTypeNode singleTypeNode;
+    private final TypeNode singleTypeNode;
 
     @Getter
-    private final List<TypeNode> typeVariables;
+    private final TypeParameterListNode typeVariables;
 
-    public GenericTypeNode(@NotNull SingleTypeNode singleTypeNode, @NotNull List<TypeNode> typeVariables) {
+    public GenericTypeNode(@NotNull TypeNode singleTypeNode, @NotNull TypeParameterListNode typeVariables) {
         this.singleTypeNode = singleTypeNode;
         this.typeVariables = typeVariables;
+    }
+
+    public TypeParameterListNode getTypeVariables() {
+        return typeVariables;
     }
 
     @Override
@@ -32,7 +35,7 @@ public class GenericTypeNode extends TypeNode {
 
     @Override
     public String toString() {
-        return singleTypeNode.toString() + "<" + typeVariables.stream().map(Object::toString).collect(Collectors.joining(",")) + ">";
+        return singleTypeNode.toString() + typeVariables.toString();
     }
 
     @Override
@@ -48,7 +51,7 @@ public class GenericTypeNode extends TypeNode {
                 type.getCanonicalName(),
                 type.getTypeEnum(),
                 type.getTypeParameters(),
-                typeVariables.stream().map(TypeNode::getType).collect(Collectors.toList())
+                typeVariables.getTypes().stream().map(TypeNode::getType).collect(Collectors.toList())
         );
     }
 

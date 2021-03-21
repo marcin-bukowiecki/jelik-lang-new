@@ -1,1 +1,2 @@
-fun expr(a String, b String) -> String { ret a + b - 1 }
+fun expr(a Long) -> Long { val b = 10 
+ ret a - b }

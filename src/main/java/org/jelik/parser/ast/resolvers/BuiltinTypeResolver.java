@@ -16,7 +16,7 @@ public class BuiltinTypeResolver extends AstVisitor {
     private Type type;
 
     @Override
-    public void visit(@NotNull SingleTypeNode typeNode, @NotNull CompilationContext compilationContext) {
+    public void visitSingleTypeNode(@NotNull SingleTypeNode typeNode, @NotNull CompilationContext compilationContext) {
         String text = typeNode.getText();
         BuiltinTypeRegister.INSTANCE
                 .checkForBuiltinByName(text)

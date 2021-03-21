@@ -5,18 +5,15 @@ import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.token.keyword.ConstructorKeyword;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-
 /**
  * @author Marcin Bukowiecki
  */
 public class DefaultConstructorDeclaration extends ConstructorDeclaration {
 
     public DefaultConstructorDeclaration() {
-        super(new ConstructorKeyword(-1,-1), FunctionParameterList.EMPTY,
-                new MockFunctionReturn(),
-                FunctionBodyBlock.EMPTY,
-                Collections.emptyList());
+        super(new ConstructorKeyword(-1,-1),
+                FunctionParameterList.EMPTY,
+                FunctionBodyBlock.EMPTY);
     }
 
     @Override
@@ -30,7 +27,7 @@ public class DefaultConstructorDeclaration extends ConstructorDeclaration {
     }
 
     @Override
-    public String getDescriptor() {
+    public @NotNull String getDescriptor() {
         return "()V";
     }
 

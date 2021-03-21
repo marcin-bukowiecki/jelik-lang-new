@@ -1,5 +1,6 @@
 package org.jelik.parser.ast.operators;
 
+import org.jelik.parser.ast.ConsumingExpression;
 import org.jelik.parser.ast.Expression;
 import org.jelik.parser.ast.expression.ExpressionWithType;
 import org.jelik.parser.token.operators.AbstractOperator;

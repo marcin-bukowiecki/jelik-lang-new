@@ -5,6 +5,7 @@ import org.jelik.compiler.asm.visitor.TypeVisitor;
 import org.jelik.parser.ast.Expression;
 import org.jelik.types.JVMBooleanType;
 import org.jelik.types.JVMIntType;
+import org.jelik.types.JVMNullType;
 import org.jelik.types.JVMObjectType;
 import org.jelik.types.Type;
 import org.jelik.types.jvm.IntegerWrapperType;
@@ -77,7 +78,15 @@ public class CastToVisitor extends TypeVisitor {
 
     @Override
     public void visit(@NotNull Type type, @NotNull CompilationContext compilationContext) {
+        if (type.isAssignableTo(target, compilationContext)) {
+            return;
+        }
         target.castFrom(from, type, compilationContext);
+    }
+
+    @Override
+    public void visit(@NotNull JVMNullType type, @NotNull CompilationContext compilationContext) {
+
     }
 
     @Override

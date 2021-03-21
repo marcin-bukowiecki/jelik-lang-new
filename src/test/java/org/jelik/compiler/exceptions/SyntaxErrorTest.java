@@ -2,8 +2,6 @@ package org.jelik.compiler.exceptions;
 
 import org.assertj.core.api.Assertions;
 import org.jelik.compiler.utils.FunctionCompiler;
-import org.jelik.parser.exceptions.SyntaxException;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -35,12 +33,11 @@ public class SyntaxErrorTest {
                 .hasMessage("Expected parameter type declaration got ')'.");
     }
 
-    @Ignore
     @Test
     public void shouldExpectTypeToken() {
         final String expression = "fun function(: a\n";
         Assertions.assertThatThrownBy(() -> FunctionCompiler.getInstance().compile(expression))
                 .isExactlyInstanceOf(SyntaxException.class)
-                .hasMessage("Unexpected token.");
+                .hasMessage("Expected parameter name.");
     }
 }

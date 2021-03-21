@@ -8,6 +8,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,6 +31,8 @@ public class MethodDataImpl implements MethodData {
 
     private final ClassData owner;
 
+    private final List<Type> typeParameters;
+
     public MethodDataImpl(Method method, ClassData owner) {
         this.modifiers = method.getModifiers();
         this.name = method.getName();
@@ -38,6 +41,7 @@ public class MethodDataImpl implements MethodData {
         this.genericParameterTypes = Arrays.stream(method.getGenericParameterTypes()).map(TypeUtils::createGenericType).collect(Collectors.toList());
         this.returnType = Type.of(method.getReturnType());
         this.genericReturnType = TypeUtils.createGenericType(method.getGenericReturnType());
+        this.typeParameters = Arrays.stream(method.getTypeParameters()).map(TypeUtils::createGenericType).collect(Collectors.toList());
     }
 
     public MethodDataImpl(Constructor<?> constructor, ClassData owner) {
@@ -48,6 +52,7 @@ public class MethodDataImpl implements MethodData {
         this.genericParameterTypes = Arrays.stream(constructor.getGenericParameterTypes()).map(TypeUtils::createGenericType).collect(Collectors.toList());
         this.returnType = owner.getType();
         this.genericReturnType = owner.getType();
+        this.typeParameters = Arrays.stream(constructor.getTypeParameters()).map(TypeUtils::createGenericType).collect(Collectors.toList());
     }
 
     public MethodDataImpl(int modifiers,
@@ -64,10 +69,16 @@ public class MethodDataImpl implements MethodData {
         this.returnType = returnType;
         this.genericReturnType = genericReturnType;
         this.owner = owner;
+        this.typeParameters = Collections.emptyList();
     }
 
     public int getModifiers() {
         return modifiers;
+    }
+
+    @Override
+    public boolean isAbstract() {
+        return Modifier.isAbstract(modifiers);
     }
 
     @NotNull
@@ -77,7 +88,7 @@ public class MethodDataImpl implements MethodData {
     }
 
     @Override
-    public List<Type> getParameterTypes() {
+    public @NotNull List<Type> getParameterTypes() {
         return parameterTypes;
     }
 
@@ -97,13 +108,14 @@ public class MethodDataImpl implements MethodData {
     }
 
     @Override
-    public String getDescriptor() {
+    public @NotNull String getDescriptor() {
         if (isConstructor()) {
             return "(" + parameterTypes.stream().map(Type::getDescriptor).collect(Collectors.joining()) + ")V";
         }
         return "(" + parameterTypes.stream().map(Type::getDescriptor).collect(Collectors.joining()) + ")" + returnType.getDescriptor();
     }
 
+    @Override
     public boolean isConstructor() {
         return name.equals("<init>");
     }
@@ -116,6 +128,11 @@ public class MethodDataImpl implements MethodData {
     @Override
     public Type getOwner() {
         return owner.getType();
+    }
+
+    @Override
+    public List<Type> getExpectedTypeParameters() {
+        return Collections.emptyList();
     }
 
     @Override

@@ -37,7 +37,7 @@ public class ClassDataImpl implements ClassData {
         this.functionalInterface = ASMUtils.isFunctionalInterface(clazz);
         this.interfacee = clazz.isInterface();
         if (this.functionalInterface) {
-            this.type = new FunctionType(clazz.getName(), this.canonicalName);
+            this.type = new FunctionType(clazz);
         } else {
             this.type = Type.of(clazz);
         }
@@ -61,6 +61,10 @@ public class ClassDataImpl implements ClassData {
     @Override
     public List<Type> getInterfaceTypes() {
         return interfaceScope.stream().map(cd -> cd.type).collect(Collectors.toList());
+    }
+
+    public List<MethodDataImpl> getMethodScope() {
+        return Collections.unmodifiableList(methodScope);
     }
 
     @Override

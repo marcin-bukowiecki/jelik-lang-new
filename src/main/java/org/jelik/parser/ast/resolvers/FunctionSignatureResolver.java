@@ -1,6 +1,7 @@
 package org.jelik.parser.ast.resolvers;
 
 import org.jelik.CompilationContext;
+import org.jelik.compiler.exceptions.CompileException;
 import org.jelik.compiler.locals.LocalVariable;
 import org.jelik.parser.ast.classes.ClassDeclaration;
 import org.jelik.parser.ast.functions.DefaultConstructorDeclaration;
@@ -8,6 +9,7 @@ import org.jelik.parser.ast.functions.FunctionDeclaration;
 import org.jelik.parser.ast.functions.FunctionParameter;
 import org.jelik.parser.ast.functions.FunctionParameterList;
 import org.jelik.parser.ast.functions.FunctionReturn;
+import org.jelik.parser.ast.types.TypeNode;
 import org.jelik.parser.ast.types.TypeNodeRef;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.types.Type;
@@ -28,7 +30,7 @@ public class FunctionSignatureResolver extends AstVisitor {
     }
 
     @Override
-    public void visitDefaultConstructor(DefaultConstructorDeclaration defaultConstructorDeclaration, CompilationContext compilationContext) {
+    public void visitDefaultConstructor(@NotNull DefaultConstructorDeclaration defaultConstructorDeclaration, @NotNull CompilationContext compilationContext) {
         final Type owner = defaultConstructorDeclaration.getOwner();
         defaultConstructorDeclaration.getFunctionContext().setSignature("()" + owner.getInternalName());
     }
@@ -36,6 +38,8 @@ public class FunctionSignatureResolver extends AstVisitor {
     @Override
     public void visitFunctionDeclaration(@NotNull FunctionDeclaration functionDeclaration, @NotNull CompilationContext compilationContext) {
         compilationContext.pushCompilationUnit(functionDeclaration);
+
+        functionDeclaration.getGenerics().forEach(g -> g.visit(new TypeParametersResolver(), compilationContext));
 
         FunctionTypeParametersResolver.INSTANCE.resolve(functionDeclaration, compilationContext);
         functionDeclaration.getFunctionParameterList().visit(this, compilationContext);
@@ -86,7 +90,22 @@ public class FunctionSignatureResolver extends AstVisitor {
     public void visit(@NotNull FunctionReturn functionReturn, @NotNull CompilationContext compilationContext) {
         functionReturn.getTypeNode().visit(new TypeResolver(), compilationContext);
         if (functionReturn.getTypeNode().getType() == null) {
-            functionReturn.visit(FunctionTypeParametersResolver.INSTANCE, compilationContext);
+            final TypeNode typeNode = compilationContext.currentCompilationUnit()
+                    .getTypeParametersMappings()
+                    .get(functionReturn.getTypeNode().getSymbol());
+            if (typeNode == null) {
+                throw new CompileException("Unresolved type",
+                        functionReturn.getTypeNode(),
+                        compilationContext.getCurrentModule());
+            } else {
+                functionReturn.getTypeNode().setType(typeNode.getType());
+                functionReturn
+                        .getTypeNode()
+                        .setGenericType(compilationContext
+                                .currentCompilationUnit()
+                                .getGenericTypeParametersMappings()
+                                .get(functionReturn.getTypeNode().getSymbol()).getType());
+            }
         }
     }
 }

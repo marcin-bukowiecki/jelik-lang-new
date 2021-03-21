@@ -1,15 +1,25 @@
 package org.jelik.parser.ast.resolvers;
 
+import org.jelik.CompilationContext;
+import org.jelik.compiler.data.MethodData;
 import org.jelik.compiler.locals.LocalVariable;
 import org.jelik.parser.ast.Expression;
 import org.jelik.parser.ast.LiteralExpr;
 import org.jelik.parser.ast.arrays.ArrayOrMapGetExpr;
 import org.jelik.parser.ast.arrays.ArrayOrMapSetExpr;
+import org.jelik.parser.ast.functions.FunctionCall;
+import org.jelik.parser.ast.functions.FunctionReferenceNode;
 import org.jelik.parser.ast.locals.GetLocalNode;
 import org.jelik.parser.ast.locals.StoreLocalNode;
 import org.jelik.parser.ast.operators.AssignExpr;
+import org.jelik.parser.ast.types.InferredTypeRef;
+import org.jelik.parser.ast.types.TypeNodeRef;
 import org.jelik.parser.token.LiteralToken;
 import org.jelik.parser.token.operators.AssignOperator;
+import org.jelik.types.FunctionType;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Marcin Bukowiecki
@@ -50,6 +60,18 @@ public class LocalVariableAccessSymbolResult implements FindSymbolResult {
             newExpr.parent = literalExpr.parent;
             newExpr.parent.replaceWith(literalExpr, newExpr);
             return newExpr;
+        }
+    }
+
+    @Override
+    public List<MethodData> findMethodData(FunctionCall caller, CompilationContext compilationContext) {
+        if (localVariable.isFunctionReference()) {
+            return ((FunctionType) localVariable.getType())
+                    .getFunctionalInterfaceMethod(localVariable, compilationContext)
+                    .map(Collections::singletonList)
+                    .orElse(Collections.emptyList());
+        } else {
+            return localVariable.getType().findMethodData(caller.getName(), compilationContext);
         }
     }
 

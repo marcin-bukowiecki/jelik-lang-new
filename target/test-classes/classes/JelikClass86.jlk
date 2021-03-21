@@ -1,2 +1,2 @@
-fun expr(a Int) -> Short { val b = 10 
- ret (a bor b) as Short }
+fun expr(a Int) -> Int { ++a 
+ ret a }

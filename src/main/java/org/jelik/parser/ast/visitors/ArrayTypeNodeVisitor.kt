@@ -4,7 +4,7 @@ import org.jelik.parser.ParseContext
 import org.jelik.parser.ast.ParseVisitor
 import org.jelik.parser.ast.types.ArrayTypeNode
 import org.jelik.parser.ast.types.TypeNode
-import org.jelik.parser.exceptions.SyntaxException
+import org.jelik.compiler.exceptions.SyntaxException
 import org.jelik.parser.token.ElementType
 import org.jelik.parser.token.LeftBracketToken
 import org.jelik.parser.token.RightBracketToken

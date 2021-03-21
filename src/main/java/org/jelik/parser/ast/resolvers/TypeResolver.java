@@ -5,6 +5,8 @@ import org.jelik.compiler.exceptions.CompileException;
 import org.jelik.parser.ast.DotCallExpr;
 import org.jelik.parser.ast.Expression;
 import org.jelik.parser.ast.GetFieldNode;
+import org.jelik.parser.ast.KeyValueExpr;
+import org.jelik.parser.ast.MapCreateExpr;
 import org.jelik.parser.ast.ReturnExpr;
 import org.jelik.parser.ast.arguments.Argument;
 import org.jelik.parser.ast.arrays.ArrayCreateExpr;
@@ -15,10 +17,12 @@ import org.jelik.parser.ast.functions.FunctionBodyBlock;
 import org.jelik.parser.ast.functions.FunctionCallExpr;
 import org.jelik.parser.ast.functions.FunctionDeclaration;
 import org.jelik.parser.ast.functions.FunctionParameter;
+import org.jelik.parser.ast.functions.FunctionReferenceNode;
 import org.jelik.parser.ast.functions.FunctionReturn;
-import org.jelik.parser.ast.functions.TargetFunctionCall;
 import org.jelik.parser.ast.locals.GetLocalNode;
 import org.jelik.parser.ast.locals.ValueDeclaration;
+import org.jelik.parser.ast.locals.VariableDeclaration;
+import org.jelik.parser.ast.locals.WithLocalVariableDeclaration;
 import org.jelik.parser.ast.numbers.Int32Node;
 import org.jelik.parser.ast.operators.AddExpr;
 import org.jelik.parser.ast.operators.AsExpr;
@@ -35,12 +39,15 @@ import org.jelik.parser.ast.operators.RemExpr;
 import org.jelik.parser.ast.operators.SubExpr;
 import org.jelik.parser.ast.operators.XorExpr;
 import org.jelik.parser.ast.types.ArrayTypeNode;
+import org.jelik.parser.ast.types.CovariantTypeNode;
 import org.jelik.parser.ast.types.GenericTypeNode;
+import org.jelik.parser.ast.types.InferredTypeRef;
 import org.jelik.parser.ast.types.SingleTypeNode;
 import org.jelik.parser.ast.types.TypeNode;
 import org.jelik.parser.ast.types.TypeNodeRef;
 import org.jelik.parser.ast.types.UndefinedTypeNode;
 import org.jelik.parser.ast.visitors.AstVisitor;
+import org.jelik.compiler.exceptions.SyntaxException;
 import org.jelik.types.JVMArrayType;
 import org.jelik.types.JVMIntType;
 import org.jelik.types.JVMObjectType;
@@ -56,6 +63,7 @@ import org.jelik.types.resolver.RemTypeResolver;
 import org.jelik.types.resolver.SubOperatorTypeResolver;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -64,29 +72,56 @@ import java.util.Objects;
 public class TypeResolver extends AstVisitor {
 
     @Override
-    public void visit(@NotNull GenericTypeNode genericTypeNode, @NotNull CompilationContext compilationContext) {
+    public void visit(@NotNull GenericTypeNode genericTypeNode,
+                      @NotNull CompilationContext compilationContext) {
         genericTypeNode.getSingleTypeNode().visit(this, compilationContext);
-        for (TypeNode typeVariable : genericTypeNode.getTypeVariables()) {
+        for (TypeNode typeVariable : genericTypeNode.getTypeVariables().getTypes()) {
             typeVariable.visit(this, compilationContext);
         }
     }
 
     @Override
-    public void visitValueDeclaration(@NotNull ValueDeclaration valueDeclaration, @NotNull CompilationContext compilationContext) {
-        valueDeclaration.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
-        valueDeclaration.getTypeNode().visit(this, compilationContext);
-        if (valueDeclaration.getTypeNode() == UndefinedTypeNode.UNDEFINED_TYPE_NODE) {
-            valueDeclaration.getFurtherExpressionOpt().ifPresent(expr -> {
-                valueDeclaration.getLocalVariable().getTypeRef().setType(expr.getReturnType());
-                valueDeclaration.getLocalVariable().getTypeRef().setGenericType(expr.getGenericReturnType().deepGenericCopy());
-            });
-        } else {
-            valueDeclaration.getLocalVariable().setTypeRef(new TypeNodeRef(valueDeclaration.getTypeNode()));
+    public void visitCovariantTypeNode(@NotNull CovariantTypeNode covariantTypeNode,
+                                       @NotNull CompilationContext compilationContext) {
+
+        covariantTypeNode.getParentTypeNode().visit(this, compilationContext);
+        if (covariantTypeNode.getParentTypeNode().getType() == null) {
+            throw new CompileException("Unresolved type",
+                    covariantTypeNode.getParentTypeNode(),
+                    compilationContext.getCurrentModule());
         }
     }
 
     @Override
-    public void visitFunctionDeclaration(@NotNull FunctionDeclaration functionDeclaration, @NotNull CompilationContext compilationContext) {
+    public void visitValueDeclaration(@NotNull ValueDeclaration valueDeclaration,
+                                      @NotNull CompilationContext compilationContext) {
+        visitWithLocalVariable(valueDeclaration, compilationContext);
+    }
+
+    @Override
+    public void visitVariableDeclaration(@NotNull VariableDeclaration variableDeclaration,
+                                         @NotNull CompilationContext compilationContext) {
+        visitWithLocalVariable(variableDeclaration, compilationContext);
+    }
+
+    @Override
+    public void visitWithLocalVariable(@NotNull WithLocalVariableDeclaration withLocalVariable,
+                                       @NotNull CompilationContext compilationContext) {
+        withLocalVariable.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
+        withLocalVariable.getTypeNode().visit(this, compilationContext);
+        if (withLocalVariable.getTypeNode() == UndefinedTypeNode.UNDEFINED_TYPE_NODE) {
+            withLocalVariable.getFurtherExpressionOpt().ifPresent(expr -> {
+                final InferredTypeRef inferredTypeRef = new InferredTypeRef(expr);
+                withLocalVariable.getLocalVariable().setTypeRef(inferredTypeRef);
+            });
+        } else {
+            withLocalVariable.getLocalVariable().setTypeRef(new TypeNodeRef(withLocalVariable.getTypeNode()));
+        }
+    }
+
+    @Override
+    public void visitFunctionDeclaration(@NotNull FunctionDeclaration functionDeclaration,
+                                         @NotNull CompilationContext compilationContext) {
         compilationContext.pushCompilationUnit(functionDeclaration);
         functionDeclaration.getFunctionBody().visit(this, compilationContext);
         compilationContext.popCompilationUnit();
@@ -94,9 +129,11 @@ public class TypeResolver extends AstVisitor {
 
     @Override
     public void visit(@NotNull FunctionBodyBlock fb, @NotNull CompilationContext compilationContext) {
+        compilationContext.blockStack.addLast(fb.getBb());
         for (Expression expression : fb.getBb().getExpressions()) {
             expression.visit(this, compilationContext);
         }
+        compilationContext.blockStack.removeLast();
         /*
         if (fb.getBb().getExpressions().isEmpty()) {
             fb.getBb().setType(JVMVoidType.INSTANCE);
@@ -125,7 +162,7 @@ public class TypeResolver extends AstVisitor {
             Operators
      */
     @Override
-    public void visit(DecrExpr decrExpr, CompilationContext compilationContext) {
+    public void visit(@NotNull DecrExpr decrExpr, @NotNull CompilationContext compilationContext) {
         decrExpr.getFurtherExpression().visit(this, compilationContext);
         Type genericReturnType = decrExpr.getGenericReturnType();
         if (genericReturnType.isWrapper()) {
@@ -136,7 +173,7 @@ public class TypeResolver extends AstVisitor {
     }
 
     @Override
-    public void visit(IncrExpr incrExpr, CompilationContext compilationContext) {
+    public void visit(@NotNull IncrExpr incrExpr, @NotNull CompilationContext compilationContext) {
         incrExpr.getRight().visit(this, compilationContext);
         var rt = incrExpr.getRight().getGenericReturnType();
         incrExpr.setType(incrExpr.getRight().getType());
@@ -185,7 +222,7 @@ public class TypeResolver extends AstVisitor {
     }
 
     @Override
-    public void visit(SubExpr subExpr, CompilationContext compilationContext) {
+    public void visit(@NotNull SubExpr subExpr, @NotNull CompilationContext compilationContext) {
         subExpr.getLeft().visit(this, compilationContext);
         subExpr.getRight().visit(this, compilationContext);
         var rt = new SubOperatorTypeResolver().resolve(subExpr, compilationContext);
@@ -202,7 +239,7 @@ public class TypeResolver extends AstVisitor {
     }
 
     @Override
-    public void visit(MulExpr mulExpr, CompilationContext compilationContext) {
+    public void visit(@NotNull MulExpr mulExpr, @NotNull CompilationContext compilationContext) {
         mulExpr.getLeft().visit(this, compilationContext);
         mulExpr.getRight().visit(this, compilationContext);
         var rt = new MulTypeResolver().resolve(mulExpr, compilationContext);
@@ -211,7 +248,7 @@ public class TypeResolver extends AstVisitor {
     }
 
     @Override
-    public void visit(DivExpr divExpr, CompilationContext compilationContext) {
+    public void visit(@NotNull DivExpr divExpr, @NotNull CompilationContext compilationContext) {
         divExpr.getLeft().visit(this, compilationContext);
         divExpr.getRight().visit(this, compilationContext);
         var rt = new DivTypeResolver().resolve(divExpr, compilationContext);
@@ -220,7 +257,7 @@ public class TypeResolver extends AstVisitor {
     }
 
     @Override
-    public void visit(AssignExpr assignExpr, CompilationContext compilationContext) {
+    public void visit(@NotNull AssignExpr assignExpr, @NotNull CompilationContext compilationContext) {
         super.visit(assignExpr, compilationContext);
     }
 
@@ -235,19 +272,19 @@ public class TypeResolver extends AstVisitor {
     }
 
     @Override
-    public void visit(@NotNull SingleTypeNode typeNode, @NotNull CompilationContext compilationContext) {
+    public void visitSingleTypeNode(@NotNull SingleTypeNode typeNode, @NotNull CompilationContext compilationContext) {
         BuiltinTypeResolver builtinTypeResolver = new BuiltinTypeResolver();
-        builtinTypeResolver.visit(typeNode, compilationContext);
+        builtinTypeResolver.visitSingleTypeNode(typeNode, compilationContext);
         if (builtinTypeResolver.getTypeOpt().isEmpty()) {
             DefaultImportedTypeResolver defaultImportedTypeResolver = new DefaultImportedTypeResolver();
-            defaultImportedTypeResolver.visit(typeNode, compilationContext);
+            defaultImportedTypeResolver.visitSingleTypeNode(typeNode, compilationContext);
             if (defaultImportedTypeResolver.getTypeOpt().isEmpty()) {
                 compilationContext.currentCompilationUnit().findType(typeNode, compilationContext).ifPresentOrElse(t -> {
                     typeNode.setType(t);
                     typeNode.setGenericType(t);
                 }, () -> {
                     ImportedTypeResolver importedTypeResolver = new ImportedTypeResolver();
-                    importedTypeResolver.visit(typeNode, compilationContext);
+                    importedTypeResolver.visitSingleTypeNode(typeNode, compilationContext);
                 });
             }
         }
@@ -265,17 +302,26 @@ public class TypeResolver extends AstVisitor {
 
     @Override
     public void visit(@NotNull FunctionCallExpr functionCallExpr, @NotNull CompilationContext compilationContext) {
+        functionCallExpr
+                .getLiteralExpr()
+                .getTypeParameterListNode()
+                .getTypes()
+                .forEach(t -> t.visit(this, compilationContext));
+
         for (Argument argument : functionCallExpr.getArgumentList().getArguments()) {
             argument.visit(this, compilationContext);
         }
         if (functionCallExpr.getParent() instanceof DotCallExpr) {
-            Type type = ((Expression) functionCallExpr.getParent().getParent()).getGenericType();
+            Type type = ((DotCallExpr) functionCallExpr.getParent()).getSubject().getGenericType();
             functionCallExpr.setOwner(type);
         }
 
-        TargetFunctionCall targetFunctionCall = new FunctionCallResolver()
+        var targetFunctionCall = new FunctionCallResolver()
                 .resolveCall(functionCallExpr, compilationContext)
                 .orElseThrow(() -> new CompileException("Could not find method", functionCallExpr, compilationContext.getCurrentModule()));
+
+        targetFunctionCall.resolveCallback(functionCallExpr, compilationContext);
+
         if (functionCallExpr.getOwner() == null) {
             functionCallExpr.setOwner(targetFunctionCall.getMethodData().getOwner());
         }
@@ -286,7 +332,11 @@ public class TypeResolver extends AstVisitor {
         functionCallExpr.setType(returnType.deepGenericCopy());
         functionCallExpr.setGenericType(genericReturnType);
 
-        functionCallExpr.getLiteralExpr().getGenericTypeNode().visit(this, compilationContext);
+        functionCallExpr
+                .getLiteralExpr()
+                .getTypeParameterListNode()
+                .getTypes()
+                .forEach(t -> t.visit(this, compilationContext));
 
         new GenericTypeResolver().visit(functionCallExpr, compilationContext);
 
@@ -342,19 +392,26 @@ public class TypeResolver extends AstVisitor {
 
     @Override
     public void visit(@NotNull ArrayOrMapGetExpr arrayOrMapGetExpr, @NotNull CompilationContext compilationContext) {
+        arrayOrMapGetExpr.getLeftExpr().visit(this, compilationContext);
         if (arrayOrMapGetExpr.isArrayGet()) {
-            Expression parent = (Expression) arrayOrMapGetExpr.getParent();
+            Expression parent = arrayOrMapGetExpr.getLeftExpr();
             arrayOrMapGetExpr.setType(parent.getType().getInnerType(0));
             arrayOrMapGetExpr.setGenericType(parent.getGenericType().getInnerType(0));
         } else {
-            if (arrayOrMapGetExpr.parent instanceof GetLocalNode) {
-                GetLocalNode parent = (GetLocalNode) arrayOrMapGetExpr.getParent();
+            if (arrayOrMapGetExpr.getLeftExpr() instanceof GetLocalNode) {
+                GetLocalNode parent = (GetLocalNode) arrayOrMapGetExpr.getLeftExpr();
                 Type genericReturnType = parent.getGenericType();
                 if (genericReturnType.isArray()) {
                     arrayOrMapGetExpr.arrayGet = true;
                     arrayOrMapGetExpr.setType(parent.getType().getInnerType(0));
                     arrayOrMapGetExpr.setGenericType(genericReturnType.getInnerType(0).deepGenericCopy());
                 }
+            } else if (arrayOrMapGetExpr.getLeftExpr() instanceof MapCreateExpr) {
+                arrayOrMapGetExpr.setType(JVMObjectType.INSTANCE);
+                arrayOrMapGetExpr.setGenericType(arrayOrMapGetExpr.getLeftExpr()
+                        .getGenericReturnType().getTypeVariables().get(1).deepGenericCopy());
+            } else {
+                throw new SyntaxException("Unexpected expression", arrayOrMapGetExpr, compilationContext.getCurrentModule());
             }
         }
         arrayOrMapGetExpr.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
@@ -385,7 +442,7 @@ public class TypeResolver extends AstVisitor {
 
     @Override
     public void visit(@NotNull GetFieldNode getFieldNode, @NotNull CompilationContext compilationContext) {
-        var genericReturnType = ((Expression) getFieldNode.getParent().getParent()).getGenericType();
+        var genericReturnType = ((DotCallExpr) getFieldNode.getParent()).getSubject().getGenericType();
         var fieldByName = genericReturnType.findClassData(compilationContext).findFieldByName(getFieldNode.getName());
         if (fieldByName.isEmpty()) {
             throw new CompileException("Symbol not found", getFieldNode, compilationContext.getCurrentModule());
@@ -395,5 +452,25 @@ public class TypeResolver extends AstVisitor {
         getFieldNode.setRef(fieldByName.get(0));
         super.visit(getFieldNode, compilationContext);
     }
-}
 
+    @Override
+    public void visitFunctionReference(@NotNull FunctionReferenceNode functionReferenceNode, @NotNull CompilationContext compilationContext) {
+        super.visitFunctionReference(functionReferenceNode, compilationContext);
+    }
+
+    @Override
+    public void visitMapCreateExpr(@NotNull MapCreateExpr mapCreateExpr, @NotNull CompilationContext compilationContext) {
+        super.visitMapCreateExpr(mapCreateExpr, compilationContext);
+        mapCreateExpr.setType(Type.of(Map.class));
+        final Type of = Type.of(Map.class);
+        if (!mapCreateExpr.getEntries().isEmpty()) {
+            //TODO union type
+            final KeyValueExpr keyValueExpr = mapCreateExpr.getEntries().get(0);
+            final Type keyType = keyValueExpr.getKey().getGenericReturnType().getWrapperType();
+            final Type valueType = keyValueExpr.getValue().getGenericReturnType().getWrapperType();
+            of.setTypeVariable(of.getTypeParameters().get(0), keyType);
+            of.setTypeVariable(of.getTypeParameters().get(1), valueType);
+        }
+        mapCreateExpr.setGenericType(of);
+    }
+}

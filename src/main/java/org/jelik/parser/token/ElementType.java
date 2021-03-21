@@ -25,6 +25,8 @@ public enum ElementType {
 
     literal,
 
+    questionMark,
+
     leftParenthesis,
 
     rightParenthesis,
@@ -121,4 +123,5 @@ public enum ElementType {
 
     leftBracket,
     rightBracket,
+    staticKeyword, empty,
 }

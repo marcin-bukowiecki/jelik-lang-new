@@ -1,5 +1,6 @@
 package org.jelik.compiler;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.jelik.CompilationContext;
@@ -9,6 +10,9 @@ import org.jelik.compiler.checkers.TypeChecker;
 import org.jelik.compiler.data.ClassData;
 import org.jelik.compiler.data.ClassDataImpl;
 import org.jelik.compiler.data.JavaClassData;
+import org.jelik.compiler.helper.JelikSourceFile;
+import org.jelik.compiler.helper.SourceFiles;
+import org.jelik.compiler.helper.SourceFilesProvider;
 import org.jelik.parser.CharPointer;
 import org.jelik.parser.Lexer;
 import org.jelik.parser.ParseContext;
@@ -28,10 +32,14 @@ import org.jelik.parser.ast.resolvers.TypeResolver;
 import org.jelik.types.Type;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author Marcin Bukowiecki
@@ -46,10 +54,32 @@ public enum JelikCompiler {
 
     }
 
-    public List<ToByteCodeResult> compile(List<File> filesToCompile) {
-        List<ModuleDeclaration> parsedModules = Lists.newArrayList();
+    public void compile(final String[] args) {
+        final CompilationContext compilationContext = new CompilationContext();
+        final SourceFiles sourceFiles = SourceFilesProvider.INSTANCE.findSourceFiles(compilationContext);
+        final List<JavaClassData> javaClassData = sourceFiles.mapToJavaClassData();
+        javaClassData.forEach(cd -> classDataRegister.put(cd.getCanonicalName(), cd));
+        var byteCodeResult = compile(sourceFiles.getJelikSourceFiles().stream()
+                .map(JelikSourceFile::getFile).collect(Collectors.toList()));
 
-        CompilationContext compilationContext = new CompilationContext();
+        var outputDirectory = compilationContext.outputDirectory();
+        final Path outputDirectoryPath = Path.of(outputDirectory);
+        byteCodeResult.forEach(toByteCodeResult -> {
+            try {
+                Files.write(outputDirectoryPath, toByteCodeResult.getBytes());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    @VisibleForTesting
+    public List<ToByteCodeResult> compile(List<File> filesToCompile) {
+        return compile(filesToCompile, new CompilationContext());
+    }
+
+    public List<ToByteCodeResult> compile(List<File> filesToCompile, CompilationContext compilationContext) {
+        List<ModuleDeclaration> parsedModules = Lists.newArrayList();
 
         for (File file : filesToCompile) {
             CharPointer charPointer = new CharPointer(file);
@@ -160,10 +190,5 @@ public enum JelikCompiler {
 
     public PrintStream getErrOut() {
         return System.err;
-    }
-
-    public Map<String, Class<?>> compileClasses(JelikCompileSession session, List<ClassDeclaration> classList, List<Object> emptyList) {
-
-        return null;
     }
 }

@@ -2,14 +2,16 @@ package org.jelik.compiler.utils;
 
 import org.assertj.core.api.Assertions;
 
+import java.util.function.Function;
+
 /**
  * @author Marcin Bukowiecki
  */
-public class StaticInvocationResult {
+public class StaticInvocationResult<T> {
 
-    private final Object value;
+    private final T value;
 
-    public StaticInvocationResult(Object value) {
+    public StaticInvocationResult(T value) {
         this.value = value;
     }
 
@@ -20,5 +22,9 @@ public class StaticInvocationResult {
     public void isEqualTo(Object given) {
         Assertions.assertThat(this.value)
                 .isEqualTo(given);
+    }
+
+    public <R> StaticInvocationResult<R> mapResult(Function<T, R> mapper) {
+        return new StaticInvocationResult<R>(mapper.apply(this.value));
     }
 }

@@ -10,6 +10,9 @@ import java.lang.reflect.WildcardType;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+/**
+ * @author Marcin Bukowiecki
+ */
 public class TypeUtils {
 
     public static Type createGenericType(java.lang.reflect.Type type) {
