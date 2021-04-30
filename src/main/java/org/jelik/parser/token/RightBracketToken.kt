@@ -1,7 +1,7 @@
 package org.jelik.parser.token
 
 import org.jelik.parser.ParseContext
-import org.jelik.parser.ast.ParseVisitor
+import org.jelik.parser.ast.TokenVisitor
 
 /**
  * Represents [
@@ -10,7 +10,7 @@ import org.jelik.parser.ast.ParseVisitor
  */
 class RightBracketToken(row: Int, col: Int) : Token("]", row, col, ElementType.rightBracket) {
 
-    override fun visit(parseVisitor: ParseVisitor<*>, parseContext: ParseContext) {
+    override fun accept(parseVisitor: TokenVisitor<*>, parseContext: ParseContext) {
         parseVisitor.visit(this, parseContext)
     }
 }

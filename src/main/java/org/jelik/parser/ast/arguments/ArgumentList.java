@@ -1,11 +1,14 @@
 package org.jelik.parser.ast.arguments;
 
-import lombok.Getter;
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
+import org.jelik.parser.ast.ASTNodeImpl;
+import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.visitors.AstVisitor;
-import org.jelik.parser.ast.expression.ExpressionReferencingType;
 import org.jelik.parser.token.LeftParenthesisToken;
 import org.jelik.parser.token.RightParenthesisToken;
+import org.jelik.types.FunctionType;
+import org.jelik.types.JVMVoidType;
+import org.jelik.types.Type;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -17,9 +20,13 @@ import java.util.stream.Collectors;
  *
  * @author Marcin Bukowiecki
  */
-public class ArgumentList extends ExpressionReferencingType {
+public class ArgumentList extends ASTNodeImpl implements Expression {
 
-    public static ArgumentList EMPTY = new ArgumentList(new LeftParenthesisToken(-1,-1), Collections.emptyList(), new RightParenthesisToken(-1, -1));
+    public static ArgumentList EMPTY = new ArgumentList(
+            new LeftParenthesisToken(-1,-1),
+            Collections.emptyList(),
+            new RightParenthesisToken(-1, -1)
+    );
 
     private final LeftParenthesisToken leftParenthesisToken;
 
@@ -27,24 +34,33 @@ public class ArgumentList extends ExpressionReferencingType {
 
     private final RightParenthesisToken rightParenthesisToken;
 
-    public ArgumentList(LeftParenthesisToken leftParenthesisToken, List<Argument> arguments, RightParenthesisToken rightParenthesisToken) {
+    public ArgumentList(@NotNull LeftParenthesisToken leftParenthesisToken,
+                        @NotNull List<@NotNull Argument> arguments,
+                        @NotNull RightParenthesisToken rightParenthesisToken) {
         this.leftParenthesisToken = leftParenthesisToken;
         this.arguments = arguments;
         this.rightParenthesisToken = rightParenthesisToken;
-        for (Argument argument : arguments) {
-            argument.parent = parent;
+        for (var argument : arguments) {
+            argument.setParent(getParent());
         }
     }
 
-    public LeftParenthesisToken getLeftParenthesisToken() {
+    public ArgumentList(@NotNull Argument argument) {
+        this.leftParenthesisToken = new LeftParenthesisToken(-1,-1);
+        this.arguments = Collections.singletonList(argument);
+        this.rightParenthesisToken = new RightParenthesisToken(-1, -1);
+        argument.setParent(this);
+    }
+
+    public @NotNull LeftParenthesisToken getLeftParenthesisToken() {
         return leftParenthesisToken;
     }
 
-    public List<Argument> getArguments() {
+    public @NotNull List<@NotNull Argument> getArguments() {
         return arguments;
     }
 
-    public RightParenthesisToken getRightParenthesisToken() {
+    public @NotNull RightParenthesisToken getRightParenthesisToken() {
         return rightParenthesisToken;
     }
 
@@ -69,19 +85,34 @@ public class ArgumentList extends ExpressionReferencingType {
     }
 
     @Override
-    public void visit(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
-
+    public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
+        astVisitor.visitArgumentList(this, compilationContext);
     }
 
     @Override
     public String toString() {
         return leftParenthesisToken.toString() +
                 arguments.stream().map(Object::toString).collect(Collectors.joining()) +
-                rightParenthesisToken.toString() +
-                getFurtherExpressionOpt().map(Object::toString).orElse("");
+                rightParenthesisToken.toString();
     }
 
-    public String getArgumentsDescriptor() {
-        return "(" + arguments.stream().map(arg -> arg.getGenericReturnType().getInternalName()).collect(Collectors.joining()) + ")";
+    @Override
+    public Type getReturnType() {
+        return FunctionType.Companion.getFunctionType(arguments.size(), JVMVoidType.INSTANCE);
+    }
+
+    @Override
+    public Type getGenericReturnType() {
+        return FunctionType.Companion.getFunctionType(arguments.size(), JVMVoidType.INSTANCE);
+    }
+
+    @Override
+    public Type getType() {
+        return FunctionType.Companion.getFunctionType(arguments.size(), JVMVoidType.INSTANCE);
+    }
+
+    @Override
+    public Type getGenericType() {
+        return FunctionType.Companion.getFunctionType(arguments.size(), JVMVoidType.INSTANCE);
     }
 }

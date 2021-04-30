@@ -1,10 +1,11 @@
 package org.jelik.parser.ast.operators;
 
-import org.jelik.CompilationContext;
-import org.jelik.parser.ast.Expression;
+import org.jelik.compiler.config.CompilationContext;
+import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.expression.EmptyExpression;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.token.operators.SubtractOperator;
+import org.jelik.types.Type;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -17,7 +18,17 @@ public class NegExpr extends SubExpr {
     }
 
     @Override
-    public void visit(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
+    public Type getReturnType() {
+        return right.getReturnType();
+    }
+
+    @Override
+    public Type getGenericReturnType() {
+        return right.getGenericReturnType();
+    }
+
+    @Override
+    public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
         astVisitor.visit(this, compilationContext);
     }
 }

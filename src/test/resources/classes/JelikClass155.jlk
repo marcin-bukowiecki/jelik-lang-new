@@ -1,1 +1,1 @@
-fun expr(a Object) -> Boolean { ret a is String }
+fun expr(b Float) -> Float { ret - b }

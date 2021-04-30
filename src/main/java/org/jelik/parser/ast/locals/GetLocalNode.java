@@ -1,10 +1,9 @@
 package org.jelik.parser.ast.locals;
 
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.compiler.locals.LocalVariable;
+import org.jelik.parser.ast.expression.ExpressionWithType;
 import org.jelik.parser.ast.visitors.AstVisitor;
-import org.jelik.parser.ast.Expression;
-import org.jelik.parser.ast.expression.ExpressionReferencingType;
 import org.jelik.parser.token.LiteralToken;
 import org.jelik.types.Type;
 import org.jetbrains.annotations.NotNull;
@@ -12,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Marcin Bukowiecki
  */
-public class GetLocalNode extends ExpressionReferencingType {
+public class GetLocalNode extends ExpressionWithType {
 
     private final LiteralToken literalToken;
 
@@ -28,13 +27,8 @@ public class GetLocalNode extends ExpressionReferencingType {
     }
 
     @Override
-    public void visit(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
+    public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
         astVisitor.visit(this, compilationContext);
-    }
-
-    @Override
-    public void replaceWith(@NotNull Expression oldNode, @NotNull Expression newNode) {
-        setFurtherExpression(newNode);
     }
 
     @Override
@@ -48,22 +42,16 @@ public class GetLocalNode extends ExpressionReferencingType {
     }
 
     public Type getReturnType() {
-        if (furtherExpression != null) {
-            return furtherExpression.getReturnType();
-        }
         return getType();
     }
 
     public Type getGenericReturnType() {
-        if (furtherExpression != null) {
-            return furtherExpression.getGenericReturnType();
-        }
         return getGenericType();
     }
 
     @Override
     public String toString() {
-        return literalToken.toString() + (furtherExpression != null ? furtherExpression.toString() : "");
+        return literalToken.toString();
     }
 
     @Override

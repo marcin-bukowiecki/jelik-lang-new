@@ -1,10 +1,9 @@
 package org.jelik.types;
 
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.compiler.asm.visitor.TypeVisitor;
 import org.jelik.compiler.common.TypeEnum;
 import org.jelik.types.jvm.BooleanWrapperType;
-import org.jelik.types.jvm.IntegerWrapperType;
 import org.jelik.types.jvm.NumberType;
 
 /**
@@ -19,7 +18,7 @@ public class JVMBooleanType extends Type {
     }
 
     @Override
-    public void visit(TypeVisitor typeVisitor, CompilationContext compilationContext) {
+    public void accept(TypeVisitor typeVisitor, CompilationContext compilationContext) {
         typeVisitor.visit(this, compilationContext);
     }
 

@@ -1,9 +1,8 @@
 package org.jelik.parser.ast.expression;
 
 import lombok.Getter;
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.parser.ast.visitors.AstVisitor;
-import org.jelik.parser.ast.Expression;
 import org.jelik.parser.token.LeftParenthesisToken;
 import org.jelik.parser.token.RightParenthesisToken;
 import org.jetbrains.annotations.NotNull;
@@ -11,25 +10,17 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Marcin Bukowiecki
  */
-public class ParenthesisExpression extends ExpressionReferencingType {
+public class ParenthesisExpression extends ExpressionWrapper {
 
     @Getter
     private final LeftParenthesisToken left;
 
     @Getter
-    private final Expression expression;
-
-    @Getter
     private final RightParenthesisToken right;
 
     public ParenthesisExpression(LeftParenthesisToken left, Expression expression, RightParenthesisToken right) {
+        super(expression == null ? EmptyExpression.INSTANCE : expression);
         this.left = left;
-        if (expression != null) {
-            expression.setParent(this);
-            this.expression = expression;
-        } else {
-            this.expression = EmptyExpression.INSTANCE;
-        }
         this.right = right;
     }
 
@@ -54,12 +45,12 @@ public class ParenthesisExpression extends ExpressionReferencingType {
     }
 
     @Override
-    public void visit(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
+    public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
         astVisitor.visit(this, compilationContext);
     }
 
     @Override
     public String toString() {
-        return "" + left + expression + right;
+        return "" + left + getExpression() + right;
     }
 }

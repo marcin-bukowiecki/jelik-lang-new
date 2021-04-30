@@ -1,8 +1,8 @@
 package org.jelik.parser.ast;
 
-import org.jelik.CompilationContext;
-import org.jelik.parser.ast.context.NodeContext;
-import org.jelik.parser.ast.types.TypeParameterListNode;
+import org.jelik.compiler.config.CompilationContext;
+import org.jelik.parser.ast.expression.Expression;
+import org.jelik.parser.ast.types.TypeVariableListNode;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.token.LiteralToken;
 import org.jelik.types.Type;
@@ -11,23 +11,21 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Marcin Bukowiecki
  */
-public class LiteralExpr extends Expression {
+public class LiteralExpr extends ASTNodeImpl implements Expression {
 
     private final LiteralToken literalToken;
 
-    private TypeParameterListNode typeParameterListNode = TypeParameterListNode.Companion.getEMPTY();
-
-    private final NodeContext nodeContext = new NodeContext();
+    private TypeVariableListNode typeParameterListNode = TypeVariableListNode.Companion.getEMPTY();
 
     public LiteralExpr(LiteralToken literalToken) {
         this.literalToken = literalToken;
     }
 
-    public void setTypeParameterListNode(TypeParameterListNode typeParameterListNode) {
+    public void setTypeParameterListNode(TypeVariableListNode typeParameterListNode) {
         this.typeParameterListNode = typeParameterListNode;
     }
 
-    public TypeParameterListNode getTypeParameterListNode() {
+    public TypeVariableListNode getTypeParameterListNode() {
         return typeParameterListNode;
     }
 
@@ -51,27 +49,17 @@ public class LiteralExpr extends Expression {
     }
 
     @Override
-    public void visit(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
+    public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
         astVisitor.visit(this, compilationContext);
     }
 
     @Override
-    public void setFurtherExpression(Expression furtherExpression) {
-        this.furtherExpression = furtherExpression;
-    }
-
-    @Override
-    public NodeContext getNodeContext() {
-        return nodeContext;
-    }
-
-    @Override
-    public void setType(Type type) {
+    public void setType(@NotNull Type type) {
         throw new UnsupportedOperationException("Literal was not resolved");
     }
 
     @Override
-    public void setGenericType(Type type) {
+    public void setGenericType(@NotNull Type type) {
         throw new UnsupportedOperationException("Literal was not resolved");
     }
 
@@ -100,10 +88,14 @@ public class LiteralExpr extends Expression {
         return literalToken.getRow();
     }
 
+    public String getText() {
+        return literalToken.getText();
+    }
+
     @Override
     public String toString() {
         return literalToken
-                + (typeParameterListNode == TypeParameterListNode.Companion.getEMPTY() ? "" : typeParameterListNode.toString())
-                + (furtherExpression == null ? "" : furtherExpression.toString());
+                + (typeParameterListNode == TypeVariableListNode.Companion.getEMPTY() ? "" :
+                typeParameterListNode.toString());
     }
 }

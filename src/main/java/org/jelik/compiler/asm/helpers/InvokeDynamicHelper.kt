@@ -1,7 +1,7 @@
 package org.jelik.compiler.asm.helpers
 
 import org.jelik.compiler.asm.MethodVisitorAdapter
-import org.jelik.compiler.data.LambdaMethodData
+import org.jelik.compiler.data.FunctionReferenceMethodData
 import org.jelik.compiler.data.MethodData
 import org.jelik.types.JVMObjectType
 import org.objectweb.asm.Handle
@@ -13,11 +13,10 @@ import org.objectweb.asm.Type
  */
 object InvokeDynamicHelper {
 
-    fun codeGen(mv: MethodVisitorAdapter, targetFunction: MethodData, lambdaMethod: LambdaMethodData) {
+    fun codeGen(mv: MethodVisitorAdapter, targetFunction: MethodData, functionReferenceMethod: FunctionReferenceMethodData) {
         val targetFunctionName = targetFunction.name
         val targetFunctionDescriptor = targetFunction.descriptor
         val owner = targetFunction.owner.internalName
-        val parameterTypes = targetFunction.parameterTypes
 
         val lambdaMetaFactoryHandler = Handle(Opcodes.H_INVOKESTATIC,
                 "java/lang/invoke/LambdaMetafactory",
@@ -55,7 +54,7 @@ object InvokeDynamicHelper {
 
         mv
                 .visitInvokeDynamicInsn(
-                        lambdaMethod.name,  //method name
+                        functionReferenceMethod.name,  //method name
                         methodSignature,  //method signature
                         lambdaMetaFactoryHandler,
                         Type.getMethodType(Type.getType(JVMObjectType.INSTANCE.descriptor), *interfaceArgs),

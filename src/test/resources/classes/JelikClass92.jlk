@@ -1,2 +1,13 @@
-fun expr(a Int) -> Int { val b = 10 
- ret -a * b }
+
+            fun expr(a Int) -> Int {
+                var b = 123
+                if a > 10 and a < 100 then
+                    b = 1
+                elif a > 100 then
+                    b = 2
+                else 
+                    b = 0
+                end    
+                ret b
+            }
+        

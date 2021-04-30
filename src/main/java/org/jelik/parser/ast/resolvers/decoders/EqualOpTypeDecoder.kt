@@ -1,8 +1,8 @@
 package org.jelik.parser.ast.resolvers.decoders
 
-import org.jelik.CompilationContext
+import org.jelik.compiler.config.CompilationContext
 import org.jelik.compiler.common.TypeEnum
-import org.jelik.parser.ast.Expression
+import org.jelik.parser.ast.expression.Expression
 import org.jelik.parser.ast.NullExpr
 import org.jelik.parser.ast.operators.EqualExpr
 import org.jelik.parser.ast.operators.JumpInstruction
@@ -40,7 +40,7 @@ object EqualOpTypeDecoder {
                     }
                     TypeEnum.objectT -> {
                         if (rightType.isWrapper) {
-                            rightType.visit(CastToVisitor(rightCaller, rightType.primitiveType), ctx)
+                            rightType.accept(CastToVisitor(rightCaller, rightType.primitiveType), ctx)
                         }
                     }
                 }
@@ -73,7 +73,7 @@ object EqualOpTypeDecoder {
                     }
                     TypeEnum.nullT -> {
                         (rightCaller as NullExpr).ignore = true
-                        op.instructionToCall = JumpInstruction.ifnull
+                        op.instructionToCall = JumpInstruction.isNull
                     }
                 }
             }
@@ -91,7 +91,7 @@ object EqualOpTypeDecoder {
                 when(rightType.typeEnum) {
                     TypeEnum.string -> {
                         (leftCaller as NullExpr).ignore = true
-                        op.instructionToCall = JumpInstruction.ifnull
+                        op.instructionToCall = JumpInstruction.isNull
                     }
                 }
             }

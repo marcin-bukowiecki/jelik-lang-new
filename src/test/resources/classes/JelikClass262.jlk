@@ -1,0 +1,1 @@
+fun expr(a java.lang.String, b String) -> String { ret a + b }

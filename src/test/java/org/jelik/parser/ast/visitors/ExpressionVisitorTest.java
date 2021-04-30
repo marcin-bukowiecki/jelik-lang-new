@@ -2,8 +2,8 @@ package org.jelik.parser.ast.visitors;
 
 import org.assertj.core.api.Assertions;
 import org.jelik.parser.ParseContext;
-import org.jelik.parser.ast.DotCallExpr;
-import org.jelik.parser.ast.Expression;
+import org.jelik.parser.ast.ReferenceExpressionImpl;
+import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.LiteralExpr;
 import org.jelik.parser.ast.ReturnExpr;
 import org.jelik.parser.ast.operators.AddExpr;
@@ -28,10 +28,10 @@ public class ExpressionVisitorTest {
         Assertions.assertThat(expr.toString()).isEqualTo("ret a + b");
         Assertions.assertThat(expr)
                 .isInstanceOf(ReturnExpr.class)
-                .matches(e -> e.getFurtherExpressionOpt().isPresent() &&
-                        e.getFurtherExpressionOpt().get() instanceof AddExpr &&
-                        ((AddExpr) e.getFurtherExpressionOpt().get()).getLeft() instanceof LiteralExpr &&
-                        ((AddExpr) e.getFurtherExpressionOpt().get()).getRight() instanceof LiteralExpr);
+                .matches(e ->
+                        ((ReturnExpr) e).getExpression() instanceof AddExpr &&
+                        ((AddExpr) ((ReturnExpr) e).getExpression()).getLeft() instanceof LiteralExpr &&
+                        ((AddExpr) ((ReturnExpr) e).getExpression()).getRight() instanceof LiteralExpr);
     }
 
     @Test
@@ -45,8 +45,8 @@ public class ExpressionVisitorTest {
         Assertions.assertThat(expr.toString()).isEqualTo("ret a.b");
         Assertions.assertThat(expr)
                 .isInstanceOf(ReturnExpr.class)
-                .matches(e -> e.getFurtherExpressionOpt().isPresent() &&
-                        e.getFurtherExpressionOpt().get() instanceof DotCallExpr);
+                .matches(e ->
+                        ((ReturnExpr) e).getExpression() instanceof ReferenceExpressionImpl);
     }
 
     @Test
@@ -60,10 +60,9 @@ public class ExpressionVisitorTest {
         Assertions.assertThat(expr.toString()).isEqualTo("ret a.b.c");
         Assertions.assertThat(expr)
                 .isInstanceOf(ReturnExpr.class)
-                .matches(e -> e.getFurtherExpressionOpt().isPresent() &&
-                        e.getFurtherExpressionOpt().get() instanceof DotCallExpr &&
-                        e.getFurtherExpressionOpt().get().getFurtherExpressionOpt().isPresent() &&
-                        e.getFurtherExpressionOpt().get().getFurtherExpressionOpt().get() instanceof LiteralExpr);
+                .matches(e ->
+                        ((ReturnExpr) e).getExpression() instanceof ReferenceExpressionImpl &&
+                        ((ReferenceExpressionImpl) ((ReturnExpr) e).getExpression()).getReference() instanceof ReferenceExpressionImpl);
     }
 
     @Test
@@ -77,7 +76,7 @@ public class ExpressionVisitorTest {
         Assertions.assertThat(expr.toString()).isEqualTo("ret a.b.c.d");
         Assertions.assertThat(expr)
                 .isInstanceOf(ReturnExpr.class)
-                .matches(e -> e.getFurtherExpression() instanceof DotCallExpr);
+                .matches(e -> ((ReturnExpr) e).getExpression() instanceof ReferenceExpressionImpl);
     }
 
     @Test
@@ -91,7 +90,7 @@ public class ExpressionVisitorTest {
         Assertions.assertThat(expr.toString()).isEqualTo("ret a.b.c().d");
         Assertions.assertThat(expr)
                 .isInstanceOf(ReturnExpr.class)
-                .matches(e -> e.getFurtherExpressionOpt().isPresent() && e.getFurtherExpressionOpt().get() instanceof DotCallExpr);
+                .matches(e -> ((ReturnExpr) e).getExpression() instanceof ReferenceExpressionImpl);
     }
 
     @Test
@@ -105,8 +104,8 @@ public class ExpressionVisitorTest {
         Assertions.assertThat(expr.toString()).isEqualTo("ret a + b * c + d");
         Assertions.assertThat(expr)
                 .isInstanceOf(ReturnExpr.class)
-                .matches(e -> e.getFurtherExpression() instanceof AddExpr &&
-                        ((AddExpr) e.getFurtherExpression()).getRight() instanceof AddExpr);
+                .matches(e -> ((ReturnExpr) e).getExpression() instanceof AddExpr &&
+                        ((AddExpr) ((ReturnExpr) e).getExpression()).getRight() instanceof AddExpr);
     }
 
     @Test

@@ -1,9 +1,10 @@
 package org.jelik.types.resolver;
 
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.compiler.exceptions.TypeCompileException;
 import org.jelik.parser.ast.functions.FunctionDeclaration;
 import org.jelik.parser.ast.functions.CodeEvent;
+import org.jelik.parser.ast.numbers.Int32ToFloat64Node;
 import org.jelik.parser.ast.operators.AddExpr;
 import org.jelik.parser.ast.resolvers.CastToVisitor;
 import org.jelik.parser.ast.strings.StringBuilderAppend;
@@ -23,7 +24,6 @@ public class AddOperatorTypeResolver {
     public static Type resolve(AddExpr addExpr, CompilationContext compilationContext) {
         Type leftType = addExpr.getLeft().getGenericReturnType();
         Type rightType = addExpr.getRight().getGenericReturnType();
-        FunctionDeclaration functionDeclaration = compilationContext.currentFunction();
 
         switch (leftType.getTypeEnum()) {
             case int32:
@@ -31,10 +31,10 @@ public class AddOperatorTypeResolver {
                     case int32:
                         return JVMIntType.INSTANCE;
                     case string:
-                        setupStringBuilder(functionDeclaration, addExpr, compilationContext);
+                        setupStringBuilder(addExpr, compilationContext);
                         return JVMStringType.INSTANCE;
                     case int32Wrapper:
-                        rightType.visit(new CastToVisitor(addExpr.getRight(), JVMIntType.INSTANCE), compilationContext);
+                        rightType.accept(new CastToVisitor(addExpr.getRight(), JVMIntType.INSTANCE), compilationContext);
                         return JVMIntType.INSTANCE;
                     default:
                         throw createException(leftType, rightType, addExpr, compilationContext);
@@ -45,7 +45,7 @@ public class AddOperatorTypeResolver {
                     case int64:
                         return JVMLongType.INSTANCE;
                     case string:
-                        setupStringBuilder(functionDeclaration, addExpr, compilationContext);
+                        setupStringBuilder(addExpr, compilationContext);
                         return JVMStringType.INSTANCE;
                     default:
                         throw createException(leftType, rightType, addExpr, compilationContext);
@@ -59,32 +59,51 @@ public class AddOperatorTypeResolver {
                 }
             case float64:
                 switch (rightType.getTypeEnum()) {
+                    case int32:
+                        addExpr.getRight().getParent().replaceWith(addExpr.getRight(), new Int32ToFloat64Node(addExpr.getRight()));
                     case float64:
                         return JVMDoubleType.INSTANCE;
                     default:
                         throw createException(leftType, rightType, addExpr, compilationContext);
                 }
             case string:
-                setupStringBuilder(functionDeclaration, addExpr, compilationContext);
                 switch (rightType.getTypeEnum()) {
                     case string:
+                        AddOperatorTypeResolver.setupStringBuilder(addExpr, compilationContext);
                         return JVMStringType.INSTANCE;
                 }
             default:
+                switch (rightType.getTypeEnum()) {
+                    case string:
+                        AddOperatorTypeResolver.setupStringBuilder(addExpr, compilationContext);
+                        return JVMStringType.INSTANCE;
+                }
                 throw createException(leftType, rightType, addExpr, compilationContext);
         }
     }
 
-    public static void setupStringBuilder(final FunctionDeclaration functionDeclaration, final AddExpr addExpr, final CompilationContext compilationContext) {
-        boolean stringBuilderInitialized = functionDeclaration.getFunctionContext()
+    public static void setupStringBuilder(final AddExpr addExpr, final CompilationContext compilationContext) {
+        StringBuilderInit stringBuilderInit = new StringBuilderInit();
+        addExpr.getParent().replaceWith(addExpr, stringBuilderInit);
+        final StringBuilderAppend stringBuilderAppend = new StringBuilderAppend(addExpr.getLeft(), compilationContext);
+        stringBuilderInit.setFurtherExpression(stringBuilderAppend);
+        stringBuilderAppend.setFurtherExpression(new StringBuilderAppend(addExpr.getRight(), compilationContext));
+    }
+
+    public static void setupStringBuilder(final FunctionDeclaration functionDeclaration,
+                                          final AddExpr addExpr,
+                                          final CompilationContext compilationContext) {
+
+        final boolean stringBuilderInitialized = functionDeclaration.getFunctionContext()
                 .isStringBuilderInitialized();
 
         if (!stringBuilderInitialized) {
             StringBuilderInit stringBuilderInit = new StringBuilderInit();
-            addExpr.parent.replaceWith(addExpr, stringBuilderInit);
-            stringBuilderInit.setFurtherExpression(new StringBuilderAppend(addExpr.getLeft(), compilationContext));
-            stringBuilderInit.getFurtherExpression().setFurtherExpression(new StringBuilderAppend(addExpr.getRight(), compilationContext));
+            addExpr.getParent().replaceWith(addExpr, stringBuilderInit);
+            StringBuilderAppend stringBuilderAppend = new StringBuilderAppend(addExpr.getLeft(), compilationContext);
+            stringBuilderInit.setFurtherExpression(stringBuilderAppend);
             functionDeclaration.getFunctionContext().addCodeEvent(CodeEvent.stringBuilderInitialized);
+            stringBuilderAppend.setFurtherExpression(addExpr.getRight());
         }
     }
 

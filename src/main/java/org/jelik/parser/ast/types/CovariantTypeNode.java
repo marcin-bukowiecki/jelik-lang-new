@@ -1,9 +1,8 @@
 package org.jelik.parser.ast.types;
 
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.token.ColonToken;
-import org.jelik.parser.token.operators.MulOperator;
 import org.jelik.types.Type;
 import org.jetbrains.annotations.NotNull;
 
@@ -66,7 +65,7 @@ public class CovariantTypeNode extends TypeNode {
     }
 
     @Override
-    public void visit(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
+    public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
         astVisitor.visitCovariantTypeNode(this, compilationContext);
     }
 

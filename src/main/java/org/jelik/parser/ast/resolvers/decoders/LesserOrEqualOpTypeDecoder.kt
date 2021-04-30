@@ -1,16 +1,10 @@
 package org.jelik.parser.ast.resolvers.decoders
 
-import org.jelik.CompilationContext
+import org.jelik.compiler.config.CompilationContext
 import org.jelik.compiler.common.TypeEnum
-import org.jelik.parser.ast.Expression
-import org.jelik.parser.ast.numbers.CharToInt64Node
-import org.jelik.parser.ast.numbers.Int32ToFloat32Node
-import org.jelik.parser.ast.operators.EqualExpr
-import org.jelik.parser.ast.operators.GreaterExpr
-import org.jelik.parser.ast.operators.GreaterOrEqualExpr
+import org.jelik.parser.ast.expression.Expression
 import org.jelik.parser.ast.operators.JumpInstruction
 import org.jelik.parser.ast.operators.LesserOrEqualExpr
-import org.jelik.parser.ast.resolvers.CastToVisitor
 import org.jelik.types.Type
 
 /**

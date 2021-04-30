@@ -1,7 +1,7 @@
 package org.jelik.parser.ast;
 
 import lombok.Getter;
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.parser.ast.types.TypeNode;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.token.Token;
@@ -27,7 +27,7 @@ public class ImportDeclaration extends TypeNode {
     }
 
     @Override
-    public void visit(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
+    public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
         astVisitor.visitImportDeclaration(this, compilationContext);
     }
 
@@ -43,5 +43,10 @@ public class ImportDeclaration extends TypeNode {
     @Override
     public String getSymbol() {
         return toString();
+    }
+
+    @Override
+    public int getEndRow() {
+        return tokens.get(tokens.size()-1).getEndRow();
     }
 }

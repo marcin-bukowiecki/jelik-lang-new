@@ -1,9 +1,8 @@
 package org.jelik.parser.ast.expression;
 
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
+import org.jelik.parser.ast.ASTNodeImpl;
 import org.jelik.parser.ast.visitors.AstVisitor;
-import org.jelik.parser.ast.Expression;
-import org.jelik.parser.ast.context.NodeContext;
 import org.jelik.types.JVMVoidType;
 import org.jelik.types.Type;
 import org.jetbrains.annotations.NotNull;
@@ -11,24 +10,17 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Marcin Bukowiecki
  */
-public class EmptyExpression extends Expression {
+public class EmptyExpression extends ASTNodeImpl implements Expression {
 
     public static final EmptyExpression INSTANCE = new EmptyExpression();
 
-    private final NodeContext nodeContext = new NodeContext();
-
     @Override
-    public NodeContext getNodeContext() {
-        return nodeContext;
-    }
-
-    @Override
-    public void setType(Type type) {
+    public void setType(@NotNull Type type) {
 
     }
 
     @Override
-    public void setGenericType(Type type) {
+    public void setGenericType(@NotNull Type type) {
 
     }
 
@@ -38,7 +30,7 @@ public class EmptyExpression extends Expression {
     }
 
     @Override
-    public void visit(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
+    public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
 
     }
 

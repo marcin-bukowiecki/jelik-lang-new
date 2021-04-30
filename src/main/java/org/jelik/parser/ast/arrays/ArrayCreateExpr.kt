@@ -1,7 +1,7 @@
 package org.jelik.parser.ast.arrays
 
-import org.jelik.CompilationContext
-import org.jelik.parser.ast.Expression
+import org.jelik.compiler.config.CompilationContext
+import org.jelik.parser.ast.expression.Expression
 import org.jelik.parser.ast.expression.ExpressionWithType
 import org.jelik.parser.ast.visitors.AstVisitor
 import org.jelik.parser.token.LeftBracketToken
@@ -12,9 +12,9 @@ import org.jelik.parser.token.RightBracketToken
  *
  * @author Marcin Bukowiecki
  */
-open class ArrayCreateExpr(private val leftBracket: LeftBracketToken,
-                      val expressions: ArrayList<Expression>,
-                      private val rightBracket: RightBracketToken) : ExpressionWithType() {
+open class ArrayCreateExpr(protected val leftBracket: LeftBracketToken,
+                           val expressions: MutableList<Expression>,
+                           protected val rightBracket: RightBracketToken) : ExpressionWithType() {
 
     init {
         expressions.forEach { expr -> expr.parent = this }
@@ -31,8 +31,8 @@ open class ArrayCreateExpr(private val leftBracket: LeftBracketToken,
         expressions[pos] = newNode
     }
 
-    override fun visit(astVisitor: AstVisitor, compilationContext: CompilationContext) {
-        astVisitor.visit(this, compilationContext)
+    override fun accept(astVisitor: AstVisitor, compilationContext: CompilationContext) {
+        astVisitor.visitArrayCreateExpr(this, compilationContext)
     }
 
     override fun getStartCol(): Int {
@@ -54,7 +54,6 @@ open class ArrayCreateExpr(private val leftBracket: LeftBracketToken,
     override fun toString(): String {
         return leftBracket.toString() +
                 expressions.joinToString(separator = ",", transform = { expr -> expr.toString() }) +
-                rightBracket.toString() +
-                furtherExpressionOpt.map { expr -> expr.toString() }.orElse("")
+                rightBracket.toString()
     }
 }

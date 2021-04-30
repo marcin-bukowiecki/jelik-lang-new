@@ -1,7 +1,7 @@
 package org.jelik.parser.ast.functions;
 
-import org.jelik.CompilationContext;
-import org.jelik.parser.ast.ASTNode;
+import org.jelik.compiler.config.CompilationContext;
+import org.jelik.parser.ast.ASTNodeImpl;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.token.LeftParenthesisToken;
 import org.jelik.parser.token.RightParenthesisToken;
@@ -14,14 +14,11 @@ import java.util.stream.Collectors;
 /**
  * @author Marcin Bukowiecki
  */
-public class FunctionParameterList extends ASTNode {
-
-    public static final FunctionParameterList EMPTY = new FunctionParameterList(new LeftParenthesisToken(-1, -1),
-            Collections.emptyList(), new RightParenthesisToken(-1, -1));
+public class FunctionParameterList extends ASTNodeImpl {
 
     private final LeftParenthesisToken leftParenthesisToken;
 
-    private final List<FunctionParameter> functionParameters;
+    protected final List<FunctionParameter> functionParameters;
 
     private final RightParenthesisToken rightParenthesisToken;
 
@@ -32,8 +29,14 @@ public class FunctionParameterList extends ASTNode {
         this.functionParameters = functionParameters;
         this.rightParenthesisToken = rightParenthesisToken;
         for (FunctionParameter functionParameter : functionParameters) {
-            functionParameter.parent = this;
+            functionParameter.setParent(this);
         }
+    }
+
+    public static @NotNull FunctionParameterList createEmpty() {
+        return new FunctionParameterList(LeftParenthesisToken.DUMMY,
+                Collections.emptyList(),
+                RightParenthesisToken.DUMMY);
     }
 
     public LeftParenthesisToken getLeftParenthesisToken() {
@@ -56,7 +59,7 @@ public class FunctionParameterList extends ASTNode {
     }
 
     @Override
-    public void visit(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
+    public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
         astVisitor.visitFunctionParameterList(this, compilationContext);
     }
 }

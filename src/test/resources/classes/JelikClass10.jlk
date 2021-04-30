@@ -1,1 +1,4 @@
-fun expr() -> Int {   ret [1,2,3,4][3]}
+fun expr() -> []Short { 
+var foo = [1,2,3,4,5]Short
+ret foo[1:3] 
+}

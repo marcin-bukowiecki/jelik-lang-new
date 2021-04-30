@@ -1,10 +1,11 @@
 package org.jelik.compiler.asm.visitor;
 
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.compiler.asm.MethodVisitorAdapter;
 import org.jelik.types.JVMBooleanType;
 import org.jelik.types.JVMIntType;
 import org.jelik.types.JVMObjectType;
+import org.jelik.types.JVMVoidType;
 import org.jelik.types.Type;
 import org.jelik.types.jvm.IntegerWrapperType;
 import org.jelik.types.jvm.JVMByteType;
@@ -72,8 +73,13 @@ public class ByteCodeReturnInstructionVisitor extends TypeVisitor {
     }
 
     @Override
-    public void visit(@NotNull IntegerWrapperType type, @NotNull CompilationContext compilationContext) {
+    public void visit(@NotNull JVMVoidType type, @NotNull CompilationContext compilationContext) {
+        methodVisitorAdapter.visitReturn();
+    }
 
+    @Override
+    public void visit(@NotNull IntegerWrapperType type, @NotNull CompilationContext compilationContext) {
+        methodVisitorAdapter.visitAReturn();
     }
 
     @Override

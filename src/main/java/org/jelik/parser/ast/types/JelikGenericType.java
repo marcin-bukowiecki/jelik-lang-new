@@ -16,8 +16,12 @@
 
 package org.jelik.parser.ast.types;
 
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.compiler.common.TypeEnum;
+import org.jelik.compiler.data.ClassData;
+import org.jelik.types.JVMObjectType;
 import org.jelik.types.Type;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Marcin Bukowiecki
@@ -25,7 +29,12 @@ import org.jelik.types.Type;
 public class JelikGenericType extends Type {
 
     public JelikGenericType(String name) {
-        super(name, name, TypeEnum.generic);
+        super(name, name, TypeEnum.objectT);
+    }
+
+    @Override
+    public String forErrorMessage() {
+        return getErasedCanonicalName();
     }
 
     public String getTypeSignature() {
@@ -41,6 +50,22 @@ public class JelikGenericType extends Type {
     }
 
     @Override
+    public String getInternalName() {
+        return "java/lang/Object";
+    }
+
+    @Override
+    public String getDescriptor() {
+        return "Ljava/lang/Object;";
+    }
+
+    @Override
+    public ClassData findClassData(@NotNull CompilationContext compilationContext) {
+        return JVMObjectType.INSTANCE.findClassData(compilationContext);
+    }
+
+    @Override
+    @NotNull
     public String getCanonicalName() {
         return getErasedCanonicalName();
     }

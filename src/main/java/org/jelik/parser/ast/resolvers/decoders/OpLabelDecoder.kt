@@ -1,6 +1,7 @@
 package org.jelik.parser.ast.resolvers.decoders
 
-import org.jelik.CompilationContext
+import org.jelik.compiler.config.CompilationContext
+import org.jelik.parser.ast.loops.WhileLoopImpl
 import org.jelik.parser.ast.operators.AbstractLogicalOpExpr
 import org.jelik.parser.ast.operators.AndExpr
 import org.jelik.parser.ast.operators.EqualExpr
@@ -19,6 +20,13 @@ object OpLabelDecoder {
             op.falseLabelNode = ctx.createLabel("equal-false")
             return
         }
+
+        if (parent is WhileLoopImpl) {
+            op.trueLabelNode = parent.loopStart
+            op.falseLabelNode = parent.loopEnd
+            return
+        }
+
 /*
         if (parent is WhileNode || parent is DoNode) {
             abstractBooleanExpression.setLabelIndexes(parent.getTrueLabel(), parent.getFalseLabel())

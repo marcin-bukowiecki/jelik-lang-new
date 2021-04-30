@@ -1,10 +1,13 @@
 package org.jelik.parser.ast.operators;
 
-import org.jelik.parser.ast.ConsumingExpression;
-import org.jelik.parser.ast.Expression;
+import org.jelik.parser.ast.ASTNode;
+import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.expression.ExpressionWithType;
 import org.jelik.parser.token.operators.AbstractOperator;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Marcin Bukowiecki
@@ -19,16 +22,24 @@ public abstract class AbstractOpExpr extends ExpressionWithType {
 
     public AbstractOpExpr(Expression left, AbstractOperator op, Expression right) {
         this.left = left;
-        left.parent = this;
+        left.setParent(this);
         this.op = op;
         this.right = right;
-        right.parent = this;
+        right.setParent(this);
     }
 
     public AbstractOpExpr(AbstractOperator op, Expression right) {
         this.op = op;
         this.right = right;
-        right.parent = this;
+        right.setParent(this);
+    }
+
+    @Override
+    public @NotNull List<ASTNode> getChildren() {
+        List<ASTNode> result = new ArrayList<>();
+        if (left != null) result.add(left);
+        if (right != null) result.add(right);
+        return result;
     }
 
     public AbstractOperator getOp() {
@@ -39,10 +50,10 @@ public abstract class AbstractOpExpr extends ExpressionWithType {
     public void replaceWith(@NotNull Expression oldNode, @NotNull Expression newNode) {
         if (left == oldNode) {
             left = newNode;
-            newNode.parent = this;
+            newNode.setParent(this);
         } else if (right == oldNode) {
             right = newNode;
-            newNode.parent = this;
+            newNode.setParent(this);
         } else {
             throw new IllegalArgumentException("Could not find given old node to replace: " + oldNode);
         }

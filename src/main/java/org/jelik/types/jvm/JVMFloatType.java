@@ -16,9 +16,12 @@
 
 package org.jelik.types.jvm;
 
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.compiler.asm.visitor.TypeVisitor;
 import org.jelik.compiler.common.TypeEnum;
+import org.jelik.parser.ast.expression.Expression;
+import org.jelik.parser.ast.numbers.Int32ToFloat32Node;
+import org.jelik.types.JVMIntType;
 import org.jelik.types.Type;
 
 /**
@@ -33,7 +36,7 @@ public class JVMFloatType extends NumberType {
     }
 
     @Override
-    public void visit(TypeVisitor typeVisitor, CompilationContext compilationContext) {
+    public void accept(TypeVisitor typeVisitor, CompilationContext compilationContext) {
         typeVisitor.visit(this, compilationContext);
     }
 
@@ -79,5 +82,15 @@ public class JVMFloatType extends NumberType {
     @Override
     public NumberType getWrapperType() {
         return FloatWrapperType.INSTANCE;
+    }
+
+    @Override
+    public void castFrom(Expression expression, JVMIntType type, CompilationContext compilationContext) {
+        expression.getParent().replaceWith(expression, new Int32ToFloat32Node(expression));
+    }
+
+    @Override
+    public void castFrom(Expression expression, JVMFloatType type, CompilationContext compilationContext) {
+
     }
 }

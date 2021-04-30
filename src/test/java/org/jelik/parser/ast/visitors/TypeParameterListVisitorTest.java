@@ -3,7 +3,7 @@ package org.jelik.parser.ast.visitors;
 import org.assertj.core.api.Assertions;
 import org.jelik.parser.Lexer;
 import org.jelik.parser.ParseContext;
-import org.jelik.parser.ast.types.TypeParameterListNode;
+import org.jelik.parser.ast.types.TypeVariableListNode;
 import org.jelik.parser.ast.types.WildCardTypeNode;
 import org.jelik.parser.token.Token;
 import org.jelik.parser.token.operators.LesserOperator;
@@ -22,7 +22,7 @@ public class TypeParameterListVisitorTest {
         var expr = "<T, R, B>";
         var lexer = Lexer.of(expr);
         final Token nextToken = lexer.nextToken();
-        final TypeParameterListNode visit = new TypeParameterListVisitor(((LesserOperator) nextToken)).visit(new ParseContext(lexer));
+        final TypeVariableListNode visit = new TypeParameterListVisitor(((LesserOperator) nextToken)).visit(new ParseContext(lexer));
         Assertions.assertThat(visit.getTypes().stream().map(Object::toString).collect(Collectors.toList()))
                 .isEqualTo(List.of("T", "R", "B"));
     }
@@ -32,7 +32,7 @@ public class TypeParameterListVisitorTest {
         var expr = "<T>";
         var lexer = Lexer.of(expr);
         final Token nextToken = lexer.nextToken();
-        final TypeParameterListNode visit = new TypeParameterListVisitor(((LesserOperator) nextToken)).visit(new ParseContext(lexer));
+        final TypeVariableListNode visit = new TypeParameterListVisitor(((LesserOperator) nextToken)).visit(new ParseContext(lexer));
         Assertions.assertThat(visit.getTypes().stream().map(Object::toString).collect(Collectors.toList()))
                 .isEqualTo(List.of("T"));
     }
@@ -42,7 +42,7 @@ public class TypeParameterListVisitorTest {
         var expr = "<T, *, B>";
         var lexer = Lexer.of(expr);
         final Token nextToken = lexer.nextToken();
-        final TypeParameterListNode visit = new TypeParameterListVisitor(((LesserOperator) nextToken)).visit(new ParseContext(lexer));
+        final TypeVariableListNode visit = new TypeParameterListVisitor(((LesserOperator) nextToken)).visit(new ParseContext(lexer));
         Assertions.assertThat(visit.getTypes().stream().map(Object::toString).collect(Collectors.toList()))
                 .isEqualTo(List.of("T", "*", "B"));
         Assertions.assertThat(visit.getTypes().get(1))
@@ -54,7 +54,7 @@ public class TypeParameterListVisitorTest {
         var expr = "<T : Runnable, R>";
         var lexer = Lexer.of(expr);
         final Token nextToken = lexer.nextToken();
-        final TypeParameterListNode visit = new TypeParameterListVisitor(((LesserOperator) nextToken)).visit(new ParseContext(lexer));
+        final TypeVariableListNode visit = new TypeParameterListVisitor(((LesserOperator) nextToken)).visit(new ParseContext(lexer));
         Assertions.assertThat(visit.getTypes().stream().map(Object::toString).collect(Collectors.toList()))
                 .isEqualTo(List.of("T : Runnable", "R"));
     }
@@ -64,7 +64,7 @@ public class TypeParameterListVisitorTest {
         var expr = "<S, T : Runnable, R>";
         var lexer = Lexer.of(expr);
         final Token nextToken = lexer.nextToken();
-        final TypeParameterListNode visit = new TypeParameterListVisitor(((LesserOperator) nextToken)).visit(new ParseContext(lexer));
+        final TypeVariableListNode visit = new TypeParameterListVisitor(((LesserOperator) nextToken)).visit(new ParseContext(lexer));
         Assertions.assertThat(visit.getTypes().stream().map(Object::toString).collect(Collectors.toList()))
                 .isEqualTo(List.of("S", "T : Runnable", "R"));
     }
@@ -74,7 +74,7 @@ public class TypeParameterListVisitorTest {
         var expr = "<S, T : Runnable>";
         var lexer = Lexer.of(expr);
         final Token nextToken = lexer.nextToken();
-        final TypeParameterListNode visit = new TypeParameterListVisitor(((LesserOperator) nextToken)).visit(new ParseContext(lexer));
+        final TypeVariableListNode visit = new TypeParameterListVisitor(((LesserOperator) nextToken)).visit(new ParseContext(lexer));
         Assertions.assertThat(visit.getTypes().stream().map(Object::toString).collect(Collectors.toList()))
                 .isEqualTo(List.of("S", "T : Runnable"));
     }
@@ -84,7 +84,7 @@ public class TypeParameterListVisitorTest {
         var expr = "<S, T<*>>";
         var lexer = Lexer.of(expr);
         final Token nextToken = lexer.nextToken();
-        final TypeParameterListNode visit = new TypeParameterListVisitor(((LesserOperator) nextToken)).visit(new ParseContext(lexer));
+        final TypeVariableListNode visit = new TypeParameterListVisitor(((LesserOperator) nextToken)).visit(new ParseContext(lexer));
         Assertions.assertThat(visit.toString())
                 .isEqualTo("<S,T<*>>");
     }

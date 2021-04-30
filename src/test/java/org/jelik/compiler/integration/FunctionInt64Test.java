@@ -77,7 +77,7 @@ public class FunctionInt64Test {
         FunctionCompiler.getInstance()
                 .compile(expr)
                 .invoke("expr", 1200L)
-                .isEqualTo(10L);
+                .isEqualTo(120L);
     }
 
     @Test
@@ -167,7 +167,7 @@ public class FunctionInt64Test {
         FunctionCompiler.getInstance()
                 .compile(expr)
                 .invoke("expr", 12L, 11L)
-                .isEqualTo(8L);
+                .isEqualTo(15L);
     }
 
     @Test
@@ -176,6 +176,78 @@ public class FunctionInt64Test {
         FunctionCompiler.getInstance()
                 .compile(expr)
                 .invoke("expr", 12L, 11)
-                .isEqualTo(8L);
+                .isEqualTo(15L);
+    }
+
+    @Test
+    public void shouldLongShiftRight_1() {
+        var expr = "fun expr(a Long, b Long) -> Long { ret a shr b }";
+        FunctionCompiler.getInstance()
+                .compile(expr)
+                .invoke("expr", 12, 11)
+                .isEqualTo(0L);
+    }
+
+    @Test
+    public void shouldLongShiftRight_2() {
+        var expr = "fun expr(a Long, b Long) -> Long { ret a shr b }";
+        FunctionCompiler.getInstance()
+                .compile(expr)
+                .invoke("expr", 14, 2)
+                .isEqualTo(3L);
+    }
+
+    @Test
+    public void shouldLongShiftRight_3() {
+        var expr = "fun expr(a Long, b Int) -> Long { ret a shr b }";
+        FunctionCompiler.getInstance()
+                .compile(expr)
+                .invoke("expr", 14, 2)
+                .isEqualTo(3L);
+    }
+
+    @Test
+    public void shouldLongUnsignedShiftRight_1() {
+        var expr = "fun expr(a Long, b Long) -> Long { ret a ushr b }";
+        FunctionCompiler.getInstance()
+                .compile(expr)
+                .invoke("expr", 12, 11)
+                .isEqualTo(0L);
+    }
+
+    @Test
+    public void shouldLongUnsignedShiftRight_2() {
+        var expr = "fun expr(a Long, b Long) -> Long { ret a ushr b }";
+        FunctionCompiler.getInstance()
+                .compile(expr)
+                .invoke("expr", 14, 2)
+                .isEqualTo(3L);
+    }
+
+    @Test
+    public void shouldLongShiftLeft_1() {
+        var expr = "fun expr(a Long, b Long) -> Long { ret a shl b }";
+        FunctionCompiler.getInstance()
+                .compile(expr)
+                .invoke("expr", 12, 11)
+                .isEqualTo(24576L);
+    }
+
+    @Test
+    public void shouldLongShiftLeft_2() {
+        var expr = "fun expr(a Long, b Long) -> Long { ret a shl b }";
+        FunctionCompiler.getInstance()
+                .compile(expr)
+                .invoke("expr", 14, 2)
+                .isEqualTo(56L);
+    }
+
+    @Test
+    public void shouldLongShiftLeft_3() {
+        var expr = "fun expr(a Long, b Int) -> Long { ret a shl b }";
+        FunctionCompiler.getInstance()
+                .compile(expr)
+                .invoke("expr", 14, 2)
+                .isEqualTo(56L);
     }
 }

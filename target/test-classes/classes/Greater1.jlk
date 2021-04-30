@@ -1,6 +1,0 @@
-fun greater(a Int, b Int) -> Int {    if (a > b) then
-       ret a
-   else
-       ret b
-   end
-}

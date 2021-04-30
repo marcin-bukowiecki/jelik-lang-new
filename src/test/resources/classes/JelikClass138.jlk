@@ -1,1 +1,1 @@
-fun expression(a Long, b Long) -> Long { ret a + b }
+fun expr(a Float) -> Boolean { ret a < 0 or a < 123 }

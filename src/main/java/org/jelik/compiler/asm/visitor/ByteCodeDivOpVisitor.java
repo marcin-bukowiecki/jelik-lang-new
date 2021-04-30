@@ -1,6 +1,6 @@
 package org.jelik.compiler.asm.visitor;
 
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.compiler.asm.MethodVisitorAdapter;
 import org.jelik.types.JVMBooleanType;
 import org.jelik.types.JVMIntType;
@@ -50,7 +50,7 @@ public class ByteCodeDivOpVisitor extends TypeVisitor {
 
     @Override
     public void visit(@NotNull JVMLongType type, @NotNull CompilationContext compilationContext) {
-        //methodVisitorAdapter.visitLongAdd();
+        methodVisitorAdapter.visitLongDiv();
     }
 
     @Override

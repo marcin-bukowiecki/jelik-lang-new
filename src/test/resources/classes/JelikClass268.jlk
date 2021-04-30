@@ -1,0 +1,7 @@
+import java.util.ArrayList
+
+fun expr(a Int) -> Boolean { 
+   val b = ArrayList<Int>()
+   b.add(123)
+   ret b.get(0) is Int
+}

@@ -1,6 +1,7 @@
 package org.jelik.parser;
 
 import com.google.common.collect.Lists;
+import org.jelik.parser.ast.functions.LambdaDeclaration;
 import org.jelik.parser.token.keyword.Modifier;
 
 import java.util.List;
@@ -11,6 +12,8 @@ import java.util.List;
 public class ParseContext {
 
     public List<Modifier> modifiersStack = Lists.newArrayList();
+
+    public List<LambdaDeclaration> lambdaDeclarations = Lists.newArrayList();
 
     private final Lexer lexer;
 
@@ -28,5 +31,16 @@ public class ParseContext {
 
     public String getCurrentFilePath() {
         return lexer.getScanner().getCp().getFileAbsolutePath();
+    }
+
+    public LambdaDeclaration addLambdaDeclaration(LambdaDeclaration lambdaDeclaration) {
+        this.lambdaDeclarations.add(lambdaDeclaration);
+        return lambdaDeclaration;
+    }
+
+    public List<Modifier> getModifiersAndReset() {
+        var temp = modifiersStack;
+        this.modifiersStack = Lists.newArrayList();
+        return temp;
     }
 }

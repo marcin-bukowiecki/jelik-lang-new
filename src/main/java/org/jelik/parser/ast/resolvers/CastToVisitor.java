@@ -1,8 +1,8 @@
 package org.jelik.parser.ast.resolvers;
 
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.compiler.asm.visitor.TypeVisitor;
-import org.jelik.parser.ast.Expression;
+import org.jelik.parser.ast.expression.Expression;
 import org.jelik.types.JVMBooleanType;
 import org.jelik.types.JVMIntType;
 import org.jelik.types.JVMNullType;
@@ -26,7 +26,7 @@ public class CastToVisitor extends TypeVisitor {
 
     private final Type target;
 
-    public CastToVisitor(Expression from, Type target) {
+    public CastToVisitor(@NotNull Expression from, @NotNull Type target) {
         this.from = from;
         this.target = target;
     }

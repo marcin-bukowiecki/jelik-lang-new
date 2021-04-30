@@ -1,61 +1,50 @@
 package org.jelik.parser.ast;
 
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
+import org.jelik.parser.ast.common.DupNodeImpl;
+import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.visitors.AstVisitor;
-import org.jelik.types.Type;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
+import java.util.Collections;
+import java.util.List;
 
 /**
- * Base class for Abstract Syntax Tree node
- *
  * @author Marcin Bukowiecki
  */
-public abstract class ASTNode {
+public interface ASTNode {
 
-    public ASTNode parent;
+    int getStartCol();
 
-    public abstract void visit(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext);
+    int getStartRow();
 
-    public void replaceWith(@NotNull Expression oldNode, @NotNull Expression newNode) {
+    int getEndCol();
+
+    int getEndRow();
+
+    @NotNull
+    ASTNode getParent();
+
+    void setParent(@NotNull ASTNode parent);
+
+    void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext);
+
+    boolean isZero();
+
+    void setIgnored(boolean ignored);
+
+    boolean isIgnored();
+
+    default @NotNull List<? extends ASTNode> getChildren() {
+        return Collections.emptyList();
+    }
+
+    default void replaceWith(@NotNull Expression oldNode, @NotNull Expression newNode) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 
-    public Type getPrevType() {
-        Objects.requireNonNull(parent, "parent is null for: " + this.getClass().getCanonicalName());
-        return parent.getPrevType();
-    }
-
-    public ASTNode getParent() {
-        return parent;
-    }
-
-    public void setParent(ASTNode parent) {
-        this.parent = parent;
-    }
-
-    public boolean isLogical() {
-        return false;
-    }
-
-    public int getStartCol() {
-        return -1;
-    }
-
-    public int getStartRow() {
-        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
-    }
-
-    public int getEndCol() {
-        return -1;
-    }
-
-    public int getEndRow() {
-        return -1;
-    }
-
-    public boolean isZero() {
-        return false;
+    default Expression replaceWithAndReturn(@NotNull Expression oldNode, @NotNull Expression newNode) {
+        replaceWith(oldNode, newNode);
+        return newNode;
     }
 }

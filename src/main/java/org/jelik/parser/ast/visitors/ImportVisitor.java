@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import org.jelik.parser.Lexer;
 import org.jelik.parser.ParseContext;
 import org.jelik.parser.ast.ImportDeclaration;
-import org.jelik.parser.ast.ParseVisitor;
+import org.jelik.parser.ast.TokenVisitor;
 import org.jelik.parser.token.ElementType;
 import org.jelik.parser.token.Token;
 import org.jelik.parser.token.keyword.ImportKeyword;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Marcin Bukowiecki
  */
-public class ImportVisitor implements ParseVisitor<ImportDeclaration> {
+public class ImportVisitor implements TokenVisitor<ImportDeclaration> {
 
     private final ImportKeyword importKeyword;
 

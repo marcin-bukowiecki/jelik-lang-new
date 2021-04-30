@@ -1,4 +1,1 @@
-fun toCall() -> Int { ret 123 }
-fun expr(a Int) -> Int {
-   val b = toCall
-   ret b() + a}
+fun expr() -> Short {   ret [3 as Short,4 as Short][1]}

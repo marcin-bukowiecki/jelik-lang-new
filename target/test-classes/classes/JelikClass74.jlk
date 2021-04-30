@@ -1,1 +1,0 @@
-fun expr(a Float) -> Double { ret a as Double }

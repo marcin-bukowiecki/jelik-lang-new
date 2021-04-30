@@ -1,1 +1,1 @@
-fun expr(a Object, b Object) -> Boolean { ret a == b }
+fun expr() -> []Int {   ret [1,2,3,4]}

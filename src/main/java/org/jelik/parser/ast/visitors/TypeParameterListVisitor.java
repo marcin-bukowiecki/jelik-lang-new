@@ -1,10 +1,10 @@
 package org.jelik.parser.ast.visitors;
 
 import org.jelik.parser.ParseContext;
-import org.jelik.parser.ast.ParseVisitor;
+import org.jelik.parser.ast.TokenVisitor;
 import org.jelik.parser.ast.types.CovariantTypeNode;
 import org.jelik.parser.ast.types.TypeNode;
-import org.jelik.parser.ast.types.TypeParameterListNode;
+import org.jelik.parser.ast.types.TypeVariableListNode;
 import org.jelik.parser.ast.types.WildCardTypeNode;
 import org.jelik.parser.token.ColonToken;
 import org.jelik.parser.token.CommaToken;
@@ -24,7 +24,7 @@ import java.util.List;
  *
  * @author Marcin Bukowiecki
  */
-public class TypeParameterListVisitor implements ParseVisitor<TypeParameterListNode> {
+public class TypeParameterListVisitor implements TokenVisitor<TypeVariableListNode> {
 
     private final LesserOperator token;
 
@@ -38,12 +38,12 @@ public class TypeParameterListVisitor implements ParseVisitor<TypeParameterListN
 
     @NotNull
     @Override
-    public TypeParameterListNode visit(@NotNull ParseContext parseContext) {
+    public TypeVariableListNode visit(@NotNull ParseContext parseContext) {
         var lexer = parseContext.getLexer();
 
         while (lexer.hasNextToken()) {
             final Token nextToken = lexer.nextToken();
-            nextToken.visit(this, parseContext);
+            nextToken.accept(this, parseContext);
             if (lexer.getCurrent().getTokenType() == ElementType.comma) {
                 commas.add(((CommaToken) lexer.getCurrent()));
             }
@@ -51,7 +51,7 @@ public class TypeParameterListVisitor implements ParseVisitor<TypeParameterListN
                 break;
             }
         }
-        return new TypeParameterListNode(this.token, types, commas, ((GreaterOperator) lexer.getCurrent()));
+        return new TypeVariableListNode(this.token, types, commas, ((GreaterOperator) lexer.getCurrent()));
     }
 
     @Override

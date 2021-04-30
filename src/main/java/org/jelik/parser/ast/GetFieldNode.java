@@ -1,9 +1,8 @@
 package org.jelik.parser.ast;
 
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.compiler.data.FieldData;
-import org.jelik.compiler.locals.LocalVariable;
-import org.jelik.parser.ast.expression.ExpressionReferencingType;
+import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.expression.ExpressionWithType;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.token.LiteralToken;
@@ -23,13 +22,12 @@ public class GetFieldNode extends ExpressionWithType {
     }
 
     @Override
-    public void visit(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
+    public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
         astVisitor.visit(this, compilationContext);
     }
 
-    @Override
-    public void replaceWith(@NotNull Expression oldNode, @NotNull Expression newNode) {
-        setFurtherExpression(newNode);
+    public Expression getCallingReference() {
+        return ((ReferenceExpressionImpl) getParent()).getReference();
     }
 
     @Override
@@ -43,22 +41,16 @@ public class GetFieldNode extends ExpressionWithType {
     }
 
     public Type getReturnType() {
-        if (furtherExpression != null) {
-            return furtherExpression.getReturnType();
-        }
         return getType();
     }
 
     public Type getGenericReturnType() {
-        if (furtherExpression != null) {
-            return furtherExpression.getGenericReturnType();
-        }
         return getGenericType();
     }
 
     @Override
     public String toString() {
-        return literalToken.toString() + (furtherExpression != null ? furtherExpression.toString() : "");
+        return literalToken.toString();
     }
 
     @Override

@@ -259,4 +259,92 @@ public class FunctionInt32Test {
                 .invoke("expr", 12, 11)
                 .isEqualTo(7);
     }
+
+    @Test
+    public void shouldIntShiftRight_1() {
+        var expr = "fun expr(a Int, b Int) -> Int { ret a shr b }";
+        FunctionCompiler.getInstance()
+                .compile(expr)
+                .invoke("expr", 12, 11)
+                .isEqualTo(0);
+    }
+
+    @Test
+    public void shouldIntShiftRight_2() {
+        var expr = "fun expr(a Int, b Int) -> Int { ret a shr b }";
+        FunctionCompiler.getInstance()
+                .compile(expr)
+                .invoke("expr", 14, 2)
+                .isEqualTo(3);
+    }
+
+    @Test
+    public void shouldIntUnsignedShiftRight_1() {
+        var expr = "fun expr(a Int, b Int) -> Int { ret a ushr b }";
+        FunctionCompiler.getInstance()
+                .compile(expr)
+                .invoke("expr", 12, 11)
+                .isEqualTo(0);
+    }
+
+    @Test
+    public void shouldIntUnsignedShiftRight_2() {
+        var expr = "fun expr(a Int, b Int) -> Int { ret a ushr b }";
+        FunctionCompiler.getInstance()
+                .compile(expr)
+                .invoke("expr", 14, 2)
+                .isEqualTo(3);
+    }
+
+    @Test
+    public void shouldIntShiftLeft_1() {
+        var expr = "fun expr(a Int, b Int) -> Int { ret a shl b }";
+        FunctionCompiler.getInstance()
+                .compile(expr)
+                .invoke("expr", 12, 11)
+                .isEqualTo(24576);
+    }
+
+    @Test
+    public void shouldIntShiftLeft_2() {
+        var expr = "fun expr(a Int, b Int) -> Int { ret a shl b }";
+        FunctionCompiler.getInstance()
+                .compile(expr)
+                .invoke("expr", 14, 2)
+                .isEqualTo(56);
+    }
+
+    @Test
+    public void testLifting_1() {
+        var expr = "fun expr(a Int) -> Int { ret a.hashCode() }";
+        FunctionCompiler.getInstance()
+                .compile(expr)
+                .invoke("expr", 14)
+                .isEqualTo(14);
+    }
+
+    @Test
+    public void testLifting_2() {
+        var expr = "fun expr(a Int) -> String { ret a.toString() }";
+        FunctionCompiler.getInstance()
+                .compile(expr)
+                .invoke("expr", 14)
+                .isEqualTo("14");
+    }
+
+    @Test
+    public void testLifting_3() {
+        var expr = "fun expr(a Int, b Int) -> Boolean { ret a.equals(b) }";
+        FunctionCompiler.getInstance()
+                .compile(expr)
+                .invoke("expr", 14, 15)
+                .isEqualTo(false);
+    }
+
+    @Test
+    public void testLifting_4() {
+        var expr = "fun expr(a Int, b Int) -> String { ret a.equals(b) }";
+        FunctionCompiler.getInstance()
+                .compileAndExpectError(expr, "Function must return java.lang.String, given boolean");
+    }
 }

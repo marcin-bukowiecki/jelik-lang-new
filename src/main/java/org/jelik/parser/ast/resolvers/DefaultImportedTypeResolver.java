@@ -1,7 +1,7 @@
 package org.jelik.parser.ast.resolvers;
 
 import com.google.common.collect.Maps;
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.ast.types.SingleTypeNode;
 import org.jelik.types.JVMObjectType;
@@ -28,7 +28,10 @@ public class DefaultImportedTypeResolver extends AstVisitor {
 
     static {
         defaultClasses.put("String", JVMStringType.INSTANCE);
+
         defaultClasses.put("Object", JVMObjectType.INSTANCE);
+        defaultClasses.put("Any", JVMObjectType.INSTANCE);
+
         defaultClasses.put("System", Type.of(System.class));
         defaultClasses.put("StringBuilder", Type.of(StringBuilder.class));
 
@@ -55,6 +58,8 @@ public class DefaultImportedTypeResolver extends AstVisitor {
         defaultClasses.put("java.lang.Short", ShortWrapperType.INSTANCE);
         defaultClasses.put("java.lang.Exception", Type.of(Exception.class));
         defaultClasses.put("java.lang.Throwable", Type.of(Throwable.class));
+
+        defaultClasses.put("java.lang.System", Type.of(System.class));
     }
 
     private Type type;
@@ -79,5 +84,9 @@ public class DefaultImportedTypeResolver extends AstVisitor {
 
     public static Type getType(String name) {
         return defaultClasses.get(name);
+    }
+
+    public static void addDefaultImport(String canonicalName, Type type) {
+        defaultClasses.put(canonicalName, type);
     }
 }

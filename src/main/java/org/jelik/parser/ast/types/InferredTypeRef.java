@@ -1,10 +1,13 @@
 package org.jelik.parser.ast.types;
 
-import org.jelik.parser.ast.Expression;
-import org.jelik.parser.ast.functions.FunctionReferenceNode;
+import org.jelik.parser.ast.expression.Expression;
+import org.jelik.parser.ast.functions.FunctionReferenceNodeImpl;
 import org.jelik.types.Type;
+import org.jetbrains.annotations.NotNull;
 
 /**
+ * Base type for referencing types
+ *
  * @author Marcin Bukowiecki
  */
 public class InferredTypeRef extends AbstractTypeRef {
@@ -26,18 +29,18 @@ public class InferredTypeRef extends AbstractTypeRef {
     }
 
     @Override
-    public void setType(Type type) {
+    public void setType(@NotNull Type type) {
         throw new UnsupportedOperationException("Can't set type for inferred type");
     }
 
     @Override
-    public void setGenericType(Type type) {
+    public void setGenericType(@NotNull Type type) {
         throw new UnsupportedOperationException("Can't set type for inferred type");
     }
 
     @Override
     public boolean isFunctionReference() {
-        return ref instanceof FunctionReferenceNode;
+        return ref instanceof FunctionReferenceNodeImpl;
     }
 
     public Expression getRef() {

@@ -1,5 +1,9 @@
 package org.jelik.compiler.data;
 
+import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.JelikCompiler;
+import org.jelik.types.JVMObjectType;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -33,43 +37,47 @@ public class JavaClassData extends ClassDataImpl {
         }
 
         Field[] declaredFields = clazz.getDeclaredFields();
-        this.fieldScope = Arrays.stream(declaredFields).map(f -> new FieldDataImpl(f, this)).collect(Collectors.toList());;
+        this.fieldScope = Arrays.stream(declaredFields)
+                .map(f -> new FieldDataImpl(f, this))
+                .collect(Collectors.toList());;
     }
 
-    public void resolveParentScope(Class<?> clazz) {/*
+    public void resolveParentScope(Class<?> clazz,
+                                             JelikCompiler jelikCompiler,
+                                             CompilationContext compilationContext) {
         final Class<?> parentClass = clazz.getSuperclass();
         final java.lang.reflect.Type genericSuperclass = clazz.getGenericSuperclass();
-
         if (parentClass == null) {
-            if (isInterface()) {
-                this.parentScope = new JdkParentScope(jelikCompiler.loadClass(Object.class));
-            } else {
-                if (clazz.equals(Object.class)) {
-                    this.parentScope = new JdkParentScope(new ParentClassEnd());
-                } else {
-                    this.parentScope = new JdkParentScope(jelikCompiler.loadClass(Object.class));
-                }
-            }
+            this.parentScope = JVMObjectType.INSTANCE.findClassData(compilationContext);
         } else {
-            this.parentScope = new JdkParentScope(jelikCompiler.loadClass(parentClass));
-        }*/
+            this.parentScope = jelikCompiler.createJavaClassData(parentClass, compilationContext);
+        }
     }
 
-    public void resolveInterfaceScope(Class<?> clazz) {
+    public void resolveInterfaceScope(Class<?> clazz,
+                                                JelikCompiler jelikCompiler,
+                                                CompilationContext compilationContext) {
         var interfaces = clazz.getInterfaces();
         var genericInterfaces = clazz.getGenericInterfaces();
         if (interfaces.length == 0) {
             this.interfaceScope = Collections.emptyList();
         } else {
-            this.interfaceScope = Arrays.stream(interfaces).map(JavaClassData::new).collect(Collectors.toList());
+            this.interfaceScope = Arrays.stream(interfaces)
+                    .map(i -> jelikCompiler.createJavaClassData(i, compilationContext))
+                    .collect(Collectors.toList());
         }
     }
 
     public boolean isInterface() {
-        return type.isInterface();
+        return interfacee;
     }
 
     public boolean isArray() {
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return canonicalName;
     }
 }

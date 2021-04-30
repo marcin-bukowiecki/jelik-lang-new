@@ -1,2 +1,1 @@
-fun expr() -> Int { System.out.println("Hello world")
- ret 0 }
+fun expr(a Int, b Int) -> Boolean { ret a == b or a == 100 }

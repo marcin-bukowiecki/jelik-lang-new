@@ -1,1 +1,1 @@
-fun expr(a String) -> Boolean { ret a == Null }
+fun expr() -> []Long {   ret [1,2,3,4]Long}

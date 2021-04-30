@@ -1,2 +1,1 @@
-import java.util.Collection
-fun expr() -> Collection<Int> {   ret {"foo": 11, "bar": 12}.values()}
+fun expr(a Double, b Double) -> Double {   ret a + b}

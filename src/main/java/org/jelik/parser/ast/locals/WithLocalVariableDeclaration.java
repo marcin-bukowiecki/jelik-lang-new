@@ -1,6 +1,7 @@
 package org.jelik.parser.ast.locals;
 
 import org.jelik.compiler.locals.LocalVariable;
+import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.types.TypeNode;
 import org.jelik.parser.token.LiteralToken;
 import org.jetbrains.annotations.NotNull;
@@ -9,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
  * @author Marcin Bukowiecki
  */
 public interface WithLocalVariableDeclaration extends WithLocalVariable {
+
+    Expression getExpression();
 
     @NotNull
     TypeNode getTypeNode();

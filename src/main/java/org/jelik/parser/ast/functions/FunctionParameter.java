@@ -1,8 +1,8 @@
 package org.jelik.parser.ast.functions;
 
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.compiler.locals.LocalVariable;
-import org.jelik.parser.ast.ASTNode;
+import org.jelik.parser.ast.ASTNodeImpl;
 import org.jelik.parser.ast.types.TypeNode;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.token.LiteralToken;
@@ -14,7 +14,7 @@ import java.util.Optional;
 /**
  * @author Marcin Bukowiecki
  */
-public class FunctionParameter extends ASTNode {
+public class FunctionParameter extends ASTNodeImpl {
 
     private final TypeNode typeNode;
 
@@ -28,7 +28,7 @@ public class FunctionParameter extends ASTNode {
         this.typeNode = typeNode;
         this.name = name;
         this.comma = comma;
-        typeNode.parent = this;
+        typeNode.setParent(this);
     }
 
     public TypeNode getTypeNode() {
@@ -49,7 +49,7 @@ public class FunctionParameter extends ASTNode {
     }
 
     @Override
-    public void visit(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
+    public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
         astVisitor.visit(this, compilationContext);
     }
 }

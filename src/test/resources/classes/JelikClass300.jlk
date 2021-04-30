@@ -1,0 +1,2 @@
+import java.util.List
+fun expr(list List<Int>, b Int) -> Int { ret list.size() + b }

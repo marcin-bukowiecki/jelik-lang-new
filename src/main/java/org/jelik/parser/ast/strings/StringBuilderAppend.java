@@ -1,12 +1,12 @@
 package org.jelik.parser.ast.strings;
 
 import lombok.Getter;
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.parser.ast.visitors.AstVisitor;
-import org.jelik.parser.ast.Expression;
+import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.expression.ExpressionWithType;
 import org.jelik.parser.ast.functions.FunctionCall;
-import org.jelik.parser.ast.functions.TargetFunctionCallProvider;
+import org.jelik.parser.ast.functions.providers.TargetFunctionCallProvider;
 import org.jelik.parser.ast.resolvers.DefaultImportedTypeResolver;
 import org.jelik.parser.ast.resolvers.FunctionCallResolver;
 import org.jelik.types.Type;
@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * AST node corresponding to StringBuilder.append(...) method, used for string appending
@@ -25,15 +26,28 @@ public class StringBuilderAppend extends ExpressionWithType implements FunctionC
 
     private Expression subject;
 
-    private final TargetFunctionCallProvider targetFunctionCall;
+    private final TargetFunctionCallProvider<?> targetFunctionCall;
 
-    public StringBuilderAppend(Expression subject, CompilationContext compilationContext) {
+    private Expression furtherExpression;
+
+    public StringBuilderAppend(@NotNull Expression subject, @NotNull CompilationContext compilationContext) {
         this.subject = subject;
         subject.setParent(this);
         Type stringBuilder = DefaultImportedTypeResolver.getType("StringBuilder");
         this.nodeContext.setType(stringBuilder);
         this.nodeContext.setGenericType(stringBuilder);
-        this.targetFunctionCall = new FunctionCallResolver().resolveCall(this, compilationContext).orElseThrow();
+        this.targetFunctionCall = new FunctionCallResolver()
+                .resolveCall(this, compilationContext)
+                .orElseThrow();
+    }
+
+    public void setFurtherExpression(@NotNull Expression furtherExpression) {
+        this.furtherExpression = furtherExpression;
+        this.furtherExpression.setParent(this);
+    }
+
+    public Optional<Expression> getFurtherExpressionOpt() {
+        return Optional.ofNullable(furtherExpression);
     }
 
     @Override
@@ -43,7 +57,7 @@ public class StringBuilderAppend extends ExpressionWithType implements FunctionC
     }
 
     @Override
-    public void visit(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
+    public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
         astVisitor.visit(this, compilationContext);
     }
 
@@ -64,6 +78,6 @@ public class StringBuilderAppend extends ExpressionWithType implements FunctionC
 
     @Override
     public String toString() {
-        return ".append(" + this.subject.toString() + ")" + getFurtherExpressionOpt().map(Object::toString).orElse("");
+        return ".append(" + this.subject.toString() + ")";
     }
 }

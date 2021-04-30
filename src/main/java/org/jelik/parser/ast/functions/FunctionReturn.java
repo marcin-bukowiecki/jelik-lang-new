@@ -1,7 +1,7 @@
 package org.jelik.parser.ast.functions;
 
-import org.jelik.CompilationContext;
-import org.jelik.parser.ast.ASTNode;
+import org.jelik.compiler.config.CompilationContext;
+import org.jelik.parser.ast.ASTNodeImpl;
 import org.jelik.parser.ast.types.TypeNode;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.token.Token;
@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Marcin Bukowiecki
  */
-public class FunctionReturn extends ASTNode {
+public class FunctionReturn extends ASTNodeImpl {
 
     private final Token arrow;
 
@@ -31,11 +31,15 @@ public class FunctionReturn extends ASTNode {
 
     @Override
     public String toString() {
-        return arrow.toString() + " " + typeNode.toString();
+        return getArrow() + " " + getTypeNode();
     }
 
     @Override
-    public void visit(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
+    public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
         astVisitor.visit(this, compilationContext);
+    }
+
+    public boolean isVoid() {
+        return false;
     }
 }

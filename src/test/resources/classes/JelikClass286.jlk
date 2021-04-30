@@ -1,0 +1,6 @@
+
+fun expr(l []Int) -> Int {
+   for e in l do
+       println(e)
+   end
+   ret 1}

@@ -1,9 +1,9 @@
 package org.jelik.parser.ast.operators;
 
 import lombok.Getter;
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.parser.ast.visitors.AstVisitor;
-import org.jelik.parser.ast.Expression;
+import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.token.operators.AddOperator;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,7 +18,7 @@ public class AddExpr extends AbstractOpExpr {
     }
 
     @Override
-    public void visit(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
+    public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
         astVisitor.visit(this, compilationContext);
     }
 }

@@ -1,3 +1,1 @@
-fun expr() -> Long {   val a = [1 as Long, 2 as Long, 3 as Long] 
- a[2] = 6 as Long 
- ret a[2]}
+fun expr() -> Double {   ret [1 as Double, 2 as Double, 3 as Double][0]}

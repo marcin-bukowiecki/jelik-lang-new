@@ -1,2 +1,1 @@
-fun expression(a Int, b Int, c Int, d Int) -> Int {    val e = a + b * c + d 
-   ret e }
+fun expr(a Float) -> Boolean { ret a < 0 }

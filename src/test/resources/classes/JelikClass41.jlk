@@ -1,1 +1,1 @@
-fun expr(a Float) -> Boolean { ret a < 0 and a < 123 }
+fun expr() -> []Int {   ret []Int}

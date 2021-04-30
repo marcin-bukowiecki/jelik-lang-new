@@ -1,1 +1,1 @@
-fun expr(a Int) -> Boolean { ret a < 0 }
+fun expr() -> []Short {   ret [1,2,3,4]Short}

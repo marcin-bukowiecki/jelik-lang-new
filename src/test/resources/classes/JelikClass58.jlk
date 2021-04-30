@@ -1,1 +1,1 @@
-fun expr(a Double, b Float) -> Float {   ret a as Float / b}
+fun expr() -> []Double {   ret []Double}

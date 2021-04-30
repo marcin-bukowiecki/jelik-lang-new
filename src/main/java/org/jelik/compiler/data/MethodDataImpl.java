@@ -1,3 +1,5 @@
+
+
 package org.jelik.compiler.data;
 
 import org.jelik.parser.ast.types.TypeUtils;
@@ -31,17 +33,23 @@ public class MethodDataImpl implements MethodData {
 
     private final ClassData owner;
 
-    private final List<Type> typeParameters;
+    protected List<Type> typeParameters;
 
     public MethodDataImpl(Method method, ClassData owner) {
         this.modifiers = method.getModifiers();
         this.name = method.getName();
         this.owner = owner;
-        this.parameterTypes = Arrays.stream(method.getParameterTypes()).map(Type::of).collect(Collectors.toList());
-        this.genericParameterTypes = Arrays.stream(method.getGenericParameterTypes()).map(TypeUtils::createGenericType).collect(Collectors.toList());
+        this.parameterTypes = Arrays.stream(method.getParameterTypes())
+                .map(Type::of)
+                .collect(Collectors.toList());
+        this.genericParameterTypes = Arrays.stream(method.getGenericParameterTypes())
+                .map(TypeUtils::createGenericType)
+                .collect(Collectors.toList());
         this.returnType = Type.of(method.getReturnType());
-        this.genericReturnType = TypeUtils.createGenericType(method.getGenericReturnType());
-        this.typeParameters = Arrays.stream(method.getTypeParameters()).map(TypeUtils::createGenericType).collect(Collectors.toList());
+        this.genericReturnType = TypeUtils.createGenericType(method.getGenericReturnType(), method.getReturnType());
+        this.typeParameters = Arrays.stream(method.getTypeParameters())
+                .map(TypeUtils::createGenericType)
+                .collect(Collectors.toList());
     }
 
     public MethodDataImpl(Constructor<?> constructor, ClassData owner) {
@@ -49,10 +57,14 @@ public class MethodDataImpl implements MethodData {
         this.name = "<init>";
         this.owner = owner;
         this.parameterTypes = Arrays.stream(constructor.getParameterTypes()).map(Type::of).collect(Collectors.toList());
-        this.genericParameterTypes = Arrays.stream(constructor.getGenericParameterTypes()).map(TypeUtils::createGenericType).collect(Collectors.toList());
+        this.genericParameterTypes = Arrays.stream(constructor.getGenericParameterTypes())
+                .map(TypeUtils::createGenericType)
+                .collect(Collectors.toList());
         this.returnType = owner.getType();
         this.genericReturnType = owner.getType();
-        this.typeParameters = Arrays.stream(constructor.getTypeParameters()).map(TypeUtils::createGenericType).collect(Collectors.toList());
+        this.typeParameters = Arrays.stream(constructor.getTypeParameters())
+                .map(TypeUtils::createGenericType)
+                .collect(Collectors.toList());
     }
 
     public MethodDataImpl(int modifiers,
@@ -112,7 +124,8 @@ public class MethodDataImpl implements MethodData {
         if (isConstructor()) {
             return "(" + parameterTypes.stream().map(Type::getDescriptor).collect(Collectors.joining()) + ")V";
         }
-        return "(" + parameterTypes.stream().map(Type::getDescriptor).collect(Collectors.joining()) + ")" + returnType.getDescriptor();
+        return "(" + parameterTypes.stream().map(Type::getDescriptor).collect(Collectors.joining()) + ")" +
+                returnType.getDescriptor();
     }
 
     @Override
@@ -132,7 +145,10 @@ public class MethodDataImpl implements MethodData {
 
     @Override
     public List<Type> getExpectedTypeParameters() {
-        return Collections.emptyList();
+        if (isConstructor()) {
+            return owner.getType().getTypeParameters();
+        }
+        return typeParameters;
     }
 
     @Override

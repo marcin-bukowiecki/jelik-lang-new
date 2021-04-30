@@ -1,9 +1,10 @@
 package org.jelik.parser.ast.numbers;
 
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.ast.expression.ExpressionWithType;
 import org.jelik.parser.token.LiteralToken;
+import org.jelik.types.JVMIntType;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -18,6 +19,8 @@ public class Int32Node extends ExpressionWithType {
     public Int32Node(LiteralToken literalToken, int value) {
         this.literalToken = literalToken;
         this.value = value;
+        this.nodeContext.setType(JVMIntType.INSTANCE);
+        this.nodeContext.setGenericType(JVMIntType.INSTANCE);
     }
 
     @Override
@@ -45,7 +48,7 @@ public class Int32Node extends ExpressionWithType {
     }
 
     @Override
-    public void visit(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
+    public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
         astVisitor.visit(this, compilationContext);
     }
 

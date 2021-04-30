@@ -72,6 +72,20 @@ class CommonTest {
     }
 
     @Test
+    fun shouldReturnSerializable_5() {
+        val expr = "import java.io.Serializable\n" +
+                "fun call() -> String { ret c<String>(Integer.valueOf(100).toString()) }" +
+                "\n" +
+                "fun c<T : Serializable>(arg T) -> T {\n" +
+                "   ret \"\" + arg as T + 123\n" +
+                "}"
+        FunctionCompiler.getInstance()
+                .compile(expr)
+                .invoke<Any>("call")
+                .isEqualTo("100123");
+    }
+
+    @Test
     fun shouldReturnInt() {
         val expr = "fun c<T>(arg T) -> Int {\n" +
                 "   ret arg.hashCode()\n" +

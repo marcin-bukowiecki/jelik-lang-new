@@ -1,8 +1,8 @@
 package org.jelik.parser.token.operators;
 
 import org.jelik.parser.ParseContext;
-import org.jelik.parser.ast.Expression;
-import org.jelik.parser.ast.ParseVisitor;
+import org.jelik.parser.ast.expression.Expression;
+import org.jelik.parser.ast.TokenVisitor;
 import org.jelik.parser.ast.operators.AbstractOpExpr;
 import org.jelik.parser.ast.operators.IncrExpr;
 import org.jelik.parser.token.ElementType;
@@ -18,7 +18,7 @@ public class IncrOperator extends AbstractOperator {
     }
 
     @Override
-    public void visit(@NotNull ParseVisitor<?> parseVisitor, @NotNull ParseContext parseContext) {
+    public void accept(@NotNull TokenVisitor<?> parseVisitor, @NotNull ParseContext parseContext) {
         parseVisitor.visit(this, parseContext);
     }
 

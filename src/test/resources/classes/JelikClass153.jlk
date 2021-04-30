@@ -1,1 +1,2 @@
-fun expr(a Object) -> Boolean { ret a is Int }
+fun expr(a Double, b Double) -> Boolean {
+   ret a == b}

@@ -1,0 +1,7 @@
+import java.util.List
+
+fun expr(l Int) -> Int {
+   for e in l do
+       System.out.println(e)
+   end
+   ret 1}

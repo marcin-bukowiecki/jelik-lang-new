@@ -1,0 +1,9 @@
+fun expr(a Int) -> Int {
+   try {
+       a = a / 0 
+   } catch (e Throwable) { 
+       e.printStackTrace() 
+       ret 111
+   }
+   ret 123
+}

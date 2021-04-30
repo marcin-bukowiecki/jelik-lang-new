@@ -18,6 +18,9 @@ package org.jelik.compiler;
 
 import java.lang.reflect.Method;
 
+/**
+ * @author Marcin Bukowiecki
+ */
 public class FunctionInvoker {
 
     private final Method method;

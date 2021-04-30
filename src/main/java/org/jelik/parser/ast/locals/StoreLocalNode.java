@@ -1,9 +1,10 @@
 package org.jelik.parser.ast.locals;
 
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.compiler.locals.LocalVariable;
+import org.jelik.parser.ast.ASTNodeImpl;
+import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.visitors.AstVisitor;
-import org.jelik.parser.ast.expression.ExpressionReferencingType;
 import org.jelik.parser.token.LiteralToken;
 import org.jelik.types.Type;
 import org.jetbrains.annotations.NotNull;
@@ -11,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Marcin Bukowiecki
  */
-public class StoreLocalNode extends ExpressionReferencingType implements WithLocalVariable {
+public class StoreLocalNode extends ASTNodeImpl implements Expression, WithLocalVariable {
 
     private final LiteralToken literalToken;
 
@@ -20,7 +21,6 @@ public class StoreLocalNode extends ExpressionReferencingType implements WithLoc
     public StoreLocalNode(LiteralToken literalToken, LocalVariable localVariable) {
         this.literalToken = literalToken;
         this.localVariable = localVariable;
-        this.typedRefNodeContext.setTypeRef(localVariable.getTypeRef());
     }
 
     @Override
@@ -33,18 +33,28 @@ public class StoreLocalNode extends ExpressionReferencingType implements WithLoc
         return getLocalVariable().getGenericType();
     }
 
+    @Override
+    public Type getGenericReturnType() {
+        return getLocalVariable().getGenericType();
+    }
+
+    @Override
+    public Type getReturnType() {
+        return getLocalVariable().getType();
+    }
+
     public LocalVariable getLocalVariable() {
         return localVariable;
     }
 
     @Override
-    public void visit(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
+    public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
         astVisitor.visit(this, compilationContext);
     }
 
     @Override
     public String toString() {
-        return literalToken.toString() + (furtherExpression != null ? furtherExpression.toString() : "");
+        return literalToken.toString();
     }
 
     @Override

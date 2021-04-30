@@ -1,0 +1,7 @@
+import java.util.stream.Stream
+import java.util.List
+import java.util.stream.Collectors
+
+fun ints(stream Stream<Int>) -> List<Int> {
+   ret stream.collect(Collectors.toList())
+}

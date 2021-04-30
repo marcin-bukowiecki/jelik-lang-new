@@ -1,7 +1,8 @@
 package org.jelik.parser.ast.visitors;
 
+import org.jelik.compiler.exceptions.SyntaxException;
 import org.jelik.parser.ParseContext;
-import org.jelik.parser.ast.Expression;
+import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.token.Token;
 import org.jelik.parser.token.keyword.ReturnKeyword;
 import org.jelik.parser.token.operators.AddOperator;
@@ -26,7 +27,10 @@ public class RightHandExpressionVisitor extends ExpressionVisitor {
 
     @Override
     public @NotNull Expression visit(@NotNull ParseContext parseContext) {
-        start.visit(this, parseContext);
+        start.accept(this, parseContext);
+        if (expression == null) {
+            throw new SyntaxException("Unexpected token", start, parseContext.getCurrentFilePath());
+        }
         return expression;
     }
 
@@ -61,17 +65,17 @@ public class RightHandExpressionVisitor extends ExpressionVisitor {
     }
 
     @Override
-    public void visit(@NotNull OrOperator orOperator, @NotNull ParseContext parseContext) {
+    public void visitOr(@NotNull OrOperator orOperator, @NotNull ParseContext parseContext) {
 
     }
 
     @Override
-    public void visit(@NotNull AndOperator andOperator, @NotNull ParseContext parseContext) {
+    public void visitAnd(@NotNull AndOperator andOperator, @NotNull ParseContext parseContext) {
 
     }
 
     @Override
-    public void visit(@NotNull GreaterOperator greaterOperator, @NotNull ParseContext parseContext) {
+    public void visitGreater(@NotNull GreaterOperator greaterOperator, @NotNull ParseContext parseContext) {
 
     }
 

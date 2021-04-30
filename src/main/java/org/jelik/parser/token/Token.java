@@ -1,7 +1,7 @@
 package org.jelik.parser.token;
 
 import org.jelik.parser.ParseContext;
-import org.jelik.parser.ast.ParseVisitor;
+import org.jelik.parser.ast.TokenVisitor;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -26,9 +26,11 @@ public abstract class Token {
         this.elementType = elementType;
     }
 
-    public void visit(@NotNull ParseVisitor<?> parseVisitor, @NotNull ParseContext parseContext) {
-        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
+    public boolean isDummy() {
+        return row == -1;
     }
+
+    public abstract void accept(@NotNull TokenVisitor<?> tokenVisitor, @NotNull ParseContext parseContext);
 
     public int getRow() {
         return row;
@@ -46,11 +48,11 @@ public abstract class Token {
         return row;
     }
 
-    public String getText() {
+    public @NotNull String getText() {
         return text;
     }
 
-    public ElementType getTokenType() {
+    public @NotNull ElementType getTokenType() {
         return elementType;
     }
 
@@ -69,7 +71,8 @@ public abstract class Token {
 
     public boolean canBeType() {
         switch (getTokenType()) {
-            case colon:
+            case leftBracket:
+            case literal:
                 return true;
             default:
                 return false;

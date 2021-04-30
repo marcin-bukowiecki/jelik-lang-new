@@ -1,2 +1,0 @@
-fun expr(a Double, b Double) -> Boolean {
-   ret a != b}

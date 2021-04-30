@@ -1,21 +1,31 @@
 package org.jelik.compiler.asm.visitor;
 
-import lombok.Getter;
-import org.jelik.parser.ast.classes.ClassDeclaration;
+import org.jelik.compiler.asm.utils.ByteCodeLogger;
+import org.jelik.types.Type;
 
 /**
  * @author Marcin Bukowiecki
  */
 public class ToByteCodeResult {
 
-    @Getter
-    private final ClassDeclaration classDeclaration;
+    private final Type type;
 
-    @Getter
     private final byte[] bytes;
 
-    public ToByteCodeResult(ClassDeclaration classDeclaration, byte[] bytes) {
-        this.classDeclaration = classDeclaration;
+    public ToByteCodeResult(Type type, byte[] bytes) {
         this.bytes = bytes;
+        this.type = type;
+    }
+
+    public void printByteCode() {
+        ByteCodeLogger.logASM(this.bytes);
+    }
+
+    public byte[] getBytes() {
+        return bytes;
+    }
+
+    public Type getType() {
+        return type;
     }
 }

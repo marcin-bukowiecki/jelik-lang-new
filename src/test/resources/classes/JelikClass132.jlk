@@ -1,2 +1,1 @@
-fun expr(a Long) -> Long { val b = 1L 
- ret -a * b }
+fun expr(a String) -> Boolean { ret Null != a }

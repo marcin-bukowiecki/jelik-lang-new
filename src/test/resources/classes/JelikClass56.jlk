@@ -1,2 +1,1 @@
-fun expr(a Double, b Double) -> Boolean {
-   ret a == b and a == b}
+fun expr() -> []Double {   ret [1,2,3,4]Double}

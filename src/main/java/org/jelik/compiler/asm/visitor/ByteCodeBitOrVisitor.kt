@@ -1,6 +1,6 @@
 package org.jelik.compiler.asm.visitor
 
-import org.jelik.CompilationContext
+import org.jelik.compiler.config.CompilationContext
 import org.jelik.compiler.asm.MethodVisitorAdapter
 import org.jelik.types.JVMBooleanType
 import org.jelik.types.JVMIntType
@@ -25,7 +25,7 @@ class ByteCodeBitOrVisitor(private val mv: MethodVisitorAdapter) : TypeVisitor()
     }
 
     override fun visit(type: JVMCharType, compilationContext: CompilationContext) {
-        mv.visitIntAnd()
+        mv.visitIntOr()
     }
 
     override fun visit(type: JVMBooleanType, compilationContext: CompilationContext) {
@@ -37,15 +37,15 @@ class ByteCodeBitOrVisitor(private val mv: MethodVisitorAdapter) : TypeVisitor()
     }
 
     override fun visit(type: JVMLongType, compilationContext: CompilationContext) {
-        mv.visitLongAnd()
+        mv.visitLongOr()
     }
 
     override fun visit(type: JVMShortType, compilationContext: CompilationContext) {
-        mv.visitIntAnd()
+        mv.visitIntOr()
     }
 
     override fun visit(type: JVMByteType, compilationContext: CompilationContext) {
-        mv.visitIntAnd()
+        mv.visitIntOr()
     }
 
     override fun visit(type: JVMFloatType, compilationContext: CompilationContext) {

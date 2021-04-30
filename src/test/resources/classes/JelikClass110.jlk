@@ -1,1 +1,2 @@
-fun expr(a Int, b Int) -> Boolean { ret a >= 0 and b >= 0 }
+fun expr(a Int, b Int) -> Boolean { var a = if a == b then true else false end 
+ ret a }

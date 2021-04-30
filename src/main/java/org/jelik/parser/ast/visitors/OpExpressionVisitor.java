@@ -2,8 +2,8 @@ package org.jelik.parser.ast.visitors;
 
 import org.jelik.parser.Lexer;
 import org.jelik.parser.ParseContext;
-import org.jelik.parser.ast.Expression;
-import org.jelik.parser.ast.ParseVisitor;
+import org.jelik.parser.ast.expression.Expression;
+import org.jelik.parser.ast.TokenVisitor;
 import org.jelik.parser.token.Token;
 import org.jelik.parser.token.operators.AbstractOperator;
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Marcin Bukowiecki
  */
-public class OpExpressionVisitor implements ParseVisitor<Expression> {
+public class OpExpressionVisitor implements TokenVisitor<Expression> {
 
     private final Expression leftHand;
 

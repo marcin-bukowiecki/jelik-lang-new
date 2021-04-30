@@ -1,1 +1,0 @@
-fun expr(a Object, b Object, c Object) -> Boolean { ret a == b or a == c }

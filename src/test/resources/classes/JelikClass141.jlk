@@ -1,2 +1,2 @@
-import java.util.Map
-fun expr() -> Int {   ret {"foo": 11, "bar": 12}["foo"]}
+fun expr(a Double, b Double) -> Boolean {
+   ret a != b}

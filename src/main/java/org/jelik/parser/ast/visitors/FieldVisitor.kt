@@ -2,8 +2,8 @@ package org.jelik.parser.ast.visitors
 
 import com.google.common.collect.Lists
 import org.jelik.parser.ParseContext
-import org.jelik.parser.ast.Expression
-import org.jelik.parser.ast.ParseVisitor
+import org.jelik.parser.ast.expression.Expression
+import org.jelik.parser.ast.TokenVisitor
 import org.jelik.parser.ast.classes.FieldDeclaration
 import org.jelik.parser.ast.expression.EmptyExpression
 import org.jelik.parser.ast.types.TypeNode
@@ -17,7 +17,7 @@ import org.jelik.parser.token.operators.AssignOperator
 /**
  * @author Marcin Bukowiecki
  */
-class FieldVisitor : ParseVisitor<FieldDeclaration> {
+class FieldVisitor : TokenVisitor<FieldDeclaration> {
 
     private var expr: Expression = EmptyExpression()
 
@@ -31,7 +31,7 @@ class FieldVisitor : ParseVisitor<FieldDeclaration> {
         if (name !is LiteralToken) {
             throw SyntaxException("Expected field name", name, parseContext.currentFilePath)
         }
-        lexer.nextToken().visit(this, parseContext)
+        lexer.nextToken().accept(this, parseContext)
         val modifiersStack = parseContext.modifiersStack
         if (modifiersStack.last() is ValKeyword && expr is EmptyExpression) {
             throw SyntaxException("Expected value definition", name, parseContext.currentFilePath)
@@ -49,7 +49,7 @@ class FieldVisitor : ParseVisitor<FieldDeclaration> {
 
     override fun visitAssign(assignOperator: AssignOperator, parseContext: ParseContext) {
         this.assignOp = assignOperator
-        parseContext.lexer.nextToken().visit(this, parseContext)
+        parseContext.lexer.nextToken().accept(this, parseContext)
     }
 
     override fun visitLiteral(literalToken: LiteralToken, parseContext: ParseContext) {
@@ -57,7 +57,7 @@ class FieldVisitor : ParseVisitor<FieldDeclaration> {
             this.expr = ExpressionVisitor(literalToken).visit(parseContext)
         } else {
             this.type = TypeNodeVisitor(literalToken).visit(parseContext)
-            parseContext.lexer.nextToken().visit(this, parseContext)
+            parseContext.lexer.nextToken().accept(this, parseContext)
         }
     }
 

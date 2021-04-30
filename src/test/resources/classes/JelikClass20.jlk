@@ -1,1 +1,1 @@
-fun expr() -> Short {   ret [3 as Short,4 as Short][1]}
+fun expr() -> String {   ret ["foo","bar"][0]}

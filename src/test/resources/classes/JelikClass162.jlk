@@ -1,4 +1,1 @@
-import java.io.Serializable
-fun c<T : Serializable>(arg Object) -> T {
-   ret arg as T
-}
+fun expr(a Float, b Float) -> Float { ret a % b }

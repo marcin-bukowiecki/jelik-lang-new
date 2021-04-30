@@ -1,9 +1,9 @@
 package org.jelik.parser.ast.numbers;
 
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.parser.ast.expression.ExpressionWithType;
 import org.jelik.parser.ast.visitors.AstVisitor;
-import org.jelik.parser.token.FalseToken;
+import org.jelik.parser.token.keyword.FalseToken;
 import org.jelik.types.JVMBooleanType;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,6 +15,11 @@ public class FalseNode extends ExpressionWithType implements BooleanConstant {
     private final FalseToken literalToken;
 
     private boolean ignore = false;
+
+    public FalseNode(boolean ignore) {
+        this(new FalseToken());
+        this.ignore = ignore;
+    }
 
     public FalseNode(FalseToken literalToken) {
         this.literalToken = literalToken;
@@ -51,7 +56,12 @@ public class FalseNode extends ExpressionWithType implements BooleanConstant {
     }
 
     @Override
-    public void visit(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
+    public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
         astVisitor.visit(this, compilationContext);
+    }
+
+    @Override
+    public String toString() {
+        return "false";
     }
 }

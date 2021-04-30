@@ -1,10 +1,10 @@
 package org.jelik.parser.ast.casts;
 
 import lombok.Getter;
-import org.jelik.CompilationContext;
-import org.jelik.parser.ast.Expression;
-import org.jelik.parser.ast.expression.ExpressionReferencingType;
-import org.jelik.parser.ast.types.InferredTypeRef;
+import org.jelik.compiler.config.CompilationContext;
+import org.jelik.parser.ast.ASTNodeImpl;
+import org.jelik.parser.ast.expression.EmptyExpression;
+import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.types.Type;
 import org.jetbrains.annotations.NotNull;
@@ -13,31 +13,52 @@ import org.jetbrains.annotations.NotNull;
  * @author Marcin Bukowiecki
  */
 @Getter
-public class CastObjectToObjectNode extends ExpressionReferencingType {
+public class CastObjectToObjectNode extends ASTNodeImpl implements Expression {
+
+    private final Expression expression;
 
     private final Type from;
 
-    private final Expression subject;
-
     private final Type to;
 
-    public CastObjectToObjectNode(Expression subject, Expression further, Type from, Type to) {
-        setFurtherExpression(further);
-        this.subject = subject;
-        subject.setParent(this);
-        subject.clearFurtherExpression();
+    public CastObjectToObjectNode(@NotNull Expression expression, Type from, Type to) {
+        this.expression = expression;
+        this.expression.setParent(this);
         this.from = from;
         this.to = to;
-        typedRefNodeContext.setTypeRef(new InferredTypeRef(subject));
+    }
+
+    public CastObjectToObjectNode(Type from, Type to) {
+        this(new EmptyExpression(), from, to);
     }
 
     @Override
-    public void visit(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
+    public Type getReturnType() {
+        return to;
+    }
+
+    @Override
+    public Type getGenericReturnType() {
+        return to;
+    }
+
+    @Override
+    public Type getType() {
+        return to;
+    }
+
+    @Override
+    public Type getGenericType() {
+        return to;
+    }
+
+    @Override
+    public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
         astVisitor.visit(this, compilationContext);
     }
 
     @Override
     public String toString() {
-        return "((" + to.toString() + ") " + subject.toString() + ")" + getFurtherExpressionOpt().map(Object::toString).orElse("");
+        return "((" + to.toString() + ") " + getExpression().toString() + ")";
     }
 }

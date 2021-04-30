@@ -28,9 +28,9 @@ public enum JumpInstruction {
 
     if_icmplt(List.of(Opcodes.IF_ICMPLT), List.of(Opcodes.IF_ICMPGE)),
 
-    ifnull(List.of(Opcodes.IFNULL), List.of(Opcodes.IFNONNULL)),
+    isNull(List.of(Opcodes.IFNULL), List.of(Opcodes.IFNONNULL)),
 
-    ifnonnull(List.of(Opcodes.IFNONNULL), List.of(Opcodes.IFNULL)),
+    isNotNull(List.of(Opcodes.IFNONNULL), List.of(Opcodes.IFNULL)),
 
     lcmp(List.of(Opcodes.LCMP, Opcodes.IFEQ), List.of(Opcodes.LCMP, Opcodes.IFNE)),
 

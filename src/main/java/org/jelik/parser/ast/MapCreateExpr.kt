@@ -1,6 +1,6 @@
 package org.jelik.parser.ast
 
-import org.jelik.CompilationContext
+import org.jelik.compiler.config.CompilationContext
 import org.jelik.parser.ast.expression.ExpressionWithType
 import org.jelik.parser.ast.visitors.AstVisitor
 import org.jelik.parser.token.LeftCurlToken
@@ -33,7 +33,7 @@ class MapCreateExpr(private val leftCurl: LeftCurlToken,
         return rightCurl.endRow
     }
 
-    override fun visit(astVisitor: AstVisitor, compilationContext: CompilationContext) {
+    override fun accept(astVisitor: AstVisitor, compilationContext: CompilationContext) {
         astVisitor.visitMapCreateExpr(this, compilationContext)
     }
 

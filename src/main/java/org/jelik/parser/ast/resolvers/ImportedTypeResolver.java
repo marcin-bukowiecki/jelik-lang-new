@@ -1,7 +1,8 @@
 package org.jelik.parser.ast.resolvers;
 
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.parser.ast.classes.ClassDeclaration;
+import org.jelik.parser.ast.resolvers.types.TypeResolver;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.ast.ImportDeclaration;
 import org.jelik.parser.ast.types.SingleTypeNode;
@@ -35,7 +36,11 @@ public class ImportedTypeResolver extends AstVisitor {
     }
 
     private static Type findTypeInImport(SingleTypeNode singleTypeNode, ImportDeclaration importDeclaration) {
-        if (importDeclaration.getType().getCanonicalName().endsWith(singleTypeNode.getText())) {
+        final String canonicalName = importDeclaration.getType().getCanonicalName();
+        if (canonicalName.equals(singleTypeNode.getText())) {
+            return importDeclaration.getType();
+        }
+        if (importDeclaration.getType().getCanonicalName().endsWith("." + singleTypeNode.getText())) {
             return importDeclaration.getType();
         }
         return null;

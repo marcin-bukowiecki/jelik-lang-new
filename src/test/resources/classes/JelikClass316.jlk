@@ -1,0 +1,4 @@
+fun expr() -> String? {
+    val a Integer = Null
+    ret a?.toString()
+}

@@ -1,1 +1,15 @@
-fun expr(a Int) -> Short { ret a as Short }
+
+            fun expr(a Int) -> Int {
+                var b = 123
+                if a > 10 and a < 100 then
+                    b = 1
+                elif a > 100 then
+                    b = 2
+                elif a > 200 then
+                    b = 3
+                else 
+                    b = 4
+                end    
+                ret b
+            }
+        

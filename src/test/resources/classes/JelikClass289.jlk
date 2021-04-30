@@ -1,0 +1,6 @@
+
+fun expr(l []String) -> Int {
+   for e in l do
+       System.out.println(e)
+   end
+   ret 1}

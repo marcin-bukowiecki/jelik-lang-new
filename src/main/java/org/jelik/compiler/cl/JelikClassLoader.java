@@ -18,6 +18,7 @@ package org.jelik.compiler.cl;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -41,7 +42,7 @@ public class JelikClassLoader extends URLClassLoader {
         this("");
     }
 
-    public JelikClassLoader(String jelikHome) {
+    public JelikClassLoader(@NotNull String jelikHome) {
         super(new URL[] { getDefaultPath() });
 
         try {
@@ -81,7 +82,7 @@ public class JelikClassLoader extends URLClassLoader {
     }
 
     public Class<?> defineClass(String name, byte[] b) {
-        log.info("Defining clas: " + name);
+        log.info("Defining class: " + name);
 
         var result = getLoadedClass(name);
 

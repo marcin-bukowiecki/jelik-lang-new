@@ -2,6 +2,7 @@ package org.jelik.parser.ast;
 
 import org.jelik.parser.token.Token;
 import org.jelik.parser.token.keyword.PackageKeyword;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
@@ -19,12 +20,7 @@ public class DefaultPackageDeclaration extends PackageDeclaration {
     }
 
     @Override
-    public void setParent(ASTNode parent) {
-
-    }
-
-    @Override
-    public ASTNode getParent() {
+    public @NotNull ASTNodeImpl getParent() {
         throw new UnsupportedOperationException();
     }
 }

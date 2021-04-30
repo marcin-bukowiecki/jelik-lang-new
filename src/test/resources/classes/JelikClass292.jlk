@@ -1,0 +1,5 @@
+
+fun expr(l []Long) -> Int {
+   for e in l do
+   end
+   ret 1}

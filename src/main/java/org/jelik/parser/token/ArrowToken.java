@@ -17,7 +17,7 @@
 package org.jelik.parser.token;
 
 import org.jelik.parser.ParseContext;
-import org.jelik.parser.ast.ParseVisitor;
+import org.jelik.parser.ast.TokenVisitor;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -30,7 +30,7 @@ public class ArrowToken extends Token {
     }
 
     @Override
-    public void visit(@NotNull ParseVisitor<?> parseVisitor, @NotNull ParseContext parseContext) {
+    public void accept(@NotNull TokenVisitor<?> parseVisitor, @NotNull ParseContext parseContext) {
         parseVisitor.visitArrowToken(this, parseContext);
     }
 }

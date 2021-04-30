@@ -1,7 +1,7 @@
 package org.jelik.parser.ast.strings;
 
 import lombok.Getter;
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.ast.expression.ExpressionWithType;
 import org.jelik.parser.token.ApostropheToken;
@@ -26,7 +26,9 @@ public class StringExpression extends ExpressionWithType {
     @Getter
     private final ApostropheToken rightApostropheToken;
 
-    public StringExpression(ApostropheToken leftApostropheToken, List<Token> stringTokens, ApostropheToken rightApostropheToken) {
+    public StringExpression(ApostropheToken leftApostropheToken,
+                            List<Token> stringTokens,
+                            ApostropheToken rightApostropheToken) {
         this.leftApostropheToken = leftApostropheToken;
         this.stringTokens = stringTokens;
         this.rightApostropheToken = rightApostropheToken;
@@ -35,7 +37,7 @@ public class StringExpression extends ExpressionWithType {
     }
 
     @Override
-    public void visit(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
+    public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
         astVisitor.visit(this, compilationContext);
     }
 

@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.types
 
-import org.jelik.CompilationContext
+import org.jelik.compiler.config.CompilationContext
 import org.jelik.parser.ast.visitors.AstVisitor
 import org.jelik.parser.token.LeftBracketToken
 import org.jelik.parser.token.RightBracketToken
@@ -14,8 +14,12 @@ class ArrayTypeNode(private val leftBracket: LeftBracketToken,
                     private val rightBracket: RightBracketToken,
                     val innerType: TypeNode) : TypeNode() {
 
-    override fun visit(astVisitor: AstVisitor, compilationContext: CompilationContext) {
+    override fun accept(astVisitor: AstVisitor, compilationContext: CompilationContext) {
         astVisitor.visit(this, compilationContext)
+    }
+
+    override fun getEndRow(): Int {
+        return innerType.endRow
     }
 
     override fun toString(): String {

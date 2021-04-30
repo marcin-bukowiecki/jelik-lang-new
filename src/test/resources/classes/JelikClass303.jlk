@@ -1,0 +1,7 @@
+import java.util.List
+fun expr(a List<Int>) -> Boolean { 
+if 123 in a then
+   ret true
+end
+ret false
+}

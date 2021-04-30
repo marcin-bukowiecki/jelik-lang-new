@@ -16,9 +16,12 @@
 
 package org.jelik.types.jvm;
 
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.compiler.asm.visitor.TypeVisitor;
 import org.jelik.compiler.common.TypeEnum;
+import org.jelik.parser.ast.expression.Expression;
+import org.jelik.parser.ast.numbers.Int32ToFloat64Node;
+import org.jelik.types.JVMIntType;
 import org.jelik.types.Type;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,11 +35,11 @@ public class JVMDoubleType extends NumberType {
     public static final JVMDoubleType INSTANCE = new JVMDoubleType();
 
     private JVMDoubleType() {
-        super("double", "double", TypeEnum.float64);
+        super("Double", "double", TypeEnum.float64);
     }
 
     @Override
-    public void visit(TypeVisitor typeVisitor, CompilationContext compilationContext) {
+    public void accept(TypeVisitor typeVisitor, CompilationContext compilationContext) {
         typeVisitor.visit(this, compilationContext);
     }
 
@@ -85,5 +88,15 @@ public class JVMDoubleType extends NumberType {
     @Override
     public NumberType getWrapperType() {
         return DoubleWrapperType.INSTANCE;
+    }
+
+    @Override
+    public void castFrom(Expression expression, JVMIntType type, CompilationContext compilationContext) {
+        expression.getParent().replaceWith(expression, new Int32ToFloat64Node(expression));
+    }
+
+    @Override
+    public void castFrom(Expression expression, JVMDoubleType type, CompilationContext compilationContext) {
+
     }
 }

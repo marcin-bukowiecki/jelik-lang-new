@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.numbers;
 
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.parser.ast.expression.ExpressionWithType;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.token.LiteralToken;
@@ -28,7 +28,7 @@ public class Float32Node extends ExpressionWithType {
     }
 
     @Override
-    public void visit(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
+    public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
         astVisitor.visit(this, compilationContext);
     }
 

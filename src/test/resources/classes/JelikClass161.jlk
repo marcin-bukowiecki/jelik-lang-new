@@ -1,3 +1,1 @@
-fun c<T>(arg Object) -> T {
-   ret arg as T
-}
+fun expr(a Float, b Float) -> Float { ret a + b }

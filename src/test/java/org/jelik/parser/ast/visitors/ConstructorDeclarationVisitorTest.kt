@@ -3,6 +3,7 @@ package org.jelik.parser.ast.visitors
 import org.assertj.core.api.Assertions
 import org.jelik.parser.Lexer
 import org.jelik.parser.ParseContext
+import org.jelik.parser.ast.visitors.functions.ConstructorDeclarationVisitor
 import org.jelik.parser.token.keyword.ConstructorKeyword
 import org.junit.Test
 

@@ -1,3 +1,0 @@
-class 
-
-fun test() -> Test { ret Test() }

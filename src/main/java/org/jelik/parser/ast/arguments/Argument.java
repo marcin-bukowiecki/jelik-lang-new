@@ -1,25 +1,28 @@
 package org.jelik.parser.ast.arguments;
 
 import lombok.Getter;
-import org.jelik.CompilationContext;
-import org.jelik.parser.ast.ASTNode;
+import org.jelik.compiler.config.CompilationContext;
+import org.jelik.parser.ast.ASTNodeImpl;
 import org.jelik.parser.ast.visitors.AstVisitor;
-import org.jelik.parser.ast.Expression;
+import org.jelik.parser.ast.expression.Expression;
 import org.jelik.types.Type;
 import org.jetbrains.annotations.NotNull;
 
-public class Argument extends ASTNode {
+/**
+ * @author Marcin Bukowiecki
+ */
+public class Argument extends ASTNodeImpl {
 
     @Getter
     private Expression expression;
 
-    public Argument(Expression expression) {
+    public Argument(@NotNull Expression expression) {
         this.expression = expression;
         expression.setParent(this);
     }
 
     @Override
-    public void visit(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
+    public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
         astVisitor.visit(this, compilationContext);
     }
 
@@ -27,7 +30,7 @@ public class Argument extends ASTNode {
     public void replaceWith(@NotNull Expression oldNode, @NotNull Expression newNode) {
         if (oldNode == expression) {
             expression = newNode;
-            newNode.parent = this;
+            newNode.setParent(this);
         } else {
             throw new IllegalArgumentException("Could not find node for replace: " + oldNode);
         }

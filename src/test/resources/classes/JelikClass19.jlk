@@ -1,1 +1,5 @@
-fun expr() -> []Float {   ret [1f,2f,3f,4f]:Float}
+fun expr() -> String {
+   val a = ["a","b","c"]
+   a[2] = "foo"
+   ret a[2]
+}

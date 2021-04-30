@@ -1,11 +1,15 @@
 package org.jelik.compiler;
 
+import org.assertj.core.api.Assertions;
+import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.data.ClassData;
 import org.junit.Test;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 
 /**
@@ -19,5 +23,14 @@ public class JelikCompilerTest {
         Path path = Paths.get("./src/test/resources/TempModule.jlk");
         File file = Files.writeString(path, content).toFile();
         JelikCompiler.INSTANCE.compile(Collections.singletonList(file));
+    }
+
+    @Test
+    public void createJavaClassData() {
+        CompilationContext compilationContext = new CompilationContext();
+        ClassData javaClassData = JelikCompiler.INSTANCE.createJavaClassData(ArrayList.class, compilationContext);
+        assert javaClassData != null;
+        Assertions.assertThat(javaClassData.findByName("stream", compilationContext))
+                .isNotEmpty();
     }
 }

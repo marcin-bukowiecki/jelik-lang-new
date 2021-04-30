@@ -1,0 +1,6 @@
+import java.util.ArrayList
+
+fun expr(l ArrayList<Int>) -> Int {
+   for e in l do
+       ret e   end
+   ret 1}

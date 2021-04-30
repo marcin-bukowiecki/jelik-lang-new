@@ -1,11 +1,10 @@
 package org.jelik.parser.ast.resolvers.decoders
 
-import org.jelik.CompilationContext
+import org.jelik.compiler.config.CompilationContext
 import org.jelik.compiler.common.TypeEnum
 import org.jelik.compiler.exceptions.CompileException
-import org.jelik.parser.ast.Expression
+import org.jelik.parser.ast.expression.Expression
 import org.jelik.parser.ast.NullExpr
-import org.jelik.parser.ast.operators.EqualExpr
 import org.jelik.parser.ast.operators.JumpInstruction
 import org.jelik.parser.ast.operators.NotEqualExpr
 import org.jelik.parser.ast.resolvers.CastToVisitor
@@ -21,6 +20,14 @@ object NotEqualOpTypeDecoder {
 
     fun decode(leftType: Type, rightType: Type, leftCaller: Expression, op: NotEqualExpr, rightCaller: Expression, ctx: CompilationContext) {
         when(leftType.typeEnum) {
+            TypeEnum.booleanT -> {
+                when(rightType.typeEnum) {
+                    TypeEnum.booleanT -> {
+                        op.instructionToCall = JumpInstruction.if_icmpne
+                    }
+                    else -> throw NotImplementedError()
+                }
+            }
             TypeEnum.int32 -> {
                 when(rightType.typeEnum) {
                     TypeEnum.int32 -> {
@@ -28,11 +35,12 @@ object NotEqualOpTypeDecoder {
                     }
                     TypeEnum.string, TypeEnum.objectT -> {
                         if (rightType.isWrapper) {
-                            rightType.visit(CastToVisitor(rightCaller, rightType.primitiveType), ctx)
+                            rightType.accept(CastToVisitor(rightCaller, rightType.primitiveType), ctx)
                         } else {
                             throw CompileException("Can't apply ${rightCaller.type} to '!=' operator with ${leftCaller.type} type", rightCaller, ctx.currentModule)
                         }
                     }
+                    else -> throw NotImplementedError()
                 }
             }
             TypeEnum.float32 -> {
@@ -40,6 +48,7 @@ object NotEqualOpTypeDecoder {
                     TypeEnum.float32 -> {
                         op.instructionToCall = JumpInstruction.floatGreater
                     }
+                    else -> throw NotImplementedError()
                 }
             }
             TypeEnum.float64 -> {
@@ -47,14 +56,16 @@ object NotEqualOpTypeDecoder {
                     TypeEnum.float64 -> {
                         op.instructionToCall = JumpInstruction.dcmpg
                     }
+                    else -> throw NotImplementedError()
                 }
             }
             TypeEnum.string -> {
                 when(rightType.typeEnum) {
                     TypeEnum.nullT -> {
                         (rightCaller as NullExpr).ignore = true
-                        op.instructionToCall = JumpInstruction.ifnonnull
+                        op.instructionToCall = JumpInstruction.isNotNull
                     }
+                    else -> throw NotImplementedError()
                 }
             }
             TypeEnum.objectT -> {
@@ -62,16 +73,19 @@ object NotEqualOpTypeDecoder {
                     TypeEnum.objectT -> {
                         op.instructionToCall = JumpInstruction.refs_not_equal
                     }
+                    else -> throw NotImplementedError()
                 }
             }
             TypeEnum.nullT -> {
                 when(rightType.typeEnum) {
                     TypeEnum.string -> {
                         (leftCaller as NullExpr).ignore = true
-                        op.instructionToCall = JumpInstruction.ifnonnull
+                        op.instructionToCall = JumpInstruction.isNotNull
                     }
+                    else -> throw NotImplementedError()
                 }
             }
+            else -> throw UnsupportedOperationException()
         }
     }
 }

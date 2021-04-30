@@ -1,0 +1,1 @@
+fun expr() -> Boolean { ret ["foo", "bar"][1] is String }

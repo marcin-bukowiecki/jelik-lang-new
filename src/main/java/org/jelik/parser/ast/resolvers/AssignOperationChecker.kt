@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.resolvers
 
-import org.jelik.CompilationContext
+import org.jelik.compiler.config.CompilationContext
 import org.jelik.parser.ast.arrays.ArrayOrMapGetExpr
 import org.jelik.parser.ast.visitors.AstVisitor
 
@@ -9,7 +9,7 @@ import org.jelik.parser.ast.visitors.AstVisitor
  */
 class AssignOperationChecker : AstVisitor() {
 
-    override fun visit(expr: ArrayOrMapGetExpr, compilationContext: CompilationContext) {
+    override fun visitArrayOrMapGetExpr(expr: ArrayOrMapGetExpr, compilationContext: CompilationContext) {
 
     }
 }

@@ -2,15 +2,14 @@ package org.jelik.parser.ast.arguments;
 
 import org.jelik.parser.ParseContext;
 import org.jelik.parser.ast.visitors.ExpressionVisitor;
-import org.jelik.parser.ast.ParseVisitor;
-import org.jelik.parser.token.LiteralToken;
+import org.jelik.parser.ast.TokenVisitor;
 import org.jelik.parser.token.Token;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Marcin Bukowiecki
  */
-public class ArgumentVisitor implements ParseVisitor<Argument> {
+public class ArgumentVisitor implements TokenVisitor<Argument> {
 
     private final Token start;
 

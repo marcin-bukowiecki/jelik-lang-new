@@ -1,6 +1,6 @@
 package org.jelik.parser.ast;
 
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.token.Token;
 import org.jelik.parser.token.keyword.PackageKeyword;
@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 /**
  * @author Marcin Bukowiecki
  */
-public class PackageDeclaration extends ASTNode {
+public class PackageDeclaration extends ASTNodeImpl {
 
     private final PackageKeyword packageKeyword;
 
@@ -24,7 +24,27 @@ public class PackageDeclaration extends ASTNode {
     }
 
     @Override
-    public void visit(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
+    public int getStartCol() {
+        return packageKeyword.getCol();
+    }
+
+    @Override
+    public int getStartRow() {
+        return packageKeyword.getRow();
+    }
+
+    @Override
+    public int getEndCol() {
+        return tokens.get(tokens.size()-1).getEndCol();
+    }
+
+    @Override
+    public int getEndRow() {
+        return tokens.get(tokens.size()-1).getEndRow();
+    }
+
+    @Override
+    public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
 
     }
 

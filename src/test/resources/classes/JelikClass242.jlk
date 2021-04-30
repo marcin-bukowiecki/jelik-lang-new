@@ -1,0 +1,7 @@
+import java.util.Collection
+import java.util.Map
+fun expr() -> Int {
+   val map Map<Int, Any> = {}
+   map[2] = 100
+   map[3] = "100"
+   ret len(map)}

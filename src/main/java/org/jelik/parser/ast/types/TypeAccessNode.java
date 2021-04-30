@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.types;
 
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.ast.expression.ExpressionWithType;
 import org.jelik.parser.token.LiteralToken;
@@ -32,12 +32,12 @@ public class TypeAccessNode extends ExpressionWithType {
 
     @Override
     public int getEndRow() {
-        return furtherExpression == null ? literalToken.getEndRow() : furtherExpression.getEndRow();
+        return literalToken.getEndRow();
     }
 
     @Override
     public int getEndCol() {
-        return furtherExpression == null ? literalToken.getEndCol() : furtherExpression.getEndCol();
+        return literalToken.getEndCol();
     }
 
     public LiteralToken getLiteralToken() {
@@ -45,12 +45,12 @@ public class TypeAccessNode extends ExpressionWithType {
     }
 
     @Override
-    public void visit(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
+    public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
         astVisitor.visit(this, compilationContext);
     }
 
     @Override
     public String toString() {
-        return literalToken.toString() + getFurtherExpressionOpt().map(Object::toString).orElse("");
+        return literalToken.toString();
     }
 }

@@ -1,0 +1,12 @@
+fun f1(a Int) -> Int {
+    ret a + 10
+}
+
+fun f1(a Double) -> Double {
+    ret a + 10
+}
+
+fun expr(a Int) -> Int {
+    val ref = f1
+    ret ref(a)
+}

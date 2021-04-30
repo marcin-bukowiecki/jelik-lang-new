@@ -1,7 +1,7 @@
 package org.jelik.parser.token;
 
 import org.jelik.parser.ParseContext;
-import org.jelik.parser.ast.ParseVisitor;
+import org.jelik.parser.ast.TokenVisitor;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -13,12 +13,16 @@ public class LiteralToken extends Token {
         super(text, row, col, ElementType.literal);
     }
 
+    public LiteralToken(String text) {
+        super(text, -1, -1, ElementType.literal);
+    }
+
     public LiteralToken(int row, int col, String text, ElementType empty) {
         super(text, row, col, empty);
     }
 
     @Override
-    public void visit(@NotNull ParseVisitor<?> parseVisitor, @NotNull ParseContext parseContext) {
+    public void accept(@NotNull TokenVisitor<?> parseVisitor, @NotNull ParseContext parseContext) {
         parseVisitor.visitLiteral(this, parseContext);
     }
 }

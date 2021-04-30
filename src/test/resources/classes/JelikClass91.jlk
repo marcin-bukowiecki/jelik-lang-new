@@ -1,2 +1,11 @@
-fun expr(a Int) -> Int { val b = 10 
- ret a - Integer.valueOf(b) }
+
+            fun expr(a Int) -> Int {
+                if a > 10 and a < 100 then
+                    ret 1
+                elif a > 100 then
+                    ret 2
+                else 
+                    ret 0
+                end    
+            }
+        

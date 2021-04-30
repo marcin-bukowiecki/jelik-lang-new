@@ -1,6 +1,6 @@
 package org.jelik.parser.ast
 
-import org.jelik.CompilationContext
+import org.jelik.compiler.config.CompilationContext
 import org.jelik.parser.ast.expression.ExpressionWithType
 import org.jelik.parser.ast.visitors.AstVisitor
 import org.jelik.parser.token.NullToken
@@ -20,7 +20,11 @@ class NullExpr(val literal: NullToken) : ExpressionWithType() {
         this.nodeContext.genericType = JVMNullType.INSTANCE
     }
 
-    override fun visit(astVisitor: AstVisitor, compilationContext: CompilationContext) {
+    constructor(ignore: Boolean): this(NullToken()) {
+        this.ignore = ignore
+    }
+
+    override fun accept(astVisitor: AstVisitor, compilationContext: CompilationContext) {
         astVisitor.visit(this, compilationContext)
     }
 

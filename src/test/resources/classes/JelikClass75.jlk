@@ -1,1 +1,5 @@
-fun expr(a Float) -> Long { ret a as Long }
+class Tuple1<T1> {
+constructor(_1 T1) {}
+}
+
+fun test() -> Tuple1<Int> { ret Tuple1<Int>(123) }

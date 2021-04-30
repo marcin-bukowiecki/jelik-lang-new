@@ -1,10 +1,10 @@
 package org.jelik.parser.ast.numbers;
 
 import lombok.Getter;
-import org.jelik.CompilationContext;
-import org.jelik.parser.ast.Expression;
+import org.jelik.compiler.config.CompilationContext;
+import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.visitors.AstVisitor;
-import org.jelik.types.jvm.JVMDoubleType;
+import org.jelik.types.jvm.JVMFloatType;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -15,12 +15,12 @@ public class Int32ToFloat32Node extends CastToNode {
 
     public Int32ToFloat32Node(Expression subject) {
         super(subject);
-        this.nodeContext.setType(JVMDoubleType.INSTANCE);
-        this.nodeContext.setGenericType(JVMDoubleType.INSTANCE);
+        getNodeContext().setType(JVMFloatType.INSTANCE);
+        getNodeContext().setGenericType(JVMFloatType.INSTANCE);
     }
 
     @Override
-    public void visit(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
+    public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
         astVisitor.visit(this, compilationContext);
     }
 }

@@ -1,9 +1,9 @@
 package org.jelik.compiler.asm.visitor;
 
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.compiler.asm.MethodVisitorAdapter;
 import org.jelik.compiler.exceptions.CompileException;
-import org.jelik.parser.ast.Expression;
+import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.locals.GetLocalNode;
 import org.jelik.types.JVMBooleanType;
 import org.jelik.types.JVMIntType;

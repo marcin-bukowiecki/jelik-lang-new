@@ -1,7 +1,7 @@
 package org.jelik.parser.token.keyword;
 
 import org.jelik.parser.ParseContext;
-import org.jelik.parser.ast.ParseVisitor;
+import org.jelik.parser.ast.TokenVisitor;
 import org.jelik.parser.token.ElementType;
 import org.jelik.parser.token.Token;
 import org.jetbrains.annotations.NotNull;
@@ -11,12 +11,14 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ReturnKeyword extends Token {
 
+    public static final ReturnKeyword MOCK = new ReturnKeyword(-1, -1);
+
     public ReturnKeyword(int row, int col) {
         super("ret", row, col, ElementType.returnKeyword);
     }
 
     @Override
-    public void visit(@NotNull ParseVisitor<?> parseVisitor, @NotNull ParseContext parseContext) {
+    public void accept(@NotNull TokenVisitor<?> parseVisitor, @NotNull ParseContext parseContext) {
         parseVisitor.visitReturnKeyword(this, parseContext);
     }
 }

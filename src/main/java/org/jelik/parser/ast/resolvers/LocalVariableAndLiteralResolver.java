@@ -1,36 +1,37 @@
 package org.jelik.parser.ast.resolvers;
 
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.exceptions.SyntaxException;
 import org.jelik.compiler.locals.LocalVariable;
-import org.jelik.parser.ast.BasicBlock;
-import org.jelik.parser.ast.DotCallExpr;
-import org.jelik.parser.ast.Expression;
 import org.jelik.parser.ast.GetFieldNode;
 import org.jelik.parser.ast.LiteralExpr;
 import org.jelik.parser.ast.MapCreateExpr;
+import org.jelik.parser.ast.ReferenceExpressionImpl;
 import org.jelik.parser.ast.arguments.Argument;
 import org.jelik.parser.ast.arrays.ArrayCreateExpr;
 import org.jelik.parser.ast.arrays.ArrayOrMapGetExpr;
 import org.jelik.parser.ast.arrays.ArrayOrMapSetExpr;
 import org.jelik.parser.ast.expression.CatchExpression;
+import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.expression.ParenthesisExpression;
-import org.jelik.parser.ast.expression.TryExpression;
+import org.jelik.parser.ast.functions.ConstructorDeclaration;
 import org.jelik.parser.ast.functions.FunctionBodyBlock;
 import org.jelik.parser.ast.functions.FunctionCallExpr;
 import org.jelik.parser.ast.functions.FunctionDeclaration;
-import org.jelik.parser.ast.functions.FunctionParameter;
+import org.jelik.parser.ast.functions.LambdaDeclarationExpression;
 import org.jelik.parser.ast.locals.ValueDeclaration;
 import org.jelik.parser.ast.locals.VariableDeclaration;
 import org.jelik.parser.ast.locals.WithLocalVariableDeclaration;
+import org.jelik.parser.ast.loops.ForEachLoop;
+import org.jelik.parser.ast.nullsafe.NullSafeCallExpr;
 import org.jelik.parser.ast.operators.AssignExpr;
+import org.jelik.parser.ast.resolvers.constructors.ParentConstructorCallResolver;
+import org.jelik.parser.ast.types.AbstractTypeRef;
 import org.jelik.parser.ast.types.InferredTypeRef;
 import org.jelik.parser.ast.types.TypeAccessNode;
-import org.jelik.parser.ast.types.TypeNode;
 import org.jelik.parser.ast.types.TypeNodeRef;
-import org.jelik.parser.ast.types.AbstractTypeRef;
 import org.jelik.parser.ast.types.UndefinedTypeNode;
 import org.jelik.parser.ast.visitors.AstVisitor;
-import org.jelik.compiler.exceptions.SyntaxException;
 import org.jelik.parser.token.operators.AssignOperator;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,113 +43,135 @@ import java.util.Objects;
 public class LocalVariableAndLiteralResolver extends AstVisitor {
 
     @Override
-    public void visitFunctionDeclaration(@NotNull FunctionDeclaration functionDeclaration, @NotNull CompilationContext compilationContext) {
+    public void visitFunctionDeclaration(@NotNull FunctionDeclaration functionDeclaration,
+                                         @NotNull CompilationContext compilationContext) {
+
         compilationContext.pushCompilationUnit(functionDeclaration);
-        functionDeclaration.getFunctionBody().visit(this, compilationContext);
+        functionDeclaration.getFunctionBody().accept(this, compilationContext);
         compilationContext.popCompilationUnit();
     }
 
     @Override
-    public void visit(ParenthesisExpression parenthesisExpression, CompilationContext compilationContext) {
-        parenthesisExpression.parent.replaceWith(parenthesisExpression, parenthesisExpression.getExpression());
-        parenthesisExpression.getExpression().visit(this, compilationContext);
+    public void visitConstructorDeclaration(@NotNull ConstructorDeclaration constructorDeclaration,
+                                            @NotNull CompilationContext compilationContext) {
+
+        compilationContext.pushCompilationUnit(constructorDeclaration);
+        ParentConstructorCallResolver.INSTANCE.resolveCall(constructorDeclaration, compilationContext);
+        constructorDeclaration.getFunctionBody().accept(this, compilationContext);
+        compilationContext.popCompilationUnit();
+    }
+
+    @Override
+    public void visit(@NotNull ParenthesisExpression parenthesisExpression,
+                      @NotNull CompilationContext compilationContext) {
+
+        parenthesisExpression.getParent().replaceWith(parenthesisExpression, parenthesisExpression.getExpression());
+        parenthesisExpression.getExpression().accept(this, compilationContext);
     }
 
     @Override
     public void visitValueDeclaration(@NotNull ValueDeclaration valueDeclaration,
                                       @NotNull CompilationContext compilationContext) {
+
         visitWithLocalVariable(valueDeclaration, compilationContext);
     }
 
     @Override
     public void visitVariableDeclaration(@NotNull VariableDeclaration variableDeclaration,
                                          @NotNull CompilationContext compilationContext) {
+
         visitWithLocalVariable(variableDeclaration, compilationContext);
     }
 
     @Override
     public void visitWithLocalVariable(@NotNull WithLocalVariableDeclaration withLocalVariable,
                                        @NotNull CompilationContext compilationContext) {
-        Objects.requireNonNull(withLocalVariable.getFurtherExpression());
-        withLocalVariable.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
-        TypeNode typeNode = withLocalVariable.getTypeNode();
-        AbstractTypeRef typeRef;
+
+        Objects.requireNonNull(withLocalVariable.getExpression());
+        withLocalVariable.getExpression().accept(this, compilationContext);
+        var typeNode = withLocalVariable.getTypeNode();
+        final AbstractTypeRef typeRef;
         if (typeNode == UndefinedTypeNode.UNDEFINED_TYPE_NODE) {
             typeRef = new TypeNodeRef(withLocalVariable.getTypeNode());
         } else {
-            typeRef = new InferredTypeRef(withLocalVariable.getFurtherExpressionOpt().get());
+            typeRef = new InferredTypeRef(withLocalVariable.getExpression());
         }
-        LocalVariable localVariable = new LocalVariable(withLocalVariable.getLiteralToken().getText(), typeRef, false);
+        LocalVariable localVariable = new LocalVariable(withLocalVariable.getLiteralToken().getText(),
+                typeRef,
+                false);
         compilationContext.blockStack.getLast().getBlockContext().addLocal(localVariable.getName(), localVariable);
-        FunctionDeclaration functionDeclaration = (FunctionDeclaration) compilationContext.currentCompilationUnit();
+        var functionDeclaration = (FunctionDeclaration) compilationContext.currentCompilationUnit();
         functionDeclaration.getFunctionContext().addLocalVariable(localVariable);
         withLocalVariable.setLocalVariable(localVariable);
     }
 
     @Override
-    public void visit(@NotNull BasicBlock basicBlock,
-                      @NotNull CompilationContext compilationContext) {
-        if (compilationContext.blockStack.isEmpty()) {
-            for (LocalVariable localsAsParameter : ((FunctionDeclaration) compilationContext.currentCompilationUnit())
-                    .getFunctionContext()
-                    .getLocalsAsParameters()) {
-                basicBlock.getBlockContext().addLocal(localsAsParameter.getName(), localsAsParameter);
-            }
-        }
-        super.visit(basicBlock, compilationContext);
+    public void visitNullSafeCall(@NotNull NullSafeCallExpr nullSafeCall, @NotNull CompilationContext compilationContext) {
+        nullSafeCall.getReference().accept(this, compilationContext);
+        nullSafeCall.getFurtherExpression().accept(this, compilationContext);
     }
 
     @Override
     public void visit(@NotNull FunctionBodyBlock fb, @NotNull CompilationContext compilationContext) {
-        fb.getBb().visit(this, compilationContext);
+        for (var localsAsParameter : ((FunctionDeclaration) compilationContext.currentCompilationUnit())
+                .getFunctionContext()
+                .getLocalsAsParameters()) {
+            fb.getBasicBlock().getBlockContext().addLocal(localsAsParameter.getName(), localsAsParameter);
+        }
+        fb.getBasicBlock().accept(this, compilationContext);
     }
 
     @Override
-    public void visit(@NotNull FunctionCallExpr functionCallExpr, @NotNull CompilationContext compilationContext) {
-        for (Argument argument : functionCallExpr.getArgumentList().getArguments()) {
-            argument.visit(this, compilationContext);
+    public void visitFunctionCall(@NotNull FunctionCallExpr functionCallExpr,
+                                  @NotNull CompilationContext compilationContext) {
+        for (var argument : functionCallExpr.getArgumentList().getArguments()) {
+            argument.accept(this, compilationContext);
         }
-        functionCallExpr.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
     }
 
     @Override
     public void visit(@NotNull Argument argument, @NotNull CompilationContext compilationContext) {
-        argument.getExpression().visit(this, compilationContext);
+        argument.getExpression().accept(this, compilationContext);
     }
 
     @Override
     public void visit(@NotNull LiteralExpr literalExpr, @NotNull CompilationContext compilationContext) {
-        if (literalExpr.getParent() instanceof DotCallExpr && ((DotCallExpr) literalExpr.getParent()).getSubject() instanceof TypeAccessNode) {
-            final GetFieldNode getFieldNode = new GetFieldNode(literalExpr.getLiteralToken());
-            literalExpr.getParent().replaceWith(literalExpr, getFieldNode);
-            literalExpr.getFurtherExpressionOpt().ifPresent(expr -> {
-                getFieldNode.setFurtherExpression(expr);
-                expr.visit(this, compilationContext);
-            });
-        } else {
+        if (literalExpr.getParent() instanceof ReferenceExpressionImpl &&
+                ((ReferenceExpressionImpl) literalExpr.getParent()).getReference() instanceof TypeAccessNode) {
+
+            literalExpr
+                    .getParent()
+                    .replaceWith(literalExpr, new GetFieldNode(literalExpr.getLiteralToken()));
+        }
+        else {
             Expression newExpr = new NumberResolver(literalExpr).resolve(compilationContext).getNewNode();
             if (newExpr == null) {
                 newExpr = compilationContext
                         .currentCompilationUnit()
                         .findSymbol(literalExpr.getLiteralToken().getText(), compilationContext)
                         .map(s -> s.replaceNode(literalExpr))
-                        .orElseThrow(() -> new SyntaxException("Could not resolve symbol", literalExpr, compilationContext.getCurrentModule()));
+                        .orElseThrow(() -> new SyntaxException(
+                                "Could not resolve symbol: " + literalExpr.getLiteralToken().getText(),
+                                literalExpr,
+                                compilationContext.getCurrentModule()));
             }
-            newExpr.visit(this, compilationContext);
+            newExpr.accept(this, compilationContext);
         }
     }
 
     @Override
-    public void visit(@NotNull ArrayOrMapGetExpr arrayOrMapGetExpr, @NotNull CompilationContext compilationContext) {
-        if (arrayOrMapGetExpr.parent instanceof AssignExpr) {
+    public void visitArrayOrMapGetExpr(@NotNull ArrayOrMapGetExpr arrayOrMapGetExpr,
+                                       @NotNull CompilationContext compilationContext) {
+
+        if (arrayOrMapGetExpr.getParent() instanceof AssignExpr) {
             var newExpr = new ArrayOrMapSetExpr(arrayOrMapGetExpr.getLeftExpr(),
                     arrayOrMapGetExpr.getLeftBracketToken(),
                     arrayOrMapGetExpr.getExpression(),
                     arrayOrMapGetExpr.getRightBracketToken(),
-                    ((AssignOperator) ((AssignExpr) arrayOrMapGetExpr.parent).getOp()),
-                    ((AssignExpr) arrayOrMapGetExpr.parent).getRight());
-            arrayOrMapGetExpr.parent.parent.replaceWith(((AssignExpr) arrayOrMapGetExpr.parent), newExpr);
-            newExpr.visit(this, compilationContext);
+                    ((AssignOperator) ((AssignExpr) arrayOrMapGetExpr.getParent()).getOp()),
+                    ((AssignExpr) arrayOrMapGetExpr.getParent()).getRight());
+            arrayOrMapGetExpr.getParent().getParent().replaceWith(((AssignExpr) arrayOrMapGetExpr.getParent()), newExpr);
+            newExpr.accept(this, compilationContext);
             return;
         }
         if (arrayOrMapGetExpr.getLeftExpr() instanceof ArrayCreateExpr) {
@@ -157,33 +180,56 @@ public class LocalVariableAndLiteralResolver extends AstVisitor {
         if (arrayOrMapGetExpr.getLeftExpr() instanceof MapCreateExpr) {
             arrayOrMapGetExpr.arrayGet = false;
         }
-        arrayOrMapGetExpr.getLeftExpr().visit(this, compilationContext);
-        arrayOrMapGetExpr.getExpression().visit(this, compilationContext);
-        arrayOrMapGetExpr.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
+        arrayOrMapGetExpr.getLeftExpr().accept(this, compilationContext);
+        arrayOrMapGetExpr.getExpression().accept(this, compilationContext);
     }
 
     @Override
-    public void visit(@NotNull TryExpression tryExpression, @NotNull CompilationContext compilationContext) {
-        super.visit(tryExpression, compilationContext);
-    }
-
-    @Override
-    public void visit(@NotNull CatchExpression catchExpression, @NotNull CompilationContext compilationContext) {
-        FunctionDeclaration functionDeclaration = (FunctionDeclaration) compilationContext.currentCompilationUnit();
-        for (FunctionParameter functionParameter : catchExpression.getArgs().getFunctionParameters()) {
-            LocalVariable localVariable = new LocalVariable(
+    public void visitCatchExpression(@NotNull CatchExpression catchExpression, @NotNull CompilationContext compilationContext) {
+        var functionDeclaration = (FunctionDeclaration) compilationContext.currentCompilationUnit();
+        for (var functionParameter : catchExpression.getArgs().getFunctionParameters()) {
+            var localVariable = new LocalVariable(
                     functionParameter.getName().getText(),
                     new TypeNodeRef(functionParameter.getTypeNode()),
                     false);
             functionParameter.localVariableRef = localVariable;
-            compilationContext.blockStack.getLast().getBlockContext().addLocal(functionParameter.getName().getText(), localVariable);
+            compilationContext.blockStack
+                    .getLast()
+                    .getBlockContext()
+                    .addLocal(functionParameter.getName().getText(), localVariable);
             functionDeclaration.getFunctionContext().addLocalVariable(localVariable);
         }
-        super.visit(catchExpression, compilationContext);
+        super.visitCatchExpression(catchExpression, compilationContext);
     }
 
     @Override
     public void visit(@NotNull AssignExpr assignExpr, @NotNull CompilationContext compilationContext) {
         super.visit(assignExpr, compilationContext);
+    }
+
+    @Override
+    public void visitForEachLoop(@NotNull ForEachLoop forEachloop, @NotNull CompilationContext compilationContext) {
+        forEachloop.getIterExpression().accept(this, compilationContext);
+        var functionDeclaration = (FunctionDeclaration) compilationContext.currentCompilationUnit();
+        var localVariables = forEachloop.createLocalVariables();
+        localVariables.forEach(l -> {
+            compilationContext.blockStack
+                    .getLast()
+                    .getBlockContext()
+                    .addLocal(l.getName(), l);
+            functionDeclaration.getFunctionContext().addLocalVariable(l);
+        });
+        forEachloop.setLocals(localVariables);
+        forEachloop.getBlock().accept(this, compilationContext);
+    }
+
+    @Override
+    public void visitLambdaDeclarationExpression(@NotNull LambdaDeclarationExpression lambdaDeclarationExpression,
+                                                 @NotNull CompilationContext compilationContext) {
+
+        lambdaDeclarationExpression.getLambdaDeclaration().accept(new FunctionSignatureResolver(), compilationContext);
+        lambdaDeclarationExpression.getLambdaDeclaration().accept(
+                new LocalVariableAndLiteralResolver(),
+                compilationContext);
     }
 }

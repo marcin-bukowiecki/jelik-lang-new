@@ -1,22 +1,29 @@
 package org.jelik.parser.ast;
 
-import org.jelik.CompilationContext;
-import org.jelik.parser.ast.expression.ExpressionWithType;
+import org.jelik.compiler.config.CompilationContext;
+import org.jelik.parser.ast.expression.EmptyExpression;
+import org.jelik.parser.ast.expression.Expression;
+import org.jelik.parser.ast.expression.ExpressionWrapper;
 import org.jelik.parser.ast.expression.StackConsumer;
 import org.jelik.parser.ast.visitors.AstVisitor;
+import org.jelik.parser.token.Token;
 import org.jelik.parser.token.keyword.ReturnKeyword;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Marcin Bukowiecki
  */
-public class ReturnExpr extends ExpressionWithType implements ConsumingExpression, StackConsumer {
+public class ReturnExpr extends ExpressionWrapper implements ConsumingExpression, StackConsumer {
 
-    private final ReturnKeyword returnKeyword;
+    private final Token returnKeyword;
 
-    public ReturnExpr(ReturnKeyword returnKeyword, Expression expression) {
+    public ReturnExpr(@NotNull Token returnKeyword, @NotNull Expression expression) {
+        super(expression);
         this.returnKeyword = returnKeyword;
-        this.setFurtherExpression(expression);
+    }
+
+    public static ReturnExpr voidReturn() {
+        return new ReturnExpr(ReturnKeyword.MOCK, EmptyExpression.INSTANCE);
     }
 
     @Override
@@ -31,35 +38,30 @@ public class ReturnExpr extends ExpressionWithType implements ConsumingExpressio
 
     @Override
     public int getEndCol() {
-        return furtherExpression.getEndCol();
+        return getExpression().getEndCol();
     }
 
     @Override
     public int getEndRow() {
-        return furtherExpression.getEndRow();
+        return getExpression().getEndRow();
     }
 
-    public ReturnKeyword getReturnKeyword() {
+    public Token getReturnKeyword() {
         return returnKeyword;
     }
 
     @Override
-    public void replaceWith(@NotNull Expression oldNode, @NotNull Expression newNode) {
-        if (oldNode == furtherExpression) {
-            furtherExpression = newNode;
-            newNode.parent = this;
-        } else {
-            throw new IllegalArgumentException("Could not find node for replace: " + oldNode);
-        }
-    }
-
-    @Override
-    public void visit(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
+    public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
         astVisitor.visitReturnExpr(this, compilationContext);
     }
 
     @Override
+    public boolean isEmpty() {
+        return getExpression() instanceof EmptyExpression;
+    }
+
+    @Override
     public String toString() {
-        return returnKeyword + " " + (furtherExpression == null ? "" : furtherExpression.toString());
+        return getReturnKeyword() + " " + (getExpression() instanceof EmptyExpression ? "" : getExpression().toString());
     }
 }

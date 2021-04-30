@@ -1,0 +1,4 @@
+fun expr()->Boolean {
+    var a = false == true
+    ret a
+}

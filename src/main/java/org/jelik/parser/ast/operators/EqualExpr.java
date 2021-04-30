@@ -1,10 +1,11 @@
 package org.jelik.parser.ast.operators;
 
 import lombok.Getter;
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.parser.ast.visitors.AstVisitor;
-import org.jelik.parser.ast.Expression;
+import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.token.operators.AbstractOperator;
+import org.jelik.parser.token.operators.EqualOperator;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -17,8 +18,12 @@ public class EqualExpr extends AbstractLogicalOpExpr {
         super(left, abstractOperator, right);
     }
 
+    public EqualExpr(Expression left, Expression right) {
+        super(left, new EqualOperator(), right);
+    }
+
     @Override
-    public void visit(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
+    public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
         astVisitor.visit(this, compilationContext);
     }
 }

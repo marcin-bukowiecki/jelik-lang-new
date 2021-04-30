@@ -1,1 +1,3 @@
-fun expr(a Int, b Int) -> Boolean { ret a < b and a < b }
+import java.util.Iterator
+import java.util.List
+fun expr(a Iterator<Int>, b List<Int>) -> Boolean { ret a.hasNext() and b.size() > 1}

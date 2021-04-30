@@ -45,4 +45,12 @@ public class CompilationResult {
             Assertions.assertThat(ex.getClass()).isEqualTo(exceptionType);
         }
     }
+
+    public void invokeAndExpectError(String expr, String message, Object... args) {
+        try {
+            invoke(expr, args);
+        } catch (Throwable ex) {
+            Assertions.assertThat(ex.getMessage()).isEqualTo(message);
+        }
+    }
 }

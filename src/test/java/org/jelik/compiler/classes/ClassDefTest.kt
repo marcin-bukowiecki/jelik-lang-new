@@ -2,6 +2,7 @@ package org.jelik.compiler.classes
 
 import org.assertj.core.api.Assertions
 import org.jelik.compiler.utils.FunctionCompiler
+import org.junit.Ignore
 import org.junit.Test
 
 /**
@@ -24,7 +25,7 @@ class ClassDefTest {
     @Test
     fun shouldDefineSimpleClass_2() {
         val expr = "" +
-                "class Test\n" +
+                "class Test {}\n" +
                 "\n" +
                 "fun test() -> Test { ret Test() }";
 
@@ -42,5 +43,15 @@ class ClassDefTest {
         Assertions.assertThatThrownBy {
             FunctionCompiler.getInstance().compile(expr).invoke<Any>("test").value.javaClass
         }.hasMessage("Unexpected token")
+    }
+
+    @Test
+    fun shouldDefineTpl1_1() {
+        val expr = "class Tuple1<T1> {\n" +
+                "constructor(_1 T1) {}\n" +
+                "}\n" +
+                "\n" +
+                "fun test() -> Tuple1<Int> { ret Tuple1<Int>(123) }"
+        FunctionCompiler.getInstance().compile(expr).invoke<Any>("test")
     }
 }

@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.resolvers;
 
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.ast.types.SingleTypeNode;
 import org.jelik.types.Type;

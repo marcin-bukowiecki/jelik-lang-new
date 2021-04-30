@@ -1,2 +1,1 @@
-fun expr(a Long) -> Long { val b = 10L 
- ret -a * b }
+fun expr(a Object, b Object) -> Boolean { ret a.equals(b) or b.equals(a) }

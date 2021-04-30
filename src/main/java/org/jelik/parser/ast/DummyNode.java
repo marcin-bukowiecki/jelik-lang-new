@@ -1,6 +1,6 @@
 package org.jelik.parser.ast;
 
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jetbrains.annotations.NotNull;
 
@@ -9,12 +9,12 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Marcin Bukwoiecki
  */
-public class DummyNode extends ASTNode {
+public class DummyNode extends ASTNodeImpl {
 
     public static final DummyNode INSTANCE = new DummyNode();
 
     @Override
-    public void visit(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
+    public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
 
     }
 }

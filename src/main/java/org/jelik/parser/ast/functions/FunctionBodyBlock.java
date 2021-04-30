@@ -1,42 +1,46 @@
 package org.jelik.parser.ast.functions;
 
-import org.jelik.CompilationContext;
-import org.jelik.parser.ast.BasicBlock;
+import org.jelik.compiler.config.CompilationContext;
+import org.jelik.parser.ast.blocks.BasicBlockImpl;
 import org.jelik.parser.ast.labels.LabelNode;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.token.LeftCurlToken;
 import org.jelik.parser.token.RightCurlToken;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
+
 /**
  * @author Marcin Bukowiecki
  */
 public class FunctionBodyBlock extends FunctionBody {
 
-    public static final FunctionBody EMPTY = new FunctionBodyBlock(new LeftCurlToken(-1,-1),
-            BasicBlock.EMPTY,
-            new RightCurlToken(-1,-1));
-
     private final LeftCurlToken leftCurlToken;
 
     private final RightCurlToken rightCurlToken;
 
-    private final BasicBlock bb;
+    private final BasicBlockImpl bb;
 
     private LabelNode startLabel;
 
-    public FunctionBodyBlock(LeftCurlToken leftCurlToken, BasicBlock bb, RightCurlToken rightCurlToken) {
+    public FunctionBodyBlock(final @NotNull LeftCurlToken leftCurlToken,
+                             final @NotNull BasicBlockImpl bb,
+                             final @NotNull RightCurlToken rightCurlToken) {
         this.leftCurlToken = leftCurlToken;
         this.rightCurlToken = rightCurlToken;
         this.bb = bb;
-        bb.parent = this;
+        bb.setParent(this);
     }
 
-    public void setStartLabel(LabelNode startLabel) {
+    public static @NotNull FunctionBodyBlock createEmpty() {
+        return new FunctionBodyBlock(LeftCurlToken.DUMMY, BasicBlockImpl.createEmpty(), RightCurlToken.DUMMY);
+    }
+
+    public void setStartLabel(@NotNull LabelNode startLabel) {
         this.startLabel = startLabel;
     }
 
-    public LabelNode getStartLabel() {
+    public @NotNull LabelNode getStartLabel() {
         return startLabel;
     }
 
@@ -48,12 +52,13 @@ public class FunctionBodyBlock extends FunctionBody {
         return rightCurlToken;
     }
 
-    public BasicBlock getBb() {
+    @Override
+    public BasicBlockImpl getBasicBlock() {
         return bb;
     }
 
     @Override
-    public void visit(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
+    public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
         astVisitor.visit(this, compilationContext);
     }
 
@@ -70,5 +75,10 @@ public class FunctionBodyBlock extends FunctionBody {
     @Override
     public String getSymbol() {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public int getEndRow() {
+        return rightCurlToken.getEndRow();
     }
 }

@@ -1,2 +1,1 @@
-fun test(Int )
- { }
+fun expr() -> []String {   ret []String(5)}

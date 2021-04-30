@@ -1,6 +1,6 @@
 package org.jelik.parser.token.operators;
 
-import org.jelik.parser.ast.Expression;
+import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.helpers.OperatorStack;
 import org.jelik.parser.ast.operators.AbstractOpExpr;
 import org.jelik.parser.token.Token;

@@ -1,9 +1,8 @@
 package org.jelik.parser.ast.arrays;
 
 import lombok.Getter;
-import org.jelik.CompilationContext;
-import org.jelik.parser.ast.Expression;
-import org.jelik.parser.ast.expression.ExpressionReferencingType;
+import org.jelik.compiler.config.CompilationContext;
+import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.expression.ExpressionWithType;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.token.LeftBracketToken;
@@ -40,14 +39,14 @@ public class ArrayOrMapSetExpr extends ExpressionWithType {
                              @NotNull AssignOperator assignOperator,
                              @NotNull Expression rightExpression) {
         this.ref = ref;
-        this.ref.parent = this;
+        this.ref.setParent(this);
         this.leftBracketToken = leftBracketToken;
         this.index = index;
-        this.index.parent = this;
+        this.index.setParent(this);
         this.rightBracketToken = rightBracketToken;
         this.assignOperator = assignOperator;
         this.rightExpression = rightExpression;
-        this.rightExpression.parent = this;
+        this.rightExpression.setParent(this);
         this.nodeContext.setType(JVMVoidType.INSTANCE);
         this.nodeContext.setGenericType(JVMVoidType.INSTANCE);
     }
@@ -60,6 +59,19 @@ public class ArrayOrMapSetExpr extends ExpressionWithType {
             rightExpression = newNode;
         } else if (index == oldNode) {
             index = newNode;
+        }
+    }
+
+    public Type getValueType() {
+        return arraySet ? ref.getGenericReturnType().getInnerType(0) :
+                ref.getGenericReturnType().getTypeVariables().get(1);
+    }
+
+    public Type getKeyType() {
+        if (arraySet) {
+            throw new UnsupportedOperationException();
+        } else {
+            return ref.getGenericReturnType().getTypeVariables().get(0);
         }
     }
 
@@ -84,8 +96,8 @@ public class ArrayOrMapSetExpr extends ExpressionWithType {
     }
 
     @Override
-    public void visit(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
-        astVisitor.visit(this, compilationContext);
+    public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
+        astVisitor.visitArrayOrMapSetExpr(this, compilationContext);
     }
 
     @Override

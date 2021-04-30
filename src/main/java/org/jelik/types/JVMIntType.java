@@ -1,14 +1,19 @@
 package org.jelik.types;
 
 import com.google.common.collect.Sets;
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.JelikCompiler;
 import org.jelik.compiler.asm.visitor.TypeVisitor;
 import org.jelik.compiler.common.TypeEnum;
-import org.jelik.parser.ast.Expression;
+import org.jelik.compiler.data.ClassData;
+import org.jelik.parser.ast.expression.Expression;
+import org.jelik.parser.ast.numbers.Float32ToInt32Node;
 import org.jelik.parser.ast.numbers.IntegerWrapperToInt32Node;
 import org.jelik.parser.ast.numbers.ObjectToInt32Node;
 import org.jelik.types.jvm.IntegerWrapperType;
+import org.jelik.types.jvm.JVMFloatType;
 import org.jelik.types.jvm.NumberType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.Set;
@@ -21,11 +26,16 @@ public class JVMIntType extends NumberType {
     public static final JVMIntType INSTANCE = new JVMIntType();
 
     public JVMIntType() {
-        super("int", "int", TypeEnum.int32);
+        super("Int", "Int", TypeEnum.int32);
     }
 
     public JVMIntType(String name, String canonicalName, TypeEnum t) {
         super(name, canonicalName, t);
+    }
+
+    @Override
+    public ClassData findClassData(@NotNull CompilationContext compilationContext) {
+        return JelikCompiler.INSTANCE.createJavaClassData(int.class, compilationContext);
     }
 
     @Override
@@ -56,7 +66,7 @@ public class JVMIntType extends NumberType {
     }
 
     @Override
-    public void visit(TypeVisitor typeVisitor, CompilationContext compilationContext) {
+    public void accept(TypeVisitor typeVisitor, CompilationContext compilationContext) {
         typeVisitor.visit(this, compilationContext);
     }
 
@@ -93,13 +103,18 @@ public class JVMIntType extends NumberType {
     }
 
     @Override
+    public void castFrom(Expression expression, JVMFloatType type, CompilationContext compilationContext) {
+        expression.getParent().replaceWith(expression, new Float32ToInt32Node(expression));
+    }
+
+    @Override
     public void castFrom(Expression expression, JVMObjectType type, CompilationContext compilationContext) {
-        expression.parent.replaceWith(expression, new ObjectToInt32Node(expression, expression.getFurtherExpression()));
+        expression.getParent().replaceWith(expression, new ObjectToInt32Node(expression));
     }
 
     @Override
     public void castFrom(Expression expression, IntegerWrapperType type, CompilationContext compilationContext) {
-        expression.parent.replaceWith(expression, new IntegerWrapperToInt32Node(expression, expression.getFurtherExpression()));
+        expression.getParent().replaceWith(expression, new IntegerWrapperToInt32Node(expression));
     }
 
     @Override

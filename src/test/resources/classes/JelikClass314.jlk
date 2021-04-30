@@ -1,0 +1,5 @@
+fun expr()->Boolean {
+    var a =!(12 > 5
+     )
+    ret a
+}

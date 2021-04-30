@@ -1,11 +1,15 @@
 package org.jelik.compiler.data;
 
+import com.google.common.collect.ImmutableList;
 import lombok.Getter;
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.compiler.asm.utils.ASMUtils;
 import org.jelik.types.FunctionType;
 import org.jelik.types.Type;
+import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Modifier;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,13 +26,14 @@ public class ClassDataImpl implements ClassData {
     protected final boolean functionalInterface;
     protected final Type type;
     protected final boolean interfacee;
+    protected final boolean abstractt;
 
     //initialize after constructor call
-    protected List<MethodDataImpl> methodScope;
-    protected List<MethodDataImpl> constructorScope;
-    protected List<FieldDataImpl> fieldScope;
-    protected List<ClassDataImpl> interfaceScope = Collections.emptyList();
-    protected ClassDataImpl parentScope;
+    protected List<MethodDataImpl> methodScope = Collections.emptyList();
+    protected List<MethodDataImpl> constructorScope = Collections.emptyList();
+    protected List<FieldDataImpl> fieldScope = Collections.emptyList();
+    protected List<ClassData> interfaceScope = Collections.emptyList();
+    protected ClassData parentScope;
 
     public ClassDataImpl(Class<?> clazz) {
         this.canonicalName = clazz.getCanonicalName() == null ? "" : clazz.getCanonicalName();
@@ -41,16 +46,28 @@ public class ClassDataImpl implements ClassData {
         } else {
             this.type = Type.of(clazz);
         }
+        this.abstractt = Modifier.isAbstract(this.modifiers);
     }
 
     @Override
-    public List<MethodData> findByName(String name, CompilationContext compilationContext) {
-        return methodScope.stream().filter(m -> m.getName().equals(name)).collect(Collectors.toList());
+    public @NotNull List<? extends MethodData> findByName(String name, CompilationContext compilationContext) {
+        return new ImmutableList.Builder<MethodData>()
+                .addAll(methodScope.stream().filter(m -> m.getName().equals(name)).collect(Collectors.toList()))
+                .addAll(constructorScope.stream().filter(c -> c.getName().equals(name)).collect(Collectors.toList()))
+                .addAll("java.lang.Object".equals(canonicalName) || parentScope == null ?
+                        Collections.emptySet() :
+                        parentScope.findByName(name, compilationContext))
+                .addAll(interfaceScope.stream()
+                        .map(i -> i.findByName(name, compilationContext)).flatMap(Collection::stream)
+                        .collect(Collectors.toList()))
+                .build();
     }
 
     @Override
     public List<FieldData> findFieldByName(String name) {
-        return fieldScope.stream().filter(m -> m.getName().equals(name)).collect(Collectors.toList());
+        return fieldScope.stream()
+                .filter(m -> m.getName().equals(name))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -60,15 +77,28 @@ public class ClassDataImpl implements ClassData {
 
     @Override
     public List<Type> getInterfaceTypes() {
-        return interfaceScope.stream().map(cd -> cd.type).collect(Collectors.toList());
+        return interfaceScope.stream()
+                .map(ClassData::getType)
+                .collect(Collectors.toList());
     }
 
-    public List<MethodDataImpl> getMethodScope() {
+    @Override
+    public List<MethodData> getMethodScope() {
         return Collections.unmodifiableList(methodScope);
     }
 
     @Override
     public Type getParentType() {
-        return parentScope.type;
+        return parentScope.getType();
+    }
+
+    @Override
+    public boolean isInterface() {
+        return interfacee;
+    }
+
+    @Override
+    public boolean isAbstract() {
+        return abstractt;
     }
 }

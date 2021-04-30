@@ -16,8 +16,10 @@
 
 package org.jelik.types.jvm;
 
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.compiler.common.TypeEnum;
+import org.jelik.parser.ast.expression.Expression;
+import org.jelik.parser.ast.numbers.Int64ToWrapperNode;
 import org.jelik.types.Type;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,5 +52,10 @@ public class LongWrapperType extends IntegerWrapperType {
             default:
                 return getAssignableToTypes(compilationContext).contains(type);
         }
+    }
+
+    @Override
+    public void castFrom(Expression expression, JVMLongType type, CompilationContext compilationContext) {
+        expression.getParent().replaceWith(expression, new Int64ToWrapperNode(expression));
     }
 }

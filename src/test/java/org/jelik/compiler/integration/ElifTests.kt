@@ -1,0 +1,167 @@
+package org.jelik.compiler.integration
+
+import org.jelik.compiler.utils.FunctionCompiler
+import org.junit.Test
+import java.util.*
+
+/**
+ * @author Marcin Bukowiecki
+ */
+class ElifTests {
+
+    @Test
+    fun testElif_1() {
+        val expr = """
+            fun expr(a Int) -> Int {
+                if a > 10 and a < 100 then
+                    ret 1
+                elif a > 100 then
+                    ret 2
+                else 
+                    ret 0
+                end    
+            }
+        """
+
+        FunctionCompiler.getInstance()
+            .compile(expr)
+            .invoke<Int>("expr", 101)
+            .isEqualTo(2)
+    }
+
+    @Test
+    fun testElif_2() {
+        val expr = """
+            fun expr(a Int) -> Int {
+                var b = 123
+                if a > 10 and a < 100 then
+                    b = 1
+                elif a > 100 then
+                    b = 2
+                else 
+                    b = 0
+                end    
+                ret b
+            }
+        """
+
+        FunctionCompiler.getInstance()
+            .compile(expr)
+            .invoke<Int>("expr", 101)
+            .isEqualTo(2)
+    }
+
+    @Test
+    fun testElif_3() {
+        val expr = """
+            fun expr(a Int) -> Int {
+                var b = 123
+                if a > 10 and a < 100 then
+                    b = 1
+                elif a > 100 then
+                    b = 2
+                end    
+                ret b
+            }
+        """
+
+        FunctionCompiler.getInstance()
+            .compile(expr)
+            .invoke<Int>("expr", 101)
+            .isEqualTo(2)
+    }
+
+    @Test
+    fun testElif_4() {
+        val expr = """
+            fun expr(a Int) -> Int {
+                var b = 123
+                if a > 10 and a < 100 then
+                    b = 1
+                elif a > 100 and a <= 200 then
+                    b = 2
+                elif a > 200 then
+                    b = 3
+                end    
+                ret b
+            }
+        """
+
+        FunctionCompiler.getInstance()
+            .compile(expr)
+            .invoke<Int>("expr", 201)
+            .isEqualTo(3)
+    }
+
+    @Test
+    fun testElif_5() {
+        val expr = """
+            fun expr(a Int) -> Int {
+                var b = 123
+                if a > 10 and a < 100 then
+                    b = 1
+                elif a > 100 then
+                    b = 2
+                elif a > 200 then
+                    b = 3
+                else 
+                    b = 4
+                end    
+                ret b
+            }
+        """
+
+        FunctionCompiler.getInstance()
+            .compile(expr)
+            .invoke<Int>("expr", 2)
+            .isEqualTo(4)
+    }
+
+    @Test
+    fun testElif_6() {
+        val expr = """
+            fun expr(a Int) -> Int {
+                var b = 123
+                if a > 10 and a < 100 then
+                    b = 1
+                elif a > 100 then
+                    b = 2
+                end    
+                if a > 200 then
+                    b = 3
+                else 
+                    b = 4
+                end    
+                ret b
+            }
+        """
+
+        FunctionCompiler.getInstance()
+            .compile(expr)
+            .invoke<Int>("expr", 2)
+            .isEqualTo(4)
+    }
+
+    @Test
+    fun testElif_7() {
+        val expr = """
+            import java.util.List
+            import java.util.Iterator
+
+            fun expr(a Iterator<Int>, b List<Int>) -> Int {
+                var c = 123
+                if a.hasNext() and b.size() > 1 then
+                    c = 1
+                elif b.size() > 100 then
+                    c = 2
+                end    
+                ret c
+            }
+        """
+
+        FunctionCompiler.getInstance()
+            .compile(expr)
+            .invoke<Int>("expr", listOf(1,2,3).iterator(), listOf(1,2,3))
+            .isEqualTo(1)
+    }
+}

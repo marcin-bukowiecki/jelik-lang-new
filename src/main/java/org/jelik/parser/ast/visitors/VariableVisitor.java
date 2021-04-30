@@ -1,12 +1,14 @@
 package org.jelik.parser.ast.visitors;
 
 import org.jelik.parser.ParseContext;
-import org.jelik.parser.ast.Expression;
-import org.jelik.parser.ast.ParseVisitor;
+import org.jelik.parser.ast.expression.Expression;
+import org.jelik.parser.ast.TokenVisitor;
 import org.jelik.parser.ast.locals.VariableDeclaration;
 import org.jelik.parser.ast.types.TypeNode;
 import org.jelik.parser.ast.types.UndefinedTypeNode;
+import org.jelik.parser.ast.visitors.conditions.IfVisitor;
 import org.jelik.parser.token.LiteralToken;
+import org.jelik.parser.token.keyword.IfKeyword;
 import org.jelik.parser.token.keyword.VarKeyword;
 import org.jelik.parser.token.operators.AssignOperator;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Marcin Bukowiecki
  */
-public class VariableVisitor implements ParseVisitor<VariableDeclaration> {
+public class VariableVisitor implements TokenVisitor<VariableDeclaration> {
 
     private final VarKeyword varKeyword;
 
@@ -37,14 +39,14 @@ public class VariableVisitor implements ParseVisitor<VariableDeclaration> {
         var lexer = parseContext.getLexer();
         var name = lexer.nextToken();
         var nextToken = lexer.nextToken();
-        nextToken.visit(this, parseContext);
+        nextToken.accept(this, parseContext);
         return new VariableDeclaration(varKeyword, (LiteralToken) name, typeNode, assignOperator, expression);
     }
 
     @Override
     public void visitLiteral(@NotNull LiteralToken literalToken, @NotNull ParseContext parseContext) {
         this.typeNode = new TypeNodeVisitor(literalToken).visit(parseContext);
-        parseContext.getLexer().nextToken().visit(this, parseContext);
+        parseContext.getLexer().nextToken().accept(this, parseContext);
     }
 
     @Override
@@ -52,6 +54,10 @@ public class VariableVisitor implements ParseVisitor<VariableDeclaration> {
         this.assignOperator = assignOperator;
         var lexer = parseContext.getLexer();
         var nextToken = lexer.nextToken();
-        this.expression = new ExpressionVisitor(nextToken).visit(parseContext);
+        if (nextToken instanceof IfKeyword) {
+            this.expression = new IfVisitor(((IfKeyword) nextToken)).visit(parseContext);
+        } else {
+            this.expression = new ExpressionVisitor(nextToken).visit(parseContext);
+        }
     }
 }

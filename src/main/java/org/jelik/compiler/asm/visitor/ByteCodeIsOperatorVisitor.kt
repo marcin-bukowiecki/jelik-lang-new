@@ -1,6 +1,6 @@
 package org.jelik.compiler.asm.visitor
 
-import org.jelik.CompilationContext
+import org.jelik.compiler.config.CompilationContext
 import org.jelik.compiler.asm.MethodVisitorAdapter
 import org.jelik.parser.ast.operators.IsExpr
 import org.jelik.types.JVMBooleanType
@@ -23,15 +23,14 @@ class ByteCodeIsOperatorVisitor(private val mv: MethodVisitorAdapter, private va
 
     override fun visit(type: JVMIntType, compilationContext: CompilationContext) {
         if (subject.left.genericReturnType.isPrimitive) {
-            subject.left.genericReturnType.visit(WrapperCastVisitor(mv), compilationContext)
+            subject.left.genericReturnType.accept(WrapperCastVisitor(mv), compilationContext)
         }
-
         mv.instanceOf(type.wrapperType)
     }
 
     override fun visit(type: JVMCharType, compilationContext: CompilationContext) {
         if (subject.left.genericReturnType.isPrimitive) {
-            subject.left.genericReturnType.visit(WrapperCastVisitor(mv), compilationContext)
+            subject.left.genericReturnType.accept(WrapperCastVisitor(mv), compilationContext)
         }
 
         mv.instanceOf(type.wrapperType)
@@ -39,7 +38,7 @@ class ByteCodeIsOperatorVisitor(private val mv: MethodVisitorAdapter, private va
 
     override fun visit(type: JVMBooleanType, compilationContext: CompilationContext) {
         if (subject.left.genericReturnType.isPrimitive) {
-            subject.left.genericReturnType.visit(WrapperCastVisitor(mv), compilationContext)
+            subject.left.genericReturnType.accept(WrapperCastVisitor(mv), compilationContext)
         }
 
         mv.instanceOf(type.wrapperType)
@@ -47,7 +46,7 @@ class ByteCodeIsOperatorVisitor(private val mv: MethodVisitorAdapter, private va
 
     override fun visit(type: JVMDoubleType, compilationContext: CompilationContext) {
         if (subject.left.genericReturnType.isPrimitive) {
-            subject.left.genericReturnType.visit(WrapperCastVisitor(mv), compilationContext)
+            subject.left.genericReturnType.accept(WrapperCastVisitor(mv), compilationContext)
         }
 
         mv.instanceOf(type.wrapperType)
@@ -55,7 +54,7 @@ class ByteCodeIsOperatorVisitor(private val mv: MethodVisitorAdapter, private va
 
     override fun visit(type: JVMLongType, compilationContext: CompilationContext) {
         if (subject.left.genericReturnType.isPrimitive) {
-            subject.left.genericReturnType.visit(WrapperCastVisitor(mv), compilationContext)
+            subject.left.genericReturnType.accept(WrapperCastVisitor(mv), compilationContext)
         }
 
         mv.instanceOf(type.wrapperType)
@@ -63,7 +62,7 @@ class ByteCodeIsOperatorVisitor(private val mv: MethodVisitorAdapter, private va
 
     override fun visit(type: JVMShortType, compilationContext: CompilationContext) {
         if (subject.left.genericReturnType.isPrimitive) {
-            subject.left.genericReturnType.visit(WrapperCastVisitor(mv), compilationContext)
+            subject.left.genericReturnType.accept(WrapperCastVisitor(mv), compilationContext)
         }
 
         mv.instanceOf(type.wrapperType)
@@ -71,7 +70,7 @@ class ByteCodeIsOperatorVisitor(private val mv: MethodVisitorAdapter, private va
 
     override fun visit(type: JVMByteType, compilationContext: CompilationContext) {
         if (subject.left.genericReturnType.isPrimitive) {
-            subject.left.genericReturnType.visit(WrapperCastVisitor(mv), compilationContext)
+            subject.left.genericReturnType.accept(WrapperCastVisitor(mv), compilationContext)
         }
 
         mv.instanceOf(type.wrapperType)
@@ -79,7 +78,7 @@ class ByteCodeIsOperatorVisitor(private val mv: MethodVisitorAdapter, private va
 
     override fun visit(type: JVMFloatType, compilationContext: CompilationContext) {
         if (subject.left.genericReturnType.isPrimitive) {
-            subject.left.genericReturnType.visit(WrapperCastVisitor(mv), compilationContext)
+            subject.left.genericReturnType.accept(WrapperCastVisitor(mv), compilationContext)
         }
 
         mv.instanceOf(type.wrapperType)

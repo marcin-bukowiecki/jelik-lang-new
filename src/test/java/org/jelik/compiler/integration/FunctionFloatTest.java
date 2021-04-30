@@ -109,7 +109,7 @@ public class FunctionFloatTest {
 
     @Test
     public void shouldCompareFloats_3() {
-        var expr = "fun expr(b Float) -> Boolean { val a = .5f \n ret b != a and b > 9}";
+        var expr = "fun expr(b Float) -> Boolean { ret b > 9}";
         FunctionCompiler.getInstance()
                 .compile(expr)
                 .invoke("expr", 10f)

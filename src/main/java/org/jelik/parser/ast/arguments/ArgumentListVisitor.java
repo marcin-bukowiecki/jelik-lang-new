@@ -2,9 +2,8 @@ package org.jelik.parser.ast.arguments;
 
 import org.jelik.parser.Lexer;
 import org.jelik.parser.ParseContext;
-import org.jelik.parser.ast.ParseVisitor;
+import org.jelik.parser.ast.TokenVisitor;
 import org.jelik.parser.token.LeftParenthesisToken;
-import org.jelik.parser.token.LiteralToken;
 import org.jelik.parser.token.RightParenthesisToken;
 import org.jelik.parser.token.ElementType;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +13,7 @@ import java.util.ArrayList;
 /**
  * @author Marcin Bukowiecki
  */
-public class ArgumentListVisitor implements ParseVisitor<ArgumentList> {
+public class ArgumentListVisitor implements TokenVisitor<ArgumentList> {
 
     private final LeftParenthesisToken leftParenthesisToken;
 

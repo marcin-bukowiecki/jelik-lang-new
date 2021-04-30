@@ -1,1 +1,3 @@
-fun expr(a Float, b Float) -> Float { ret a * 4 }
+class Test {}
+
+fun test() -> Test { ret Test() }

@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.resolvers
 
-import org.jelik.CompilationContext
+import org.jelik.compiler.config.CompilationContext
 import org.jelik.compiler.exceptions.CompileException
 import org.jelik.parser.ast.functions.FunctionDeclaration
 import org.jelik.parser.ast.functions.FunctionParameter
@@ -10,19 +10,45 @@ import org.jelik.parser.ast.types.SingleTypeNode
 import org.jelik.parser.ast.visitors.AstVisitor
 
 /**
+ * Checks if given type is a function generic or class generic
+ *
+ * i.e.
+ *
+ * fun expr<T>(foo T) {
+ *
+ * }
+ *
+ * will resolve T as generic type
+ *
+ * if:
+ *
+ * fun expr(foo T) {
+ *
+ * }
+ *
+ * Will check also the owning class for T type. If this visitor won't find type anywhere it will throw exception
+ *
  * @author Marcin Bukowiecki
  */
 object FunctionTypeParametersResolver : AstVisitor() {
 
-    fun resolve(functionDeclaration: FunctionDeclaration, compilationContext: CompilationContext) {
+    override fun visitFunctionDeclaration(functionDeclaration: FunctionDeclaration,
+                                          compilationContext: CompilationContext
+    ) {
+
         val generics = functionDeclaration.generics
-        generics.forEach { it.visit(this, compilationContext) }
+        generics.forEach { it.accept(this, compilationContext) }
     }
 
-    override fun visitCovariantTypeNode(covariantTypeNode: CovariantTypeNode, compilationContext: CompilationContext) {
-        covariantTypeNode.parentTypeNode.visit(this, compilationContext)
-        compilationContext.currentFunction()
-                .functionContext.genericTypesMap[covariantTypeNode.typeNode.symbol] = covariantTypeNode.parentTypeNode
+    override fun visitCovariantTypeNode(covariantTypeNode: CovariantTypeNode,
+                                        compilationContext: CompilationContext
+    ) {
+
+        covariantTypeNode.parentTypeNode.accept(this, compilationContext)
+        compilationContext
+                .currentFunction()
+                .functionContext
+                .addTypeParameterMapping(covariantTypeNode.typeNode.symbol, covariantTypeNode.parentTypeNode)
     }
 
     override fun visitSingleTypeNode(t: SingleTypeNode, compilationContext: CompilationContext) {
@@ -31,16 +57,19 @@ object FunctionTypeParametersResolver : AstVisitor() {
 
     override fun visit(fr: FunctionReturn, compilationContext: CompilationContext) {
         val typeNode = compilationContext.currentFunction()
-                .functionContext.genericTypesMap[fr.typeNode.symbol] ?: throw CompileException("Unresolved type", fr.typeNode, compilationContext.currentModule)
+                .functionContext.typeParametersMappings[fr.typeNode.symbol] ?: throw CompileException("Unresolved type",
+                fr.typeNode,
+                compilationContext.currentModule)
 
         fr.typeNode.type = typeNode.type
         fr.typeNode.genericType = typeNode.genericType
     }
 
     override fun visit(fp: FunctionParameter, compilationContext: CompilationContext) {
-        val typeNode = compilationContext.currentFunction()
-                .functionContext.genericTypesMap[fp.typeNode.symbol] ?: throw CompileException("Unresolved type", fp.typeNode, compilationContext.currentModule)
-
+        val typeNode = compilationContext.currentFunction().functionContext.typeParametersMappings[fp.typeNode.symbol]
+                ?: throw CompileException("Unresolved type ${fp.typeNode}",
+                        fp.typeNode,
+                        compilationContext.currentModule)
         fp.typeNode.type = typeNode.type
         fp.typeNode.genericType = typeNode.genericType
     }

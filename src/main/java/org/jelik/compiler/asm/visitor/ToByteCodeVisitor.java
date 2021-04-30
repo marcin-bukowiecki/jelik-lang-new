@@ -1,102 +1,58 @@
+/*
+ * Copyright 2019 Marcin Bukowiecki
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.jelik.compiler.asm.visitor;
 
-import lombok.Getter;
-import org.jelik.CompilationContext;
 import org.jelik.compiler.asm.ClassWriterAdapter;
 import org.jelik.compiler.asm.MethodVisitorAdapter;
 import org.jelik.compiler.asm.helpers.InvokeDynamicHelper;
 import org.jelik.compiler.asm.utils.ASMUtils;
-import org.jelik.compiler.asm.utils.ByteCodeLogger;
-import org.jelik.compiler.data.JelikBuiltinFunction;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.compiler.exceptions.CompileException;
 import org.jelik.compiler.locals.LocalVariable;
+import org.jelik.compiler.passes.CodeBranchChecker;
+import org.jelik.compiler.passes.ReturnStmtInserter;
 import org.jelik.compiler.utils.Stateful;
-import org.jelik.parser.ast.BasicBlock;
-import org.jelik.parser.ast.ConsumingExpression;
-import org.jelik.parser.ast.Expression;
-import org.jelik.parser.ast.GetFieldNode;
-import org.jelik.parser.ast.KeyValueExpr;
-import org.jelik.parser.ast.MapCreateExpr;
-import org.jelik.parser.ast.NullExpr;
-import org.jelik.parser.ast.ReturnExpr;
+import org.jelik.parser.ast.*;
 import org.jelik.parser.ast.arguments.Argument;
-import org.jelik.parser.ast.arrays.ArrayCreateExpr;
-import org.jelik.parser.ast.arrays.ArrayOrMapGetExpr;
-import org.jelik.parser.ast.arrays.ArrayOrMapSetExpr;
-import org.jelik.parser.ast.arrays.TypedArrayCreateExpr;
-import org.jelik.parser.ast.branching.IfExpression;
+import org.jelik.parser.ast.arrays.*;
+import org.jelik.parser.ast.blocks.BasicBlock;
+import org.jelik.parser.ast.branching.ElifExpression;
+import org.jelik.parser.ast.branching.ElseExpressionImpl;
+import org.jelik.parser.ast.branching.IfExpressionImpl;
 import org.jelik.parser.ast.casts.CastObjectToObjectNode;
 import org.jelik.parser.ast.classes.ClassDeclaration;
 import org.jelik.parser.ast.classes.ModuleDeclaration;
-import org.jelik.parser.ast.expression.CatchExpression;
-import org.jelik.parser.ast.expression.StackConsumer;
-import org.jelik.parser.ast.expression.TryExpression;
-import org.jelik.parser.ast.functions.FunctionBodyBlock;
-import org.jelik.parser.ast.functions.FunctionCallExpr;
-import org.jelik.parser.ast.functions.FunctionDeclaration;
-import org.jelik.parser.ast.functions.FunctionParameter;
-import org.jelik.parser.ast.functions.FunctionReferenceNode;
+import org.jelik.parser.ast.expression.*;
+import org.jelik.parser.ast.functions.*;
+import org.jelik.parser.ast.labels.LabelNode;
 import org.jelik.parser.ast.locals.GetLocalNode;
 import org.jelik.parser.ast.locals.StoreLocalNode;
 import org.jelik.parser.ast.locals.ValueDeclaration;
 import org.jelik.parser.ast.locals.VariableDeclaration;
-import org.jelik.parser.ast.numbers.CharToInt64Node;
-import org.jelik.parser.ast.numbers.FalseNode;
-import org.jelik.parser.ast.numbers.Float32Node;
-import org.jelik.parser.ast.numbers.Float32ToFloat64Node;
-import org.jelik.parser.ast.numbers.Float32ToInt32Node;
-import org.jelik.parser.ast.numbers.Float32ToInt64Node;
-import org.jelik.parser.ast.numbers.Float64ToFloat32;
-import org.jelik.parser.ast.numbers.Float64ToInt32Node;
-import org.jelik.parser.ast.numbers.Float64ToInt64Node;
-import org.jelik.parser.ast.numbers.Int32Node;
-import org.jelik.parser.ast.numbers.Int32ToCharNode;
-import org.jelik.parser.ast.numbers.Int32ToFloat32Node;
-import org.jelik.parser.ast.numbers.Int32ToFloat64Node;
-import org.jelik.parser.ast.numbers.Int32ToInt16Node;
-import org.jelik.parser.ast.numbers.Int32ToInt64Node;
-import org.jelik.parser.ast.numbers.Int32ToInt8Node;
-import org.jelik.parser.ast.numbers.Int32ToWrapperNode;
-import org.jelik.parser.ast.numbers.Int64Node;
-import org.jelik.parser.ast.numbers.Int64ToFloat32Node;
-import org.jelik.parser.ast.numbers.Int64ToFloat64Node;
-import org.jelik.parser.ast.numbers.Int64ToInt32Node;
-import org.jelik.parser.ast.numbers.IntegerWrapperToInt32Node;
-import org.jelik.parser.ast.numbers.ObjectToInt32Node;
-import org.jelik.parser.ast.numbers.TrueNode;
-import org.jelik.parser.ast.operators.AbstractLogicalOpExpr;
-import org.jelik.parser.ast.operators.AddExpr;
-import org.jelik.parser.ast.operators.AndExpr;
-import org.jelik.parser.ast.operators.AsExpr;
-import org.jelik.parser.ast.operators.AssignExpr;
-import org.jelik.parser.ast.operators.BitAndExpr;
-import org.jelik.parser.ast.operators.BitOrExpr;
-import org.jelik.parser.ast.operators.DecrExpr;
-import org.jelik.parser.ast.operators.DivExpr;
-import org.jelik.parser.ast.operators.EqualExpr;
-import org.jelik.parser.ast.operators.GreaterExpr;
-import org.jelik.parser.ast.operators.GreaterOrEqualExpr;
-import org.jelik.parser.ast.operators.IncrExpr;
-import org.jelik.parser.ast.operators.IsExpr;
-import org.jelik.parser.ast.operators.LesserExpr;
-import org.jelik.parser.ast.operators.LesserOrEqualExpr;
-import org.jelik.parser.ast.operators.MulExpr;
-import org.jelik.parser.ast.operators.NegExpr;
-import org.jelik.parser.ast.operators.NotEqualExpr;
-import org.jelik.parser.ast.operators.OrExpr;
-import org.jelik.parser.ast.operators.RemExpr;
-import org.jelik.parser.ast.operators.SubExpr;
-import org.jelik.parser.ast.operators.XorExpr;
-import org.jelik.parser.ast.strings.StringBuilderAppend;
-import org.jelik.parser.ast.strings.StringBuilderInit;
-import org.jelik.parser.ast.strings.StringBuilderToStringNode;
-import org.jelik.parser.ast.strings.StringExpression;
+import org.jelik.parser.ast.loops.ForEachLoop;
+import org.jelik.parser.ast.loops.WhileLoop;
+import org.jelik.parser.ast.nullsafe.NullSafeCallExpr;
+import org.jelik.parser.ast.numbers.*;
+import org.jelik.parser.ast.operators.*;
+import org.jelik.parser.ast.strings.*;
 import org.jelik.parser.ast.types.AbstractTypeRef;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.types.JVMIntType;
-import org.jelik.types.JVMObjectType;
 import org.jelik.types.JVMStringType;
-import org.jelik.types.JVMVoidType;
 import org.jelik.types.Type;
 import org.jelik.types.jvm.IntegerWrapperType;
 import org.jelik.types.jvm.JVMLongType;
@@ -105,12 +61,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Marcin Bukowiecki
@@ -120,100 +71,172 @@ public class ToByteCodeVisitor extends AstVisitor {
 
     private ClassWriterAdapter classWriterAdapter;
 
-    @Getter
     private final List<ToByteCodeResult> toByteCodeResult = new ArrayList<>();
 
+    public ToByteCodeVisitor() {
+
+    }
+
+    public List<ToByteCodeResult> getToByteCodeResult() {
+        return Collections.unmodifiableList(toByteCodeResult);
+    }
+
+    public void addByteCodeResult(ToByteCodeResult toByteCodeResult) {
+        this.toByteCodeResult.add(toByteCodeResult);
+    }
+
+    public ClassWriterAdapter getClassWriterAdapter() {
+        return classWriterAdapter;
+    }
+
     @Override
-    public void visitModuleDeclaration(@NotNull ModuleDeclaration moduleDeclaration, @NotNull CompilationContext compilationContext) {
-        ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
+    public void visitModuleDeclaration(@NotNull ModuleDeclaration moduleDeclaration,
+                                       @NotNull CompilationContext compilationContext) {
+        var classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
         classWriter.visit(Opcodes.V11,
                 Opcodes.ACC_PUBLIC,
-                moduleDeclaration.getCanonicalName(),
+                moduleDeclaration.getCanonicalNameForByteCode(),
                 "",
                 "java/lang/Object",
                 null);
         this.classWriterAdapter = new ClassWriterAdapter(classWriter);
+        compilationContext.pushClassWriter(this.classWriterAdapter);
         visitClassDeclaration(moduleDeclaration, compilationContext);
 
-        for (ClassDeclaration aClass : moduleDeclaration.getClasses()) {
+        for (var aClass : moduleDeclaration.getClasses()) {
+            var opCodes = Opcodes.ACC_PUBLIC;
+            if (aClass.isAbstract()) {
+                opCodes = opCodes | Opcodes.ACC_ABSTRACT;
+            }
+
             classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
             classWriter.visit(Opcodes.V11,
-                    Opcodes.ACC_PUBLIC,
-                    aClass.getCanonicalName(),
+                    opCodes,
+                    aClass.getCanonicalNameForByteCode(),
                     "",
                     "java/lang/Object",
                     null);
             this.classWriterAdapter = new ClassWriterAdapter(classWriter);
-            aClass.visit(this, compilationContext);
+            aClass.accept(this, compilationContext);
         }
+
+        compilationContext.popClassWriter();
     }
 
     @Override
-    public void visitClassDeclaration(@NotNull ClassDeclaration classDeclaration, @NotNull CompilationContext compilationContext) {
+    public void visitClassDeclaration(@NotNull ClassDeclaration classDeclaration,
+                                      @NotNull CompilationContext compilationContext) {
+
         compilationContext.pushCompilationUnit(classDeclaration);
 
         classWriterAdapter.visitStart();
 
-        var constructor = new MethodVisitorAdapter(classWriterAdapter.visitMethod(
-                Opcodes.ACC_PUBLIC,
-                "<init>",
-                "()V",
-                "",
-                null));
-        Label start = constructor.visitLabel();
-        constructor.aload(0);
-        constructor.invokeSpecial("java/lang/Object", "<init>", "()V");
-        constructor.visitReturn();
-        Label end = constructor.visitLabel();
-        constructor.visitLocalVariable("this", "LTest;", "", start, end, 0);
-        constructor.visitMaxes(1, 1);
-        constructor.visitEnd();
+        for (var constructorDeclaration : classDeclaration.getConstructorDeclarations()) {
+            constructorDeclaration.accept(this, compilationContext);
+        }
 
-
-        for (FunctionDeclaration functionDeclaration : classDeclaration.getFunctionDeclarations()) {
-            functionDeclaration.visit(this, compilationContext);
+        for (var functionDeclaration : classDeclaration.getFunctionDeclarations()) {
+            functionDeclaration.accept(this, compilationContext);
         }
         classWriterAdapter.visitEnd();
 
-        
         byte[] bytes = classWriterAdapter.getBytes();
-        ByteCodeLogger.logASM(bytes);
+        this.toByteCodeResult.add(new ToByteCodeResult(classDeclaration.getType(), bytes));
 
-        this.toByteCodeResult.add(new ToByteCodeResult(classDeclaration, bytes));
+        compilationContext.popCompilationUnit();
+    }
 
+    @Override
+    public void visitConstructorDeclaration(@NotNull ConstructorDeclaration constructorDeclaration,
+                                            @NotNull CompilationContext compilationContext) {
+
+        compilationContext.pushCompilationUnit(constructorDeclaration);
+        constructorDeclaration.getFunctionContext().shiftIndexesAccordingToType();
+
+        var mv = new MethodVisitorAdapter(classWriterAdapter.visitMethod(
+                Opcodes.ACC_PUBLIC,
+                constructorDeclaration.getName(),
+                constructorDeclaration.getDescriptor(),
+                constructorDeclaration.getSignature(),
+                constructorDeclaration.getExceptions()), compilationContext);
+
+        mv.setupInitialLocals(constructorDeclaration.getFunctionContext().getLocalsAsParameters());
+
+        classWriterAdapter.setCurrentMethodVisitor(mv);
+
+        mv.visitCode();
+
+        mv.visitTryCatchBlock(constructorDeclaration.getFunctionContext().getTryExpressionList());
+        constructorDeclaration.getFunctionBody().accept(this, compilationContext);
+
+        mv.visitMax();
+
+        List<LocalVariable> localVariables = constructorDeclaration.getLocalVariables();
+        mv.visitLocals(localVariables);
+
+        mv.visitEnd();
         compilationContext.popCompilationUnit();
     }
 
     @Override
     public void visitValueDeclaration(@NotNull ValueDeclaration valueDeclaration,
                                       @NotNull CompilationContext compilationContext) {
-        valueDeclaration.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
-        StoreLocalByteCodeVisitor storeLocalByteCodeVisitor = new StoreLocalByteCodeVisitor(valueDeclaration,
-                this.classWriterAdapter.getCurrentMethodVisitor());
-        valueDeclaration.getLocalVariable().getGenericType().visit(storeLocalByteCodeVisitor, compilationContext);
+        valueDeclaration.getExpression().accept(this, compilationContext);
+        var storeLocalByteCodeVisitor = new StoreLocalByteCodeVisitor(
+                valueDeclaration,
+                this.classWriterAdapter.getCurrentMethodVisitor()
+        );
+        valueDeclaration.getLocalVariable().getGenericType().accept(storeLocalByteCodeVisitor, compilationContext);
     }
 
     @Override
     public void visitVariableDeclaration(@NotNull VariableDeclaration variableDeclaration,
                                          @NotNull CompilationContext compilationContext) {
-        variableDeclaration.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
+        variableDeclaration.getExpression().accept(this, compilationContext);
         StoreLocalByteCodeVisitor storeLocalByteCodeVisitor = new StoreLocalByteCodeVisitor(variableDeclaration,
                 this.classWriterAdapter.getCurrentMethodVisitor());
-        variableDeclaration.getLocalVariable().getGenericType().visit(storeLocalByteCodeVisitor, compilationContext);
+        variableDeclaration.getLocalVariable().getGenericType().accept(storeLocalByteCodeVisitor, compilationContext);
     }
 
     @Override
-    public void visitFunctionDeclaration(@NotNull FunctionDeclaration functionDeclaration, @NotNull CompilationContext compilationContext) {
+    public void visitDefaultConstructor(@NotNull DefaultConstructorDeclaration defaultConstructorDeclaration,
+                                        @NotNull CompilationContext compilationContext) {
+
+        var constructor = new MethodVisitorAdapter(classWriterAdapter.visitMethod(
+                Opcodes.ACC_PUBLIC,
+                "<init>",
+                "()V",
+                "",
+                null), compilationContext);
+        Label start = constructor.visitLabel();
+        constructor.aload(0);
+        constructor.invokeSpecial("java/lang/Object", "<init>", "()V");
+        constructor.visitReturn();
+        Label end = constructor.visitLabel();
+        constructor.visitLocalVariable("this", defaultConstructorDeclaration.getOwner().getDescriptor(),
+                "", start, end, 0);
+        constructor.visitMaxes(1, 1);
+        constructor.visitEnd();
+
+    }
+
+    @Override
+    public void visitFunctionDeclaration(@NotNull FunctionDeclaration functionDeclaration,
+                                         @NotNull CompilationContext compilationContext) {
+
         compilationContext.pushCompilationUnit(functionDeclaration);
+
+        ReturnStmtInserter.INSTANCE.visitFunctionDeclaration(functionDeclaration, compilationContext);
+        CodeBranchChecker.INSTANCE.visitFunctionDeclaration(functionDeclaration, compilationContext);
 
         functionDeclaration.getFunctionContext().shiftIndexesAccordingToType();
 
         var mv = new MethodVisitorAdapter(classWriterAdapter.visitMethod(
                 Opcodes.ACC_STATIC | Opcodes.ACC_PUBLIC,
-                functionDeclaration.getFunctionName(),
+                functionDeclaration.getName(),
                 functionDeclaration.getDescriptor(),
                 functionDeclaration.getSignature(),
-                functionDeclaration.getExceptions()));
+                functionDeclaration.getExceptions()), compilationContext);
 
         mv.setupInitialLocals(functionDeclaration.getFunctionContext().getLocalsAsParameters());
 
@@ -222,7 +245,7 @@ public class ToByteCodeVisitor extends AstVisitor {
         mv.visitCode();
 
         mv.visitTryCatchBlock(functionDeclaration.getFunctionContext().getTryExpressionList());
-        functionDeclaration.getFunctionBody().visit(this, compilationContext);
+        functionDeclaration.getFunctionBody().accept(this, compilationContext);
 
         mv.visitMax();
 
@@ -236,11 +259,25 @@ public class ToByteCodeVisitor extends AstVisitor {
 
     @Override
     public void visit(@NotNull FunctionBodyBlock fb, @NotNull CompilationContext compilationContext) {
-        compilationContext.blockStack.addLast(fb.getBb());
-        for (Expression expression : fb.getBb().getExpressions()) {
-            classWriterAdapter.getCurrentMethodVisitor().visitLineNumber(expression.getStartRow());
-            expression.visit(this, compilationContext);
+        if (fb.getBasicBlock().getExpressions().isEmpty()) {
+            classWriterAdapter.getCurrentMethodVisitor().visitReturn();
+            final LabelNode label = compilationContext.createLabel("end-function");
+            classWriterAdapter.getCurrentMethodVisitor().visitLabel(label.getLabel());
+            compilationContext
+                    .currentFunction()
+                    .getFunctionParameterList()
+                    .getFunctionParameters().forEach(p -> p.localVariableRef.setEnd(label));
+            return;
+        }
+
+        compilationContext.blockStack.addLast(fb.getBasicBlock());
+        classWriterAdapter.getCurrentMethodVisitor().visitLabel(fb.getStartLabel().getLabel());
+        for (Expression expression : fb.getBasicBlock().getExpressions()) {
+            expression.accept(this, compilationContext);
             if (expression instanceof StackConsumer) {
+                continue;
+            }
+            if (expression instanceof Statement) {
                 continue;
             }
             if (!expression.getReturnType().isVoid()) {
@@ -255,22 +292,22 @@ public class ToByteCodeVisitor extends AstVisitor {
     }
 
     @Override
-    public void visit(@NotNull BasicBlock basicBlock, @NotNull  CompilationContext compilationContext) {
+    public void visitBasicBlock(@NotNull BasicBlock basicBlock, @NotNull  CompilationContext compilationContext) {
         MethodVisitorAdapter mv = classWriterAdapter.getCurrentMethodVisitor();
         for (Expression expression : basicBlock.getExpressions()) {
             mv.visitLineNumber(expression.getStartRow());
-            expression.visit(this, compilationContext);
+            expression.accept(this, compilationContext);
         }
     }
 
     @Override
     public void visit(@NotNull AssignExpr assignExpr, @NotNull CompilationContext compilationContext) {
         if (assignExpr.getLeft() instanceof StoreLocalNode) {
-            assignExpr.getRight().visit(this, compilationContext);
-            if (assignExpr.parent instanceof ConsumingExpression) {
+            assignExpr.getRight().accept(this, compilationContext);
+            if (assignExpr.getParent() instanceof ConsumingExpression) {
                 classWriterAdapter.getCurrentMethodVisitor().dup();
             }
-            assignExpr.getLeft().getType().visit(new StoreLocalByteCodeVisitor((StoreLocalNode) assignExpr.getLeft(),
+            assignExpr.getLeft().getType().accept(new StoreLocalByteCodeVisitor((StoreLocalNode) assignExpr.getLeft(),
                     classWriterAdapter.getCurrentMethodVisitor()), compilationContext);
             ((StoreLocalNode) assignExpr.getLeft()).getLocalVariable().setEnd(compilationContext.labelStack.getLast());
         }
@@ -280,60 +317,106 @@ public class ToByteCodeVisitor extends AstVisitor {
     public void visit(@NotNull GetLocalNode getLocalNode, @NotNull CompilationContext compilationContext) {
         AbstractTypeRef typeRef = getLocalNode.getLocalVariable().getTypeRef();
         Type genericType = typeRef.getGenericType();
-        genericType.visit(new ByteCodeGetLocalVariableVisitor(getLocalNode, classWriterAdapter.getCurrentMethodVisitor()), compilationContext);
-        getLocalNode.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
+        genericType.accept(new ByteCodeGetLocalVariableVisitor(getLocalNode,
+                        classWriterAdapter.getCurrentMethodVisitor()),
+                compilationContext);
     }
 
     @Override
     public void visitReturnExpr(@NotNull ReturnExpr returnExpr, @NotNull CompilationContext compilationContext) {
-        returnExpr.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
-        if (returnExpr.parent.parent instanceof TryExpression) {
+        returnExpr.getExpression().accept(this, compilationContext);
+        if (returnExpr.getParent().getParent() instanceof TryExpressionImpl) {
             return;
         }
-        Type genericType = ((FunctionDeclaration) compilationContext.currentCompilationUnit()).getFunctionReturn().map(rt -> rt.getTypeNode().getType()).orElse(JVMVoidType.INSTANCE);
-        genericType.visit(new ByteCodeReturnInstructionVisitor(classWriterAdapter.getCurrentMethodVisitor()), compilationContext);
+        var genericType = ((FunctionDeclaration) compilationContext.currentCompilationUnit())
+                .getFunctionReturn()
+                .getTypeNode()
+                .getType();
+        genericType.accept(new ByteCodeReturnInstructionVisitor(classWriterAdapter.getCurrentMethodVisitor()),
+                compilationContext);
     }
 
     @Override
     public void visit(@NotNull AddExpr addExpr, @NotNull CompilationContext compilationContext) {
-        addExpr.getLeft().visit(this, compilationContext);
-        addExpr.getRight().visit(this, compilationContext);
+        addExpr.getLeft().accept(this, compilationContext);
+        addExpr.getRight().accept(this, compilationContext);
         var genericType = addExpr.getGenericType();
-        genericType.visit(new ByteCodeAddOpVisitor(classWriterAdapter.getCurrentMethodVisitor()), compilationContext);
+        genericType.accept(new ByteCodeAddOpVisitor(classWriterAdapter.getCurrentMethodVisitor()), compilationContext);
     }
 
     @Override
     public void visit(@NotNull SubExpr subExpr, @NotNull CompilationContext compilationContext) {
-        subExpr.getLeft().visit(this, compilationContext);
-        subExpr.getRight().visit(this, compilationContext);
+        subExpr.getLeft().accept(this, compilationContext);
+        subExpr.getRight().accept(this, compilationContext);
         var genericType = subExpr.getGenericType();
-        genericType.visit(new ByteCodeSubOpVisitor(subExpr, classWriterAdapter.getCurrentMethodVisitor()), compilationContext);
+        genericType.accept(new ByteCodeSubOpVisitor(subExpr, classWriterAdapter.getCurrentMethodVisitor()),
+                compilationContext);
     }
 
     @Override
     public void visit(@NotNull DivExpr divExpr, @NotNull CompilationContext compilationContext) {
-        divExpr.getLeft().visit(this, compilationContext);
-        divExpr.getRight().visit(this, compilationContext);
+        divExpr.getLeft().accept(this, compilationContext);
+        divExpr.getRight().accept(this, compilationContext);
         var genericType = divExpr.getGenericType();
-        genericType.visit(new ByteCodeDivOpVisitor(classWriterAdapter.getCurrentMethodVisitor()), compilationContext);
+        genericType.accept(new ByteCodeDivOpVisitor(classWriterAdapter.getCurrentMethodVisitor()), compilationContext);
     }
 
     @Override
     public void visit(@NotNull MulExpr mulExpr, @NotNull CompilationContext compilationContext) {
-        mulExpr.getLeft().visit(this, compilationContext);
-        mulExpr.getRight().visit(this, compilationContext);
+        mulExpr.getLeft().accept(this, compilationContext);
+        mulExpr.getRight().accept(this, compilationContext);
         var genericType = mulExpr.getGenericType();
-        genericType.visit(new ByteCodeMulOpVisitor(classWriterAdapter.getCurrentMethodVisitor()), compilationContext);
+        genericType.accept(new ByteCodeMulOpVisitor(classWriterAdapter.getCurrentMethodVisitor()), compilationContext);
     }
 
     @Override
-    public void visit(@NotNull IfExpression ifExpression, @NotNull CompilationContext compilationContext) {
-        ifExpression.getConditionExpression().visit(this, compilationContext);
-        ifExpression.getBasicBlock().visit(this, compilationContext);
-        FalseLabelExtractor falseLabelExtractor = new FalseLabelExtractor();
-        ifExpression.getConditionExpression().visit(falseLabelExtractor, compilationContext);
+    public void visit(@NotNull IfExpressionImpl ifExpression,
+                      @NotNull CompilationContext compilationContext) {
+
+        ifExpression.getConditionExpression().accept(this, compilationContext);
+        ifExpression.getBasicBlock().accept(this, compilationContext);
+        if (ifExpression.getContext().isJumpOver()) {
+            final LabelNode finishLabel = ifExpression.getFinishLabel();
+            Objects.requireNonNull(finishLabel);
+            if (!ifExpression.endsWithReturnStmt()) {
+                classWriterAdapter.getCurrentMethodVisitor().visitJumpInstruction(Opcodes.GOTO, finishLabel);
+            }
+        }
+        final FalseLabelExtractor falseLabelExtractor = new FalseLabelExtractor();
+        ifExpression.getConditionExpression().accept(falseLabelExtractor, compilationContext);
         classWriterAdapter.getCurrentMethodVisitor().visitLabel(falseLabelExtractor.result.getLabel());
-        ifExpression.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
+        if (ifExpression.getElseExpression() != null) {
+            ifExpression.getElseExpression().accept(this, compilationContext);
+        }
+    }
+
+    @Override
+    public void visitElifExpression(@NotNull ElifExpression elifExpression,
+                                    @NotNull CompilationContext compilationContext) {
+
+        elifExpression.getConditionExpression().accept(this, compilationContext);
+        elifExpression.getBasicBlock().accept(this, compilationContext);
+        if (elifExpression.getContext().isJumpOver()) {
+            final LabelNode finishLabel = elifExpression.getFinishLabel();
+            Objects.requireNonNull(finishLabel);
+            if (!elifExpression.endsWithReturnStmt()) {
+                classWriterAdapter.getCurrentMethodVisitor().visitJumpInstruction(Opcodes.GOTO, finishLabel);
+            }
+        }
+
+        final FalseLabelExtractor falseLabelExtractor = new FalseLabelExtractor();
+        elifExpression.getConditionExpression().accept(falseLabelExtractor, compilationContext);
+        classWriterAdapter.getCurrentMethodVisitor().visitLabel(falseLabelExtractor.result.getLabel());
+        elifExpression.getElseExpressionOpt().ifPresent(expr -> expr.accept(this, compilationContext));
+    }
+
+    @Override
+    public void visit(@NotNull ElseExpressionImpl elseExpressionImpl,
+                      @NotNull CompilationContext compilationContext) {
+        super.visit(elseExpressionImpl, compilationContext);
+        classWriterAdapter
+                .getCurrentMethodVisitor()
+                .visitLabel(Objects.requireNonNull(elseExpressionImpl.getFinishLabel()).getLabel());
     }
 
     @Override
@@ -341,22 +424,23 @@ public class ToByteCodeVisitor extends AstVisitor {
         classWriterAdapter
                 .getCurrentMethodVisitor()
                 .visitConstant(JVMStringType.INSTANCE, stringExpression.getString());
-        stringExpression.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
     }
 
     @Override
-    public void visit(@NotNull StringBuilderInit stringBuilderInit, @NotNull CompilationContext compilationContext) {
+    public void visit(@NotNull StringBuilderInit stringBuilderInit,
+                      @NotNull CompilationContext compilationContext) {
         MethodVisitorAdapter currentMethodVisitor = classWriterAdapter.getCurrentMethodVisitor();
         Type type = stringBuilderInit.getType();
         currentMethodVisitor.callNew(type);
         currentMethodVisitor.dup();
         currentMethodVisitor.invokeSpecial(type.getInternalName(), "<init>", "()V");
-        stringBuilderInit.getFurtherExpression().visit(this, compilationContext);
+        stringBuilderInit.getFurtherExpressionOpt().ifPresent(expr -> expr.accept(this, compilationContext));
     }
 
     @Override
-    public void visit(@NotNull StringBuilderAppend stringBuilderAppend, @NotNull CompilationContext compilationContext) {
-        stringBuilderAppend.getSubject().visit(this, compilationContext);
+    public void visit(@NotNull StringBuilderAppend stringBuilderAppend,
+                      @NotNull CompilationContext compilationContext) {
+        stringBuilderAppend.getSubject().accept(this, compilationContext);
 
         var currentMethodVisitor = classWriterAdapter.getCurrentMethodVisitor();
         var type = stringBuilderAppend.getType();
@@ -366,34 +450,23 @@ public class ToByteCodeVisitor extends AstVisitor {
                 targetFunctionCall.getMethodData().getDescriptor(),
                 stringBuilderAppend.getType(),
                 stringBuilderAppend.getArgumentTypes(), false);
-
-        stringBuilderAppend.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
+        stringBuilderAppend.getFurtherExpressionOpt().ifPresent(expr -> expr.accept(this, compilationContext));
     }
 
     @Override
     public void visit(@NotNull Int32ToWrapperNode int32ToWrapperNode, @NotNull CompilationContext compilationContext) {
-        int32ToWrapperNode.getSubject().visit(this, compilationContext);
+        int32ToWrapperNode.getSubject().accept(this, compilationContext);
         MethodVisitorAdapter currentMethodVisitor = classWriterAdapter.getCurrentMethodVisitor();
         currentMethodVisitor.invokeStatic(int32ToWrapperNode.getType().getInternalName(),
                 "valueOf", "(I)Ljava/lang/Integer;",
                 IntegerWrapperType.INSTANCE, Collections.singletonList(JVMIntType.INSTANCE), false);
-        int32ToWrapperNode.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
     }
 
     @Override
-    public void visit(@NotNull FunctionCallExpr functionCallExpr, @NotNull CompilationContext compilationContext) {
-        var targetFunctionCall = functionCallExpr.getTargetFunctionCall();
+    public void visitFunctionCall(@NotNull FunctionCallExpr functionCallExpr, @NotNull CompilationContext compilationContext) {
+        var targetFunctionCall = functionCallExpr.getTargetFunctionCallProvider();
         var currentMethodVisitor = classWriterAdapter.getCurrentMethodVisitor();
-
-        if (targetFunctionCall.getMethodData().isBuiltin()) {
-            for (Argument argument : functionCallExpr.getArgumentList().getArguments()) {
-                argument.visit(this, compilationContext);
-            }
-            ((JelikBuiltinFunction) targetFunctionCall.getMethodData()).getByteCodeData().accept(currentMethodVisitor);
-        } else {
-            targetFunctionCall.getCodeGenProvider().invoke(currentMethodVisitor, this, functionCallExpr, compilationContext);
-        }
-        functionCallExpr.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
+        targetFunctionCall.getCodeGenProvider().invoke(functionCallExpr, this, currentMethodVisitor);
     }
 
     @Override
@@ -410,58 +483,65 @@ public class ToByteCodeVisitor extends AstVisitor {
 
     @Override
     public void visit(@NotNull AsExpr asExpr, @NotNull CompilationContext compilationContext) {
-        asExpr.getLeft().visit(this, compilationContext);
+        asExpr.getLeft().accept(this, compilationContext);
         var currentMethodVisitor = classWriterAdapter.getCurrentMethodVisitor();
         currentMethodVisitor.checkCast(asExpr.getRight().getGenericType());
     }
 
     @Override
-    public void visit(@NotNull ObjectToInt32Node objectToInt32Node, @NotNull CompilationContext compilationContext) {
+    public void visit(@NotNull ObjectToInt32Node objectToInt32Node,
+                      @NotNull CompilationContext compilationContext) {
         var currentMethodVisitor = classWriterAdapter.getCurrentMethodVisitor();
-        objectToInt32Node.getSubject().visit(this, compilationContext);
+        objectToInt32Node.getSubject().accept(this, compilationContext);
         currentMethodVisitor.checkCast(IntegerWrapperType.INSTANCE);
         currentMethodVisitor.invokeInstance(IntegerWrapperType.INSTANCE.getInternalName(),
                 "intValue", "()I",
                 JVMIntType.INSTANCE,
                 Collections.emptyList(), false);
-        objectToInt32Node.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
     }
 
     @Override
-    public void visit(@NotNull CastObjectToObjectNode castObjectToObjectNode, @NotNull CompilationContext compilationContext) {
+    public void visit(@NotNull CastObjectToObjectNode castObjectToObjectNode,
+                      @NotNull CompilationContext compilationContext) {
         var currentMethodVisitor = classWriterAdapter.getCurrentMethodVisitor();
-        castObjectToObjectNode.getSubject().visit(this, compilationContext);
+        castObjectToObjectNode.getExpression().accept(this, compilationContext);
         currentMethodVisitor.checkCast(castObjectToObjectNode.getTo());
-        castObjectToObjectNode.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
     }
 
     @Override
     public void visit(@NotNull IncrExpr incrExpr, @NotNull CompilationContext compilationContext) {
         if (incrExpr.getRight() instanceof GetLocalNode && incrExpr.getRight().getGenericReturnType() instanceof JVMIntType) {
-            incrExpr.getRight().getGenericType().visit(new IncrByteCodeVisitor(incrExpr, incrExpr.getRight(), classWriterAdapter.getCurrentMethodVisitor()), compilationContext);
+            incrExpr.getRight().getGenericType().accept(new IncrByteCodeVisitor(incrExpr, incrExpr.getRight(),
+                    classWriterAdapter.getCurrentMethodVisitor()), compilationContext);
         } else {
-            incrExpr.getRight().visit(this, compilationContext);
-            incrExpr.getRight().getGenericType().visit(new IncrByteCodeVisitor(incrExpr, incrExpr.getRight(), classWriterAdapter.getCurrentMethodVisitor()), compilationContext);
+            incrExpr.getRight().accept(this, compilationContext);
+            incrExpr.getRight().getGenericType().accept(new IncrByteCodeVisitor(incrExpr, incrExpr.getRight(),
+                    classWriterAdapter.getCurrentMethodVisitor()), compilationContext);
         }
     }
 
     @Override
     public void visit(@NotNull DecrExpr decrExpr, @NotNull CompilationContext compilationContext) {
-        new DecrByteCodeVisitor(decrExpr, classWriterAdapter.getCurrentMethodVisitor()).visit(decrExpr.getGenericType(), compilationContext);
+        new DecrByteCodeVisitor(decrExpr, classWriterAdapter.getCurrentMethodVisitor()).visit(decrExpr.getGenericType(),
+                compilationContext);
     }
 
     @Override
-    public void visit(@NotNull IntegerWrapperToInt32Node integerWrapperToInt32Node, @NotNull CompilationContext compilationContext) {
+    public void visit(@NotNull IntegerWrapperToInt32Node integerWrapperToInt32Node,
+                      @NotNull CompilationContext compilationContext) {
         super.visit(integerWrapperToInt32Node, compilationContext);
         MethodVisitorAdapter currentMethodVisitor = classWriterAdapter.getCurrentMethodVisitor();
-        currentMethodVisitor.invokeInstance("java/lang/Integer", "intValue", "()I", JVMIntType.INSTANCE, Collections.emptyList(), false);
+        currentMethodVisitor.invokeInstance("java/lang/Integer", "intValue", "()I",
+                JVMIntType.INSTANCE, Collections.emptyList(), false);
     }
 
     @Override
-    public void visit(@NotNull StringBuilderToStringNode stringBuilderToStringNode, @NotNull CompilationContext compilationContext) {
-        stringBuilderToStringNode.getSubject().visit(this, compilationContext);
+    public void visit(@NotNull StringBuilderToStringNode stringBuilderToStringNode,
+                      @NotNull CompilationContext compilationContext) {
+        stringBuilderToStringNode.getExpression().accept(this, compilationContext);
         MethodVisitorAdapter currentMethodVisitor = classWriterAdapter.getCurrentMethodVisitor();
-        currentMethodVisitor.invokeInstance("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", JVMStringType.INSTANCE, Collections.emptyList(), false);
+        currentMethodVisitor.invokeInstance("java/lang/StringBuilder", "toString",
+                "()Ljava/lang/String;", JVMStringType.INSTANCE, Collections.emptyList(), false);
     }
 
     @Override
@@ -473,47 +553,61 @@ public class ToByteCodeVisitor extends AstVisitor {
     }
 
     @Override
-    public void visit(@NotNull ArrayCreateExpr arrayCreateExpr, @NotNull CompilationContext compilationContext) {
+    public void visitArrayCreateExpr(@NotNull ArrayCreateExpr arrayCreateExpr, @NotNull CompilationContext compilationContext) {
         Type type = arrayCreateExpr.getType();
         int size = arrayCreateExpr.getExpressions().size();
         MethodVisitorAdapter currentMethodVisitor = classWriterAdapter.getCurrentMethodVisitor();
         currentMethodVisitor.pushInt(size);
-        type.getInnerType(0).visit(new ByteCodeArrayCreateVisitor(currentMethodVisitor), compilationContext);
+        type.getInnerType(0).accept(new ByteCodeArrayCreateVisitor(currentMethodVisitor), compilationContext);
 
         int index = 0;
         for (Expression expression : arrayCreateExpr.getExpressions()) {
             currentMethodVisitor.dup();
             currentMethodVisitor.pushInt(index);
-            expression.visit(this, compilationContext);
-            type.getInnerType(0).visit(new ByteCodeArrayStoreVisitor(currentMethodVisitor), compilationContext);
+            expression.accept(this, compilationContext);
+            type.getInnerType(0).accept(new ByteCodeArrayStoreVisitor(currentMethodVisitor), compilationContext);
             index++;
         }
-
-        arrayCreateExpr.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
     }
 
     @Override
-    public void visit(@NotNull TypedArrayCreateExpr arrayCreateExpr, @NotNull CompilationContext compilationContext) {
-        Type type = arrayCreateExpr.getType();
-        int size = arrayCreateExpr.getExpressions().size();
-        MethodVisitorAdapter currentMethodVisitor = classWriterAdapter.getCurrentMethodVisitor();
+    public void visitTypedArrayCreateExpr(@NotNull TypedArrayCreateExpr arrayCreateExpr,
+                                          @NotNull CompilationContext compilationContext) {
+
+        var type = arrayCreateExpr.getType();
+        var size = arrayCreateExpr.getExpressions().size();
+        var currentMethodVisitor = classWriterAdapter.getCurrentMethodVisitor();
         currentMethodVisitor.pushInt(size);
-        type.getInnerType(0).visit(new ByteCodeArrayCreateVisitor(currentMethodVisitor), compilationContext);
+        type.getInnerType(0).accept(new ByteCodeArrayCreateVisitor(currentMethodVisitor), compilationContext);
 
         int index = 0;
         for (Expression expression : arrayCreateExpr.getExpressions()) {
             currentMethodVisitor.dup();
             currentMethodVisitor.pushInt(index);
-            expression.visit(this, compilationContext);
-            type.getInnerType(0).visit(new ByteCodeArrayStoreVisitor(currentMethodVisitor), compilationContext);
+            expression.accept(this, compilationContext);
+            type.getInnerType(0).accept(new ByteCodeArrayStoreVisitor(currentMethodVisitor), compilationContext);
             index++;
         }
-
-        arrayCreateExpr.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
     }
 
     @Override
-    public void visit(@NotNull ArrayOrMapGetExpr arrayOrMapGetExpr, @NotNull CompilationContext compilationContext) {
+    public void visitTypedArrayCreateWithSizeExpr(@NotNull TypedArrayCreateWithSizeExpr arrayCreateExpr,
+                                                  @NotNull CompilationContext compilationContext) {
+        var mv = classWriterAdapter.getCurrentMethodVisitor();
+        var type = arrayCreateExpr.getType().getInnerType(0);
+        final Expression expression = arrayCreateExpr.getExpression();
+        expression.accept(this, compilationContext);
+        type.accept(new ByteCodeArrayCreateVisitor(mv), compilationContext);
+    }
+
+    @Override
+    public void visitArrayOrMapGetExpr(@NotNull ArrayOrMapGetExpr arrayOrMapGetExpr,
+                                       @NotNull CompilationContext compilationContext) {
+
+        arrayOrMapGetExpr.getNextElementProvider().getElement(this,
+                classWriterAdapter.getCurrentMethodVisitor());
+
+        /*
         if (arrayOrMapGetExpr.isArrayGet()) {
             arrayOrMapGetExpr.getLeftExpr().visit(this, compilationContext);
             Type type = arrayOrMapGetExpr.getType();
@@ -529,7 +623,7 @@ public class ToByteCodeVisitor extends AstVisitor {
                     JVMObjectType.INSTANCE,
                     Collections.singletonList(JVMObjectType.INSTANCE));
         }
-        arrayOrMapGetExpr.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
+        */
     }
 
     @Override
@@ -563,10 +657,10 @@ public class ToByteCodeVisitor extends AstVisitor {
     }
 
     @Override
-    public void visit(@NotNull OrExpr orExpr, @NotNull CompilationContext compilationContext) {
-        super.visit(orExpr, compilationContext);
+    public void visitOrExpr(@NotNull OrExpr orExpr, @NotNull CompilationContext compilationContext) {
+        super.visitOrExpr(orExpr, compilationContext);
         var mv = classWriterAdapter.getCurrentMethodVisitor();
-        if (orExpr.parent instanceof ConsumingExpression) {
+        if (orExpr.getParent() instanceof ConsumingExpression) {
             ASMUtils.visitSingleExpr(mv, orExpr, compilationContext);
         }
     }
@@ -575,42 +669,42 @@ public class ToByteCodeVisitor extends AstVisitor {
     public void visit(@NotNull AndExpr andExpr, @NotNull CompilationContext compilationContext) {
         super.visit(andExpr, compilationContext);
         var mv = classWriterAdapter.getCurrentMethodVisitor();
-        if (andExpr.parent instanceof ConsumingExpression) {
+        if (andExpr.getParent() instanceof ConsumingExpression) {
             ASMUtils.visitSingleExpr(mv, andExpr, compilationContext);
         }
     }
 
     @Override
-    public void visit(@NotNull TryExpression tryExpression, @NotNull CompilationContext compilationContext) {
+    public void visitTryExpression(@NotNull TryExpression tryExpression, @NotNull CompilationContext compilationContext) {
         var mv = classWriterAdapter.getCurrentMethodVisitor();
-        mv.visitLabel(tryExpression.getStartLabel().getLabel());
-        tryExpression.getBlock().visit(this, compilationContext);
-        mv.visitLabel(tryExpression.getEndLabel().getLabel());
+        mv.visitLabel(Objects.requireNonNull(tryExpression.getStartLabel()).getLabel());
+        tryExpression.getBlock().accept(this, compilationContext);
+        mv.visitLabel(Objects.requireNonNull(tryExpression.getEndLabel()).getLabel());
 
-        final CatchExpression catchExpression = ((CatchExpression) tryExpression.getFurtherExpression());
-        mv.visitJumpInstruction(Opcodes.GOTO, catchExpression.getEndLabel());
+        var catchExpression = tryExpression.getCatchExpression();
+        mv.visitJumpInstruction(Opcodes.GOTO, Objects.requireNonNull(catchExpression.getEndLabel()));
 
-        mv.visitLabel(catchExpression.getStartLabel().getLabel());
+        mv.visitLabel(Objects.requireNonNull(catchExpression.getStartLabel()).getLabel());
         if (!catchExpression.getBlock().getExpressions().isEmpty()) {
             if (catchExpression.getInnerLabel() == null) {
                 throw new IllegalArgumentException("Inner label not set");
             }
             mv.visitLabel(catchExpression.getInnerLabel().getLabel());
         }
-        tryExpression.getFurtherExpression().visit(this, compilationContext);
+        tryExpression.getCatchExpression().accept(this, compilationContext);
         mv.visitLabel(catchExpression.getEndLabel().getLabel());
     }
 
     @Override
-    public void visit(@NotNull CatchExpression catchExpression, @NotNull CompilationContext compilationContext) {
+    public void visitCatchExpression(@NotNull CatchExpression catchExpression, @NotNull CompilationContext compilationContext) {
         var mv = classWriterAdapter.getCurrentMethodVisitor();
         //mv.visitLabel(catchExpression.getBlock().startLabel.getLabel());
-         for (FunctionParameter functionParameter : catchExpression.getArgs().getFunctionParameters()) {
+        for (FunctionParameter functionParameter : catchExpression.getArgs().getFunctionParameters()) {
             mv.objectStoreIgnoreStack(functionParameter.localVariableRef.index);
         }
         compilationContext.blockStack.addLast(catchExpression.getBlock());
         for (Expression expression : catchExpression.getBlock().getExpressions()) {
-            expression.visit(this, compilationContext);
+            expression.accept(this, compilationContext);
         }
         compilationContext.blockStack.removeLast();
         //mv.visitLabel(catchExpression.getBlock().endLabel.getLabel());
@@ -618,58 +712,62 @@ public class ToByteCodeVisitor extends AstVisitor {
 
     @Override
     public void visit(@NotNull Float32ToInt64Node float32ToInt64Node, @NotNull CompilationContext compilationContext) {
-        float32ToInt64Node.getSubject().visit(this, compilationContext);
+        float32ToInt64Node.getExpression().accept(this, compilationContext);
         var mv = classWriterAdapter.getCurrentMethodVisitor();
         mv.visitFloatToLong();
     }
 
     @Override
     public void visit(@NotNull Float32ToInt32Node float32ToInt32Node, @NotNull CompilationContext compilationContext) {
-        float32ToInt32Node.getSubject().visit(this, compilationContext);
+        float32ToInt32Node.getExpression().accept(this, compilationContext);
         var mv = classWriterAdapter.getCurrentMethodVisitor();
         mv.visitFloatToInt();
     }
 
     @Override
     public void visit(@NotNull Int32ToFloat64Node int32ToFloat64Node, @NotNull CompilationContext compilationContext) {
-        int32ToFloat64Node.getSubject().visit(this, compilationContext);
+        int32ToFloat64Node.getExpression().accept(this, compilationContext);
         var mv = classWriterAdapter.getCurrentMethodVisitor();
         mv.visitIntToDouble();
     }
 
     @Override
-    public void visit(@NotNull Int32ToInt16Node int32ToInt16Node, @NotNull CompilationContext compilationContext) {
-        int32ToInt16Node.getSubject().visit(this, compilationContext);
+    public void visit(@NotNull Int32ToInt16Node int32ToInt16Node,
+                      @NotNull CompilationContext compilationContext) {
+        int32ToInt16Node.getExpression().accept(this, compilationContext);
         var mv = classWriterAdapter.getCurrentMethodVisitor();
         mv.visitIntToShort();
     }
 
     @Override
-    public void visit(@NotNull Int32ToFloat32Node int32ToFloat32Node, @NotNull CompilationContext compilationContext) {
-        int32ToFloat32Node.getSubject().visit(this, compilationContext);
+    public void visit(@NotNull Int32ToFloat32Node int32ToFloat32Node,
+                      @NotNull CompilationContext compilationContext) {
+        int32ToFloat32Node.getExpression().accept(this, compilationContext);
         var mv = classWriterAdapter.getCurrentMethodVisitor();
         mv.visitIntToFloat();
     }
 
     @Override
-    public void visit(@NotNull Float32ToFloat64Node float32ToFloat64Node, @NotNull CompilationContext compilationContext) {
-        float32ToFloat64Node.getSubject().visit(this, compilationContext);
+    public void visit(@NotNull Float32ToFloat64Node float32ToFloat64Node,
+                      @NotNull CompilationContext compilationContext) {
+        float32ToFloat64Node.getExpression().accept(this, compilationContext);
         var mv = classWriterAdapter.getCurrentMethodVisitor();
         mv.visitFloatToDouble();
     }
 
     @Override
-    public void visit(@NotNull ArrayOrMapSetExpr arrayOrMapSetExpr, @NotNull CompilationContext compilationContext) {
+    public void visitArrayOrMapSetExpr(@NotNull ArrayOrMapSetExpr arrayOrMapSetExpr, @NotNull CompilationContext compilationContext) {
         var mv = classWriterAdapter.getCurrentMethodVisitor();
         if (arrayOrMapSetExpr.isArraySet()) {
-            arrayOrMapSetExpr.getRef().visit(this, compilationContext);
-            arrayOrMapSetExpr.getIndex().visit(this, compilationContext);
-            arrayOrMapSetExpr.getRightExpression().visit(this, compilationContext);
-            arrayOrMapSetExpr.getRef().getGenericType().getInnerType(0).visit(new ByteCodeArrayStoreVisitor(mv), compilationContext);
+            arrayOrMapSetExpr.getRef().accept(this, compilationContext);
+            arrayOrMapSetExpr.getIndex().accept(this, compilationContext);
+            arrayOrMapSetExpr.getRightExpression().accept(this, compilationContext);
+            arrayOrMapSetExpr.getRef().getGenericType().getInnerType(0).accept(new ByteCodeArrayStoreVisitor(mv),
+                    compilationContext);
         } else {
-            arrayOrMapSetExpr.getRef().visit(this, compilationContext);
-            arrayOrMapSetExpr.getIndex().visit(this, compilationContext);
-            arrayOrMapSetExpr.getRightExpression().visit(this, compilationContext);
+            arrayOrMapSetExpr.getRef().accept(this, compilationContext);
+            arrayOrMapSetExpr.getIndex().accept(this, compilationContext);
+            arrayOrMapSetExpr.getRightExpression().accept(this, compilationContext);
             mv.invokeInterface(Type.of(Map.class).getInternalName(),
                     "put",
                     "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;",
@@ -681,72 +779,73 @@ public class ToByteCodeVisitor extends AstVisitor {
 
     @Override
     public void visit(@NotNull Int32ToInt8Node int32ToInt8Node, @NotNull CompilationContext compilationContext) {
-        int32ToInt8Node.getSubject().visit(this, compilationContext);
+        int32ToInt8Node.getExpression().accept(this, compilationContext);
         var mv = classWriterAdapter.getCurrentMethodVisitor();
         mv.visitIntToByte();
     }
 
     @Override
     public void visit(@NotNull Int32ToCharNode int32ToCharNode, @NotNull CompilationContext compilationContext) {
-        int32ToCharNode.getSubject().visit(this, compilationContext);
+        int32ToCharNode.getExpression().accept(this, compilationContext);
         var mv = classWriterAdapter.getCurrentMethodVisitor();
         mv.visitIntToChar();
     }
 
     @Override
     public void visit(@NotNull NegExpr negExpr, @NotNull CompilationContext compilationContext) {
-        negExpr.getRight().visit(this, compilationContext);
-        var genericType = negExpr.getGenericType();
-        genericType.visit(new ByteCodeSubOpVisitor(negExpr, classWriterAdapter.getCurrentMethodVisitor()), compilationContext);
+        negExpr.getRight().accept(this, compilationContext);
+        var genericType = negExpr.getGenericReturnType();
+        genericType.accept(new ByteCodeSubOpVisitor(negExpr, classWriterAdapter.getCurrentMethodVisitor()),
+                compilationContext);
     }
 
     @Override
     public void visit(@NotNull Int32ToInt64Node castToNode, @NotNull CompilationContext compilationContext) {
-        castToNode.getSubject().visit(this, compilationContext);
+        castToNode.getExpression().accept(this, compilationContext);
         var mv = classWriterAdapter.getCurrentMethodVisitor();
         mv.visitIntToLong();
     }
 
     @Override
     public void visit(@NotNull CharToInt64Node castToNode, @NotNull CompilationContext compilationContext) {
-        castToNode.getSubject().visit(this, compilationContext);
+        castToNode.getExpression().accept(this, compilationContext);
         var mv = classWriterAdapter.getCurrentMethodVisitor();
         mv.charToLong();
     }
 
     @Override
     public void visit(@NotNull Float64ToFloat32 castToNode, @NotNull CompilationContext compilationContext) {
-        castToNode.getSubject().visit(this, compilationContext);
+        castToNode.getExpression().accept(this, compilationContext);
         var mv = classWriterAdapter.getCurrentMethodVisitor();
         mv.doubleToFloat();
     }
 
     @Override
     public void visit(@NotNull Float64ToInt64Node castToNode, @NotNull CompilationContext compilationContext) {
-        castToNode.getSubject().visit(this, compilationContext);
+        castToNode.getExpression().accept(this, compilationContext);
         var mv = classWriterAdapter.getCurrentMethodVisitor();
         mv.doubleToLong();
     }
 
     @Override
     public void visit(@NotNull Float64ToInt32Node castToNode, @NotNull CompilationContext compilationContext) {
-        castToNode.getSubject().visit(this, compilationContext);
+        castToNode.getExpression().accept(this, compilationContext);
         var mv = classWriterAdapter.getCurrentMethodVisitor();
         mv.doubleToInt();
     }
 
     @Override
     public void visit(@NotNull RemExpr remExpr, @NotNull CompilationContext compilationContext) {
-        remExpr.getLeft().visit(this, compilationContext);
-        remExpr.getRight().visit(this, compilationContext);
-        remExpr.getGenericType().visit(new ByteCodeRemOpVisitor(classWriterAdapter.getCurrentMethodVisitor()), compilationContext);
+        remExpr.getLeft().accept(this, compilationContext);
+        remExpr.getRight().accept(this, compilationContext);
+        remExpr.getGenericType().accept(new ByteCodeRemOpVisitor(classWriterAdapter.getCurrentMethodVisitor()),
+                compilationContext);
     }
 
     @Override
     public void visit(@NotNull Int64Node int64Node, @NotNull CompilationContext compilationContext) {
         var mv = classWriterAdapter.getCurrentMethodVisitor();
         mv.visitConstant(JVMLongType.INSTANCE, int64Node.getValue());
-        int64Node.getFurtherExpressionOpt().ifPresent(expr -> expr.visit(this, compilationContext));
     }
 
     @Override
@@ -762,16 +861,43 @@ public class ToByteCodeVisitor extends AstVisitor {
 
     @Override
     public void visit(@NotNull BitAndExpr bitAndExpr, @NotNull CompilationContext compilationContext) {
-        bitAndExpr.getLeft().visit(this, compilationContext);
-        bitAndExpr.getRight().visit(this, compilationContext);
-        bitAndExpr.getGenericType().visit(new ByteCodeBitAndVisitor(classWriterAdapter.getCurrentMethodVisitor()), compilationContext);
+        bitAndExpr.getLeft().accept(this, compilationContext);
+        bitAndExpr.getRight().accept(this, compilationContext);
+        bitAndExpr.getGenericType().accept(new ByteCodeBitAndVisitor(classWriterAdapter.getCurrentMethodVisitor()),
+                compilationContext);
     }
 
     @Override
     public void visit(@NotNull BitOrExpr bitOrExpr, @NotNull CompilationContext compilationContext) {
-        bitOrExpr.getLeft().visit(this, compilationContext);
-        bitOrExpr.getRight().visit(this, compilationContext);
-        bitOrExpr.getGenericType().visit(new ByteCodeBitOrVisitor(classWriterAdapter.getCurrentMethodVisitor()), compilationContext);
+        bitOrExpr.getLeft().accept(this, compilationContext);
+        bitOrExpr.getRight().accept(this, compilationContext);
+        bitOrExpr
+                .getGenericType()
+                .accept(new ByteCodeBitOrVisitor(classWriterAdapter.getCurrentMethodVisitor()), compilationContext);
+    }
+
+    @Override
+    public void visitBitUshrExpr(@NotNull BitUshrExpr bitUshrExpr, @NotNull CompilationContext compilationContext) {
+        super.visitBitUshrExpr(bitUshrExpr, compilationContext);
+        bitUshrExpr
+                .getGenericType()
+                .accept(new ByteCodeUshrVisitor(classWriterAdapter.getCurrentMethodVisitor()), compilationContext);
+    }
+
+    @Override
+    public void visitBitShrExpr(@NotNull BitShrExpr bitShrExpr, @NotNull CompilationContext compilationContext) {
+        super.visitBitShrExpr(bitShrExpr, compilationContext);
+        bitShrExpr
+                .getGenericType()
+                .accept(new ByteCodeShrVisitor(classWriterAdapter.getCurrentMethodVisitor()), compilationContext);
+    }
+
+    @Override
+    public void visitBitShlExpr(@NotNull BitShlExpr bitShlExpr, @NotNull CompilationContext compilationContext) {
+        super.visitBitShlExpr(bitShlExpr, compilationContext);
+        bitShlExpr
+                .getGenericType()
+                .accept(new ByteCodeShlVisitor(classWriterAdapter.getCurrentMethodVisitor()), compilationContext);
     }
 
     @Override
@@ -817,16 +943,17 @@ public class ToByteCodeVisitor extends AstVisitor {
     public void visit(@NotNull XorExpr xorExpr, @NotNull CompilationContext compilationContext) {
         super.visit(xorExpr, compilationContext);
         var mv = classWriterAdapter.getCurrentMethodVisitor();
-        xorExpr.getGenericReturnType().visit(new ByteCodeBitXorVisitor(mv), compilationContext);
+        xorExpr.getGenericReturnType().accept(new ByteCodeBitXorVisitor(mv), compilationContext);
     }
 
     @Override
-    public void visitAbstractLogicalOpExpr(@NotNull AbstractLogicalOpExpr expr, @NotNull CompilationContext compilationContext) {
-        if (!expr.getLeft().ignored) {
-            expr.getLeft().visit(this, compilationContext);
+    public void visitAbstractLogicalOpExpr(@NotNull AbstractLogicalOpExpr expr,
+                                           @NotNull CompilationContext compilationContext) {
+        if (!expr.getLeft().isIgnored()) {
+            expr.getLeft().accept(this, compilationContext);
         }
-        if (!expr.getRight().ignored) {
-            expr.getRight().visit(this, compilationContext);
+        if (!expr.getRight().isIgnored()) {
+            expr.getRight().accept(this, compilationContext);
         }
         var mv = classWriterAdapter.getCurrentMethodVisitor();
         if (expr.isNegated()) {
@@ -834,16 +961,16 @@ public class ToByteCodeVisitor extends AstVisitor {
         } else {
             expr.instructionToCall.getValue().forEach(ins -> mv.visitJumpInstruction(ins, expr.trueLabelNode));
         }
-        if (expr.parent instanceof ConsumingExpression) {
+        if (expr.getParent() instanceof ConsumingExpression) {
             ASMUtils.visitSingleExpr(mv, expr, compilationContext);
         }
     }
 
     @Override
     public void visit(@NotNull IsExpr isExpr, @NotNull CompilationContext compilationContext) {
-        isExpr.getLeft().visit(this, compilationContext);
+        isExpr.getLeft().accept(this, compilationContext);
         var mv = classWriterAdapter.getCurrentMethodVisitor();
-        isExpr.getRight().getGenericReturnType().visit(new ByteCodeIsOperatorVisitor(mv, isExpr), compilationContext);
+        isExpr.getRight().getGenericReturnType().accept(new ByteCodeIsOperatorVisitor(mv, isExpr), compilationContext);
     }
 
     @Override
@@ -858,8 +985,7 @@ public class ToByteCodeVisitor extends AstVisitor {
         var targetFunction = possibleFunctionsToCall.get(0);
         InvokeDynamicHelper.INSTANCE.codeGen(classWriterAdapter.getCurrentMethodVisitor(),
                 targetFunction,
-                functionReferenceNode.lambdaMethod);
-        super.visitFunctionReference(functionReferenceNode, compilationContext);
+                Objects.requireNonNull(functionReferenceNode.getFunctionReferenceMethod()));
     }
 
     @Override
@@ -872,8 +998,8 @@ public class ToByteCodeVisitor extends AstVisitor {
         mv.invokeSpecial(of.getInternalName(), "<init>", "()V");
         for (KeyValueExpr entry : mapCreateExpr.getEntries()) {
             mv.dup();
-            entry.getKey().visit(this, compilationContext);
-            entry.getValue().visit(this, compilationContext);
+            entry.getKey().accept(this, compilationContext);
+            entry.getValue().accept(this, compilationContext);
             mv.invokeInterface(Type.of(Map.class).getInternalName(),
                     "put",
                     "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;",
@@ -882,5 +1008,106 @@ public class ToByteCodeVisitor extends AstVisitor {
                             entry.getValue().getGenericReturnType()));
             mv.visitPop();
         }
+    }
+
+    @Override
+    public void visit(@NotNull SuperCallExpr superCallExpr,
+                      @NotNull CompilationContext compilationContext) {
+        var mv = classWriterAdapter.getCurrentMethodVisitor();
+        mv.aload(0);
+        for (Argument argument : superCallExpr.getArgumentList().getArguments()) {
+            argument.accept(this, compilationContext);
+        }
+        mv.invokeSpecial(superCallExpr.getOwner().getInternalName(),
+                "<init>",
+                superCallExpr.getTargetFunctionCall()
+                        .getMethodData()
+                        .getDescriptor());
+    }
+
+    @Override
+    public void visitForEachLoop(@NotNull ForEachLoop forEachloop,
+                                 @NotNull CompilationContext compilationContext) {
+
+        var mv = classWriterAdapter.getCurrentMethodVisitor();
+        var iterExpression = forEachloop.getIterExpression();
+        var forEachASMProvider = forEachloop.getForEachASMProvider(compilationContext);
+        mv.visitLabel(forEachloop.getLoopStart().getLabel());
+        iterExpression.accept(this, compilationContext);
+        forEachASMProvider.newIterator(mv);
+        mv.visitLabel(forEachloop.getLoopBodyStart().getLabel());
+        forEachASMProvider.hasNext(mv);
+        forEachASMProvider.nextElement(this, mv);
+        forEachloop.getBlock().accept(this, compilationContext);
+        mv.visitJumpInstruction(Opcodes.GOTO, forEachloop.getLoopBodyStart());
+        mv.visitLabel(forEachloop.getLoopEnd().getLabel());
+    }
+
+    @Override
+    public void visitWhileLoop(@NotNull WhileLoop whileLoop,
+                               @NotNull CompilationContext compilationContext) {
+
+        var mv = classWriterAdapter.getCurrentMethodVisitor();
+        mv.visitLabel(whileLoop.getLoopStart().getLabel());
+        whileLoop.getCondition().accept(this, compilationContext);/*
+        if (!(whileLoop.getCondition() instanceof AbstractLogicalOpExpr)) {
+            mv.visitJumpInstruction(Opcodes.IFEQ, whileLoop.getLoopEnd());
+        }*/
+        whileLoop.getBlock().accept(this, compilationContext);
+        mv.visitJumpInstruction(Opcodes.GOTO, whileLoop.getLoopStart());
+        mv.visitLabel(whileLoop.getLoopEnd().getLabel());
+    }
+
+    @Override
+    public void visitCharExpression(@NotNull CharExpression charExpression,
+                                    @NotNull CompilationContext compilationContext) {
+        var mv = classWriterAdapter.getCurrentMethodVisitor();
+        mv.pushInt(charExpression.getStringTokens().get(0).getText().charAt(0));
+    }
+
+    @Override
+    public void visitInExpr(@NotNull InExpr inExpr,
+                            @NotNull CompilationContext compilationContext) {
+        inExpr.containsElementProvider().visit(this, compilationContext);
+    }
+
+    @Override
+    public void visitInt64ToWrapperNode(@NotNull Int64ToWrapperNode int64ToWrapperNode,
+                                        @NotNull CompilationContext compilationContext) {
+        int64ToWrapperNode.getSubject().accept(this, compilationContext);
+        MethodVisitorAdapter currentMethodVisitor = classWriterAdapter.getCurrentMethodVisitor();
+        currentMethodVisitor.invokeStatic(int64ToWrapperNode.getType().getInternalName(),
+                "valueOf", "(J)Ljava/lang/Long;",
+                IntegerWrapperType.INSTANCE, Collections.singletonList(JVMIntType.INSTANCE), false);
+    }
+
+    @Override
+    public void visitNullSafeCall(@NotNull NullSafeCallExpr nullSafeCall,
+                                  @NotNull CompilationContext compilationContext) {
+        var mv = classWriterAdapter.getCurrentMethodVisitor();
+        nullSafeCall.getReference().accept(this, compilationContext);
+        nullSafeCall.getFurtherExpression().accept(this, compilationContext);
+        if (nullSafeCall.isLast()) {
+            mv.visitJumpInstruction(Opcodes.GOTO, Objects.requireNonNull(nullSafeCall.getFinishLabel()));
+            Objects.requireNonNull(nullSafeCall.getEndLabel()).accept(this, compilationContext);
+            mv.visitPop();
+            mv.visitNull();
+            mv.checkCast(nullSafeCall.getFurtherExpression().getGenericReturnType());
+            Objects.requireNonNull(nullSafeCall.getFinishLabel()).accept(this, compilationContext);
+        }
+    }
+
+    @Override
+    public void visitNullSafeBooleanExprWrapper(@NotNull NullSafeCheckExprWrapper expr,
+                                                @NotNull CompilationContext compilationContext) {
+        var mv = classWriterAdapter.getCurrentMethodVisitor();
+        expr.getLeft().accept(this, compilationContext);
+        mv.dup();
+        expr.instructionToCall.getValue().forEach(ins -> mv.visitJumpInstruction(ins, expr.getEndLabel()));
+    }
+
+    @Override
+    public void visitLabelNode(LabelNode labelNode, CompilationContext compilationContext) {
+        classWriterAdapter.getCurrentMethodVisitor().visitLabel(labelNode.getLabel());
     }
 }

@@ -19,7 +19,7 @@ class ClassDeclarationVisitorTest {
         val parseContext = ParseContext(lexer)
         val clazz = ClassDeclarationVisitor(lexer.nextToken() as ClassKeyword).visit(parseContext)
         Assertions.assertThat(clazz.toString())
-                .isEqualTo("class Test")
+                .isEqualTo("class Test{\n\n}")
     }
 
     @Test
@@ -64,12 +64,26 @@ class ClassDeclarationVisitorTest {
 
     @Test
     fun parseClass_6() {
-        val expr = "class Test {}"
+        val expr = "class Test{}"
         val lexer = Lexer.of(expr)
         val parseContext = ParseContext(lexer)
         val clazz = ClassDeclarationVisitor(lexer.nextToken() as ClassKeyword).visit(parseContext)
         Assertions.assertThat(clazz.toString())
-                .isEqualTo("class Test")
+                .isEqualTo("class Test{\n\n}")
+    }
+
+    @Test
+    fun parseClass_7() {
+        val expr = "class Tuple1<T1> {\n" +
+                "constructor(_1 T1) {}\n" +
+                "}"
+        val lexer = Lexer.of(expr)
+        val parseContext = ParseContext(lexer)
+        val clazz = ClassDeclarationVisitor(lexer.nextToken() as ClassKeyword).visit(parseContext)
+        Assertions.assertThat(clazz.toString())
+                .isEqualTo("class Tuple1<T1>{\n" +
+                        "constructor(_1 T1){}\n" +
+                        "}")
     }
 }
 

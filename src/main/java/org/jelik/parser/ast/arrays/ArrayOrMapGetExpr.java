@@ -1,11 +1,11 @@
 package org.jelik.parser.ast.arrays;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.asm.slice.ArrayGetSliceProvider;
 import org.jelik.parser.ast.ASTNode;
-import org.jelik.parser.ast.Expression;
+import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.expression.ExpressionWithType;
+import org.jelik.parser.ast.operators.SliceExpr;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.token.LeftBracketToken;
 import org.jelik.parser.token.RightBracketToken;
@@ -14,15 +14,12 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Marcin Bukowiecki
  */
-@Getter
 public class ArrayOrMapGetExpr extends ExpressionWithType {
+
+    private Expression leftExpr;
 
     private final LeftBracketToken leftBracketToken;
 
-    @Setter
-    private Expression leftExpr;
-
-    @Setter
     private Expression expression;
 
     private final RightBracketToken rightBracketToken;
@@ -42,8 +39,12 @@ public class ArrayOrMapGetExpr extends ExpressionWithType {
         this.rightBracketToken = rightBracketToken;
     }
 
+    public boolean isArraySlice() {
+        return expression instanceof SliceExpr;
+    }
+
     @Override
-    public ASTNode getParent() {
+    public @NotNull ASTNode getParent() {
         return super.getParent();
     }
 
@@ -59,8 +60,8 @@ public class ArrayOrMapGetExpr extends ExpressionWithType {
     }
 
     @Override
-    public void visit(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
-        astVisitor.visit(this, compilationContext);
+    public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
+        astVisitor.visitArrayOrMapGetExpr(this, compilationContext);
     }
 
     @Override
@@ -83,12 +84,53 @@ public class ArrayOrMapGetExpr extends ExpressionWithType {
         return rightBracketToken.getRow();
     }
 
+    public ArrayGetElementProvider getNextElementProvider() {
+        if (isArraySlice()) {
+            return new ArrayGetSliceProvider(this);
+        } else if (arrayGet) {
+            return new ArrayGetElementProvider(this);
+        } else {
+            return new MapGetElementProvider(this);
+        }
+    }
+
+    public LeftBracketToken getLeftBracketToken() {
+        return leftBracketToken;
+    }
+
+    public Expression getLeftExpr() {
+        return leftExpr;
+    }
+
+    public void setLeftExpr(Expression leftExpr) {
+        this.leftExpr = leftExpr;
+    }
+
+    public Expression getExpression() {
+        return expression;
+    }
+
+    public void setExpression(Expression expression) {
+        this.expression = expression;
+    }
+
+    public RightBracketToken getRightBracketToken() {
+        return rightBracketToken;
+    }
+
+    public boolean isArrayGet() {
+        return arrayGet;
+    }
+
+    public void setArrayGet(boolean arrayGet) {
+        this.arrayGet = arrayGet;
+    }
+
     @Override
     public String toString() {
         return leftExpr.toString() +
                 leftBracketToken.toString() +
                 expression.toString() +
-                rightBracketToken.toString() +
-                getFurtherExpressionOpt().map(Object::toString).orElse("");
+                rightBracketToken.toString();
     }
 }

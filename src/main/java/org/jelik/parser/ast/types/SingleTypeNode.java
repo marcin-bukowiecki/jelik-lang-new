@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.types;
 
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.token.LiteralToken;
 import org.jelik.types.Type;
@@ -15,6 +15,10 @@ public class SingleTypeNode extends TypeNode {
 
     public SingleTypeNode(LiteralToken token) {
         this.token = token;
+    }
+
+    public SingleTypeNode(String name) {
+        this.token = new LiteralToken(name);
     }
 
     @Override
@@ -43,11 +47,11 @@ public class SingleTypeNode extends TypeNode {
 
     @Override
     public String toString() {
-        return token.toString() + getQuestionMarkToken();
+        return token.toString();
     }
 
     @Override
-    public void visit(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
+    public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
         astVisitor.visitSingleTypeNode(this, compilationContext);
     }
 

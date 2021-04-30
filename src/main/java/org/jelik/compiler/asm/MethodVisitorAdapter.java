@@ -2,6 +2,8 @@ package org.jelik.compiler.asm;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import org.jelik.compiler.asm.utils.ByteCodeLogger;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.compiler.locals.LocalVariable;
 import org.jelik.parser.ast.expression.CatchExpression;
 import org.jelik.parser.ast.expression.TryExpression;
@@ -9,6 +11,7 @@ import org.jelik.parser.ast.functions.FunctionParameter;
 import org.jelik.parser.ast.labels.LabelNode;
 import org.jelik.types.JVMBooleanType;
 import org.jelik.types.JVMIntType;
+import org.jelik.types.JVMVoidType;
 import org.jelik.types.Type;
 import org.jelik.types.jvm.JVMCharType;
 import org.jelik.types.jvm.JVMDoubleType;
@@ -19,10 +22,7 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Marcin Bukowiecki
@@ -43,21 +43,21 @@ public class MethodVisitorAdapter {
 
     private final LinkedList<Label> visitedLabelsStack = Lists.newLinkedList();
 
+    private final CompilationContext compilationContext;
+
     private final Set<Integer> visitedLineNumbers = Sets.newHashSet();
 
-    public MethodVisitorAdapter(MethodVisitor mv) {
+    public MethodVisitorAdapter(MethodVisitor mv, CompilationContext compilationContext) {
         this.mv = mv;
+        this.compilationContext = compilationContext;
+    }
+
+    public CompilationContext getCompilationContext() {
+        return compilationContext;
     }
 
     public void visitLineNumber(int lineNumber) {
-/*        if (lineNumber < 1) {
-            return;
-        }
-        if (visitedLineNumbers.contains(lineNumber)) {
-            return;
-        }
-        visitedLineNumbers.add(lineNumber);
-        mv.visitLineNumber(lineNumber, visitedLabelsStack.getLast());*/
+
     }
 
     public void setupInitialLocals(List<LocalVariable> initialLocals) {
@@ -121,15 +121,12 @@ public class MethodVisitorAdapter {
         mv.visitInsn(Opcodes.LADD);
     }
 
-    public void longDiv() {
+    public void visitLongDiv() {
         stackMap.popFromStack();
-        String left = stackMap.popFromStack();
         stackMap.popFromStack();
-        String right = stackMap.popFromStack();
         decrStackSize(2);
-        assert "J".equals(left) : "left expected long for long div operation";
-        assert "J".equals(right) : "right expected long for long div operation";
-        stackMap.pushOnStack("J");
+        stackMap.pushOnStack("D");
+        stackMap.pushOnStack("D");
         mv.visitInsn(Opcodes.LDIV);
     }
 
@@ -143,14 +140,6 @@ public class MethodVisitorAdapter {
         assert "J".equals(right) : "right expected long for long mul operation";
         stackMap.pushOnStack("J");
         mv.visitInsn(Opcodes.LMUL);
-    }
-
-    public void longReturn() {
-        stackMap.popFromStack();
-        String i = stackMap.popFromStack();
-        decrStackSize(2);
-        assert "J".equals(i) : "expected long for long return operation";
-        mv.visitInsn(Opcodes.LRETURN);
     }
 
     public void intLoad(int localIndex) {
@@ -206,7 +195,7 @@ public class MethodVisitorAdapter {
     }
 
     public void visitLocals(List<LocalVariable> localVariableList) {
-        for (LocalVariable localVariable : localVariableList) {
+        for (var localVariable : localVariableList) {
             mv.visitLocalVariable(
                     localVariable.getName(),
                     localVariable.getDescriptor(),
@@ -219,7 +208,14 @@ public class MethodVisitorAdapter {
     }
 
     public void visitMax() {
-        mv.visitMaxs(maxStackSize, maxLocals);
+        try {
+            mv.visitMaxs(maxStackSize, 12);
+        } catch (Exception e) {
+            var cw = this.compilationContext.currentClassWriter();
+            var bytes = cw.getBytes();
+            ByteCodeLogger.logASM(bytes);
+            throw new RuntimeException(e);
+        }
     }
 
     private void incrStackSize(int value) {
@@ -349,7 +345,43 @@ public class MethodVisitorAdapter {
         stackMap.pushOnStack(typeOfConstant.getDescriptor());
     }
 
-    public void invokeInstance(String internalName, String name, String descriptor, Type type, List<Type> argsTypes, boolean isInterface) {
+    public void invokeInstance(Type owner,
+                               String name,
+                               String descriptor) {
+        invokeInstance(owner.getInternalName(),
+                name,
+                descriptor,
+                JVMVoidType.INSTANCE,
+                Collections.emptyList(),
+                false);
+    }
+
+    public void invokeInstance(String owner,
+                               String name,
+                               String descriptor,
+                               boolean itf) {
+        invokeInstance(owner,
+                name,
+                descriptor,
+                JVMVoidType.INSTANCE,
+                Collections.emptyList(),
+                itf);
+    }
+
+    public void invokeInstance(Type owner,
+                               String name,
+                               String descriptor,
+                               Type returnType,
+                               List<Type> argsTypes) {
+        invokeInstance(owner.getInternalName(), name, descriptor, returnType, argsTypes, false);
+    }
+
+    public void invokeInstance(String internalName,
+                               String name,
+                               String descriptor,
+                               Type returnType,
+                               List<Type> argsTypes,
+                               boolean isInterface) {
         //decrStackSize(1);
         //stackMap.popFromStack();//instance
 
@@ -369,13 +401,13 @@ public class MethodVisitorAdapter {
         }
 
 
-        if (type.isDouble() || type.isLong()) {
+        if (returnType.isDouble() || returnType.isLong()) {
             incrStackSize(1);
-            stackMap.pushOnStack(type.getDescriptor());
+            stackMap.pushOnStack(returnType.getDescriptor());
         }
 
         incrStackSize(1);
-        stackMap.pushOnStack(type.getDescriptor());
+        stackMap.pushOnStack(returnType.getDescriptor());
     }
 
     public void callNew(Type type) {
@@ -394,7 +426,20 @@ public class MethodVisitorAdapter {
         mv.visitInsn(Opcodes.DUP);
     }
 
-    public void invokeStatic(String internalName, String name, String descriptor, Type type, List<Type> argsTypes, boolean isInterface) {
+    public void invokeStatic(String internalName,
+                             String name,
+                             String descriptor) {
+        mv.visitMethodInsn(Opcodes.INVOKESTATIC, internalName, name, descriptor, false);
+    }
+
+
+    public void invokeStatic(String internalName,
+                             String name,
+                             String descriptor,
+                             Type type,
+                             List<Type> argsTypes,
+                             boolean isInterface) {
+
         for (Type argType : argsTypes) {
             if (argType.isLong() || argType.isDouble()) {
                 decrStackSize(1);
@@ -825,8 +870,8 @@ public class MethodVisitorAdapter {
     }
 
     public void visitTryCatchBlock(List<TryExpression> tryExpressionList) {
-        for (TryExpression tryExpression : tryExpressionList) {
-            CatchExpression catchExpression = (CatchExpression) tryExpression.getFurtherExpression();
+        for (var tryExpression : tryExpressionList) {
+            var catchExpression = (CatchExpression) tryExpression.getCatchExpression();
             for (FunctionParameter functionParameter : catchExpression.getArgs().getFunctionParameters()) {
                 String internalName = functionParameter.getTypeNode().getType().getInternalName();
                 mv.visitTryCatchBlock(
@@ -1102,6 +1147,13 @@ public class MethodVisitorAdapter {
         mv.visitInsn(Opcodes.IOR);
     }
 
+    public void visitLongOr() {
+        decrStackSize(2);
+        stackMap.popFromStack();
+        stackMap.popFromStack();
+        mv.visitInsn(Opcodes.LOR);
+    }
+
     public void visitIntXor() {
         decrStackSize(1);
         stackMap.popFromStack();
@@ -1145,14 +1197,52 @@ public class MethodVisitorAdapter {
                                 @NotNull String descriptor,
                                 @NotNull Type returnType,
                                 @NotNull List<? extends Type> parameterTypes) {
+        parameterTypes.forEach(this::pop);
         mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, owner, name, descriptor, true);
         if (returnType.isDouble() || returnType.isLong()) {
             incrStackSize(2);
             stackMap.pushOnStack(returnType.getDescriptor());
-            stackMap.pushOnStack(returnType.getDescriptor());
         } else {
             incrStackSize(1);
-            stackMap.pushOnStack(returnType.getDescriptor());
         }
+        stackMap.pushOnStack(returnType.getDescriptor());
+    }
+
+    public void visitIntShiftLeft() {
+        mv.visitInsn(Opcodes.ISHL);
+    }
+
+    public void visitLongShiftLeft() {
+        mv.visitInsn(Opcodes.LSHL);
+    }
+
+    public void visitIntShiftRight() {
+        mv.visitInsn(Opcodes.ISHR);
+    }
+
+    public void visitLongShiftRight() {
+        mv.visitInsn(Opcodes.LSHR);
+    }
+
+    public void visitIntUnsignedShiftRight() {
+        mv.visitInsn(Opcodes.IUSHR);
+    }
+
+    public void visitLongUnsignedShiftRight() {
+        mv.visitInsn(Opcodes.LUSHR);
+    }
+
+    private void pop(Type type) {
+        if (type.isDouble() || type.isLong()) {
+            stackMap.popFromStack();
+            stackMap.popFromStack();
+        } else {
+            stackMap.popFromStack();
+        }
+    }
+
+    public void visitThis(Type genericType) {
+        stackMap.pushOnStack(genericType.getCanonicalName());
+        mv.visitVarInsn(Opcodes.ALOAD, 0);
     }
 }

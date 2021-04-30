@@ -4,6 +4,8 @@ import com.google.common.annotations.VisibleForTesting;
 import lombok.Getter;
 import org.jelik.parser.token.Token;
 
+import java.io.File;
+
 /**
  * @author Marcin Bukowiecki
  */
@@ -18,6 +20,10 @@ public class Lexer {
 
     public Lexer(Scanner scanner) {
         this.scanner = scanner;
+    }
+
+    public Lexer(String path) {
+        this.scanner = new Scanner(new CharPointer(new File(path)));
     }
 
     @VisibleForTesting

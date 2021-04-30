@@ -32,7 +32,6 @@ public final class OperatorStack {
 
     static {
         operatorWeights = new EnumMap<>(ImmutableMap.<ElementType, Integer>builder()
-                .put(ElementType.range, 1)
 
                 .put(ElementType.referenceOperator, 160)
 
@@ -73,7 +72,6 @@ public final class OperatorStack {
                 .put(ElementType.isNotOperator, 160)
 
                 .put(ElementType.asOperator, 130)
-                .put(ElementType.assign, 1)
                 .put(ElementType.pow, 130)
 
                 .put(ElementType.mul, 120)
@@ -84,9 +82,13 @@ public final class OperatorStack {
                 .put(ElementType.maybeExpr, 160)
                 .put(ElementType.mapCreate, 160)
 
-                .put(ElementType.elvisOperator, 20)
+                .put(ElementType.inOperator, 2)
+                .put(ElementType.range, 2)
+                .put(ElementType.nullSafeCall, 2)
 
-                .put(ElementType.inOperator, 0)
+                .put(ElementType.assign, 1)
+
+
                 //.put(ElementType.eqOperator, 0)
                 .build());
     }

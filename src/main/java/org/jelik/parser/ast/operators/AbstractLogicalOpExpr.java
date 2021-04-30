@@ -1,7 +1,7 @@
 package org.jelik.parser.ast.operators;
 
-import org.jelik.CompilationContext;
-import org.jelik.parser.ast.Expression;
+import org.jelik.compiler.config.CompilationContext;
+import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.labels.LabelNode;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.token.operators.AbstractOperator;
@@ -28,22 +28,17 @@ public abstract class AbstractLogicalOpExpr extends AbstractOpExpr {
     }
 
     @Override
-    public abstract void visit(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext);
-
-    @Override
-    public boolean isLogical() {
-        return true;
-    }
+    public abstract void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext);
 
     public boolean isNegated() {
         return falseLabelNode != null;
     }
 
     public boolean isLeft() {
-        return parent instanceof AbstractOpExpr && ((AbstractOpExpr) parent).getLeft() == this;
+        return getParent() instanceof AbstractOpExpr && ((AbstractOpExpr) getParent()).getLeft() == this;
     }
 
     public boolean isRight() {
-        return parent instanceof AbstractOpExpr && ((AbstractOpExpr) parent).getRight() == this;
+        return getParent() instanceof AbstractOpExpr && ((AbstractOpExpr) getParent()).getRight() == this;
     }
 }

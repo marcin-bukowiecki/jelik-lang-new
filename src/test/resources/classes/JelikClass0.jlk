@@ -1,3 +1,4 @@
-class Test {}
-
-fun test() -> Test { ret Test() }
+abstract class Foo {}
+fun get() -> Foo {
+    ret Foo()
+}

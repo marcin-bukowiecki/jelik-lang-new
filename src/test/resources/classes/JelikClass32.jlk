@@ -1,1 +1,3 @@
-fun expr(a Object, b Object, c Object) -> Boolean { ret a == b or a == c }
+fun expr() -> Long {   val a = [1 as Long, 2 as Long, 3 as Long] 
+ a[2] = 6 as Long 
+ ret a[2]}

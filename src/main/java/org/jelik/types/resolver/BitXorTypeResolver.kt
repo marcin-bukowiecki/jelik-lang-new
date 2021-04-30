@@ -5,5 +5,5 @@ package org.jelik.types.resolver
  *
  * @author Marcin Bukowiecki
  */
-object BitXorTypeResolver : BaseOpTestResolver() {
+object BitXorTypeResolver : BaseOpTypeResolver() {
 }

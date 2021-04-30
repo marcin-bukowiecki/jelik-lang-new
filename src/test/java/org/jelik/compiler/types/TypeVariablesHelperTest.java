@@ -23,6 +23,7 @@ import org.jelik.types.Type;
 import org.jelik.types.resolver.TypeVariablesHelper;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -39,5 +40,31 @@ public class TypeVariablesHelperTest {
                 .hasSize(2)
                 .contains(new JelikTypeVariable("K"), Index.atIndex(0))
                 .contains(new JelikTypeVariable("V"), Index.atIndex(1));
+    }
+
+    @Test
+    public void shouldResolveTypeVariablesForList() {
+        List<Type> actual = TypeVariablesHelper.resolveTypeVariables(List.class);
+
+        Assertions.assertThat(actual)
+                .hasSize(1)
+                .contains(new JelikTypeVariable("E"), Index.atIndex(0));
+    }
+
+    @Test
+    public void shouldResolveTypeVariablesForArrayList() {
+        List<Type> actual = TypeVariablesHelper.resolveTypeVariables(ArrayList.class);
+
+        Assertions.assertThat(actual)
+                .hasSize(1)
+                .contains(new JelikTypeVariable("E"), Index.atIndex(0));
+    }
+
+    @Test
+    public void shouldResolveTypeVariablesForString() {
+        List<Type> actual = TypeVariablesHelper.resolveTypeVariables(String.class);
+
+        Assertions.assertThat(actual)
+                .hasSize(0);
     }
 }

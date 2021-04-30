@@ -1,5 +1,7 @@
 package org.jelik.types;
 
+import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.asm.visitor.TypeVisitor;
 import org.jelik.compiler.common.TypeEnum;
 
 /**
@@ -11,6 +13,11 @@ public class JVMVoidType extends Type {
 
     public JVMVoidType() {
         super("void", "void", TypeEnum.voidT);
+    }
+
+    @Override
+    public void accept(TypeVisitor typeVisitor, CompilationContext compilationContext) {
+        typeVisitor.visit(this, compilationContext);
     }
 
     @Override

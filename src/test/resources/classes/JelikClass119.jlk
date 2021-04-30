@@ -1,1 +1,1 @@
-fun expr(a Long) -> Int { ret (++a) as Int }
+fun expr(a Object, b Object) -> Boolean { ret a.equals(b) == b.equals(a) }

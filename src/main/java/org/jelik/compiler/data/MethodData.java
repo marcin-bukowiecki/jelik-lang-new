@@ -1,9 +1,10 @@
 package org.jelik.compiler.data;
 
 import org.jelik.parser.ast.functions.ConstructorTargetFunctionCallProvider;
-import org.jelik.parser.ast.functions.InstanceTargetFunctionCallProvider;
-import org.jelik.parser.ast.functions.StaticTargetFunctionCallProvider;
-import org.jelik.parser.ast.functions.TargetFunctionCallProvider;
+import org.jelik.parser.ast.functions.providers.ExtTargetFunctionCallProvider;
+import org.jelik.parser.ast.functions.providers.InstanceTargetFunctionCallProvider;
+import org.jelik.parser.ast.functions.providers.StaticTargetFunctionCallProvider;
+import org.jelik.parser.ast.functions.providers.TargetFunctionCallProvider;
 import org.jelik.types.FunctionType;
 import org.jelik.types.Type;
 import org.jetbrains.annotations.NotNull;
@@ -37,6 +38,10 @@ public interface MethodData {
 
     List<Type> getExpectedTypeParameters();
 
+    default boolean isExt() {
+        return false;
+    }
+
     default boolean isAbstract() {
         return false;
     }
@@ -58,7 +63,9 @@ public interface MethodData {
     }
 
     default TargetFunctionCallProvider<?> getCallProvider() {
-        if (isStatic()) {
+        if (isExt()) {
+            return new ExtTargetFunctionCallProvider(this);
+        } else if (isStatic()) {
             return new StaticTargetFunctionCallProvider(this);
         } else if (isConstructor()) {
             return new ConstructorTargetFunctionCallProvider(this);

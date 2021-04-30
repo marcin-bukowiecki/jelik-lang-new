@@ -1,1 +1,1 @@
-fun expr() -> Long {   ret [3 as Long,4 as Long][1]}
+fun expr() -> []Float {   ret [1f,2f,3f,4f]Float}

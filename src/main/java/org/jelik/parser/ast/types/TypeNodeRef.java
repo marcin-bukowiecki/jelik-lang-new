@@ -2,6 +2,7 @@ package org.jelik.parser.ast.types;
 
 import lombok.Getter;
 import org.jelik.types.Type;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Marcin Bukowiecki
@@ -26,12 +27,12 @@ public class TypeNodeRef extends AbstractTypeRef {
     }
 
     @Override
-    public void setType(Type type) {
+    public void setType(@NotNull Type type) {
         this.typeNode.setType(type);
     }
 
     @Override
-    public void setGenericType(Type type) {
+    public void setGenericType(@NotNull Type type) {
         this.typeNode.setGenericType(type);
     }
 }

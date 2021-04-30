@@ -1,6 +1,7 @@
 package org.jelik.parser.ast
 
-import org.jelik.CompilationContext
+import org.jelik.compiler.config.CompilationContext
+import org.jelik.parser.ast.expression.Expression
 import org.jelik.parser.ast.expression.ExpressionWithType
 import org.jelik.parser.ast.visitors.AstVisitor
 import org.jelik.parser.token.ColonToken
@@ -31,7 +32,7 @@ class KeyValueExpr(var key: Expression,
         }
     }
 
-    override fun visit(astVisitor: AstVisitor, compilationContext: CompilationContext) {
+    override fun accept(astVisitor: AstVisitor, compilationContext: CompilationContext) {
         astVisitor.visitKeyValueExpr(this, compilationContext)
     }
 

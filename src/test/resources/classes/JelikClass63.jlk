@@ -1,1 +1,2 @@
-fun expr(a Double, b Double) -> Double {   ret a * b}
+import java.util.ArrayList
+fun expr() -> Int {   ret len([ArrayList<Int>()]ArrayList<Int>))}

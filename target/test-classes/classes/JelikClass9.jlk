@@ -1,3 +1,0 @@
-fun expr() -> Char {   val a = [1 as Char, 2 as Char, 3 as Char] 
- a[2] = 6 as Char 
- ret a[2]}

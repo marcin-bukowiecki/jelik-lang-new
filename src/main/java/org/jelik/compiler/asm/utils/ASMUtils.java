@@ -16,11 +16,13 @@
 
 package org.jelik.compiler.asm.utils;
 
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.asm.ClassWriterAdapter;
 import org.jelik.compiler.asm.MethodVisitorAdapter;
 import org.jelik.parser.ast.labels.LabelNode;
 import org.jelik.parser.ast.operators.AbstractLogicalOpExpr;
 import org.jetbrains.annotations.NotNull;
+import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 
 import java.lang.reflect.Modifier;
@@ -29,6 +31,8 @@ import java.lang.reflect.Modifier;
  * @author Marcin Bukowiecki
  */
 public class ASMUtils {
+
+    public static final String OBJECT_NO_ARGS = "()Ljava/lang/Object;";
 
     /**
      * Checks if given JVM Class is a {@link FunctionalInterface}
@@ -77,5 +81,32 @@ public class ASMUtils {
         mv.visitLabel(expr.falseLabelNode.getLabel());
         mv.pushInt(0);
         mv.visitLabel(label.getLabel());
+    }
+
+    public static ClassWriterAdapter createClassWithDefaultConstructor(final String canonicalName) {
+        ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
+        classWriter.visit(Opcodes.V11,
+                Opcodes.ACC_PUBLIC,
+                canonicalName.replace('.', '/'),
+                "",
+                "java/lang/Object",
+                null);
+        createDefaultConstructor(classWriter);
+        return new ClassWriterAdapter(classWriter);
+    }
+
+    public static void createDefaultConstructor(final ClassWriter classWriter) {
+        var constructor = classWriter.visitMethod(
+                Opcodes.ACC_PUBLIC,
+                "<init>",
+                "()V",
+                "",
+                null);
+        constructor.visitVarInsn(Opcodes.ALOAD, 0);
+        constructor.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/lang/Object", "<init>", "()V",
+                false);
+        constructor.visitInsn(Opcodes.RETURN);
+        constructor.visitMaxs(1, 1);
+        constructor.visitEnd();
     }
 }

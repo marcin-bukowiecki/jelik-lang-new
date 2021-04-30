@@ -1,8 +1,8 @@
 package org.jelik.parser.ast.numbers;
 
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.parser.ast.visitors.AstVisitor;
-import org.jelik.parser.ast.Expression;
+import org.jelik.parser.ast.expression.Expression;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -10,12 +10,12 @@ import org.jetbrains.annotations.NotNull;
  */
 public class WrapperToPrimitiveNode extends CastToNode {
 
-    public WrapperToPrimitiveNode(Expression subject, Expression further) {
-        super(subject, further);
+    public WrapperToPrimitiveNode(Expression subject) {
+        super(subject);
     }
 
     @Override
-    public void visit(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
+    public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
         astVisitor.visit(this, compilationContext);
     }
 }

@@ -1,1 +1,5 @@
-fun expr(a Long, b Int) -> Long { ret a xor b }
+fun expr(a Object, b Object) -> Boolean { 
+ if a == b and a == "foo" then 
+   ret true 
+else    ret false
+end }

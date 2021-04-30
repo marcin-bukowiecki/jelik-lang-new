@@ -5,5 +5,5 @@ package org.jelik.parser.ast.context;
  *
  * @author Marcin Bukowiecki
  */
-public class NodeContext {
+public abstract class NodeContext {
 }

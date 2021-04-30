@@ -1,7 +1,10 @@
 package org.jelik.parser.ast.functions;
 
+import org.jelik.parser.ast.blocks.BasicBlockImpl;
+import org.jelik.parser.ast.labels.LabelNode;
 import org.jelik.parser.ast.types.TypeNode;
 import org.jelik.types.Type;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Base class for function body
@@ -10,8 +13,12 @@ import org.jelik.types.Type;
  */
 public abstract class FunctionBody extends TypeNode {
 
+    public FunctionBody() { }
+
+    public abstract BasicBlockImpl getBasicBlock();
+
     @Override
-    public void setType(Type type) {
+    public void setType(@NotNull Type type) {
         this.nodeContext.setType(type);
     }
 
@@ -19,4 +26,6 @@ public abstract class FunctionBody extends TypeNode {
     public Type getType() {
         return nodeContext.getType();
     }
+
+    public abstract LabelNode getStartLabel();
 }

@@ -1,1 +1,1 @@
-fun expr(a Long, b Long) -> Boolean { ret a == b }
+fun expr() -> []Byte {   ret [1,2,3,4]Byte}

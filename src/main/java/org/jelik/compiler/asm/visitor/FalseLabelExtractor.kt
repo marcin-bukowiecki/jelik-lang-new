@@ -1,6 +1,6 @@
 package org.jelik.compiler.asm.visitor
 
-import org.jelik.CompilationContext
+import org.jelik.compiler.config.CompilationContext
 import org.jelik.parser.ast.labels.LabelNode
 import org.jelik.parser.ast.operators.AbstractLogicalOpExpr
 import org.jelik.parser.ast.operators.AndExpr
@@ -20,8 +20,8 @@ class FalseLabelExtractor : AstVisitor() {
 
     override fun visitAbstractLogicalOpExpr(expr: AbstractLogicalOpExpr, compilationContext: CompilationContext) {
         result = expr.falseLabelNode
-        expr.left.visit(this, compilationContext)
-        expr.right.visit(this, compilationContext)
+        expr.left.accept(this, compilationContext)
+        expr.right.accept(this, compilationContext)
     }
 
     override fun visit(greaterExpr: GreaterExpr, compilationContext: CompilationContext) {
@@ -40,7 +40,7 @@ class FalseLabelExtractor : AstVisitor() {
         this.visitAbstractLogicalOpExpr(op as AbstractLogicalOpExpr, compilationContext)
     }
 
-    override fun visit(orExpr: OrExpr, compilationContext: CompilationContext) {
+    override fun visitOrExpr(orExpr: OrExpr, compilationContext: CompilationContext) {
         this.visitAbstractLogicalOpExpr(orExpr as AbstractLogicalOpExpr, compilationContext)
     }
 

@@ -1,14 +1,14 @@
 package org.jelik.parser.ast.functions;
 
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.parser.ast.ASTNode;
-import org.jelik.parser.ast.DotCallExpr;
-import org.jelik.parser.ast.Expression;
 import org.jelik.parser.ast.LiteralExpr;
+import org.jelik.parser.ast.ReferenceExpressionImpl;
 import org.jelik.parser.ast.arguments.Argument;
 import org.jelik.parser.ast.arguments.ArgumentList;
+import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.expression.ExpressionWithType;
-import org.jelik.parser.ast.utils.ASTUtils;
+import org.jelik.parser.ast.functions.providers.TargetFunctionCallProvider;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.types.Type;
 import org.jetbrains.annotations.NotNull;
@@ -44,7 +44,7 @@ public class FunctionCallExpr extends ExpressionWithType implements FunctionCall
         return argumentList;
     }
 
-    public TargetFunctionCallProvider<?> getTargetFunctionCall() {
+    public TargetFunctionCallProvider<?> getTargetFunctionCallProvider() {
         return targetFunctionCall;
     }
 
@@ -72,16 +72,16 @@ public class FunctionCallExpr extends ExpressionWithType implements FunctionCall
     }
 
     @Override
-    public void visit(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
-        astVisitor.visit(this, compilationContext);
+    public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
+        astVisitor.visitFunctionCall(this, compilationContext);
     }
 
     @Override
     public String toString() {
-        return literalExpr.toString() + argumentList.toString() + (furtherExpression == null ? "" : furtherExpression.toString());
+        return literalExpr.toString() + argumentList.toString();
     }
 
-    public void setTargetFunctionCall(TargetFunctionCallProvider<?> targetFunctionCall) {
+    public void setTargetFunctionCallProvider(TargetFunctionCallProvider<?> targetFunctionCall) {
         this.targetFunctionCall = targetFunctionCall;
     }
 
@@ -95,10 +95,10 @@ public class FunctionCallExpr extends ExpressionWithType implements FunctionCall
     }
 
     public ASTNode getCaller() {
-        if (parent instanceof DotCallExpr) {
-            return ((DotCallExpr) parent).getSubject();
+        if (getParent() instanceof ReferenceExpressionImpl) {
+            return ((ReferenceExpressionImpl) getParent()).getReference();
         } else {
-            return parent;
+            return getParent();
         }
     }
 

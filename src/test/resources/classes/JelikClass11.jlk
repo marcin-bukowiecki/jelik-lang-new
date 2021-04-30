@@ -1,5 +1,4 @@
-fun expr() -> String {
-   val a = ["a","b","c"]
-   a[2] = "foo"
-   ret a[2]
+fun expr() -> []Char { 
+var foo = ['a','b','c']Char
+ret foo[0:2] 
 }

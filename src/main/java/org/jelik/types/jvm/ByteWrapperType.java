@@ -16,7 +16,7 @@
 
 package org.jelik.types.jvm;
 
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.compiler.common.TypeEnum;
 import org.jelik.types.Type;
 

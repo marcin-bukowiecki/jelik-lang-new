@@ -1,8 +1,9 @@
 package org.jelik.parser.ast.resolvers.decoders
 
-import org.jelik.CompilationContext
+import org.jelik.compiler.config.CompilationContext
 import org.jelik.compiler.common.TypeEnum
-import org.jelik.parser.ast.Expression
+import org.jelik.compiler.helper.CompilerHelper
+import org.jelik.parser.ast.expression.Expression
 import org.jelik.parser.ast.numbers.Int32ToFloat32Node
 import org.jelik.parser.ast.operators.GreaterExpr
 import org.jelik.parser.ast.operators.JumpInstruction
@@ -19,10 +20,18 @@ object GreaterOpTypeDecoder {
     fun decode(op: GreaterExpr, ctx: CompilationContext) {
         val leftType = op.left.genericReturnType
         val rightType = op.right.genericReturnType
+
         decode(leftType, rightType, op.left, op, op.right, ctx)
     }
 
-    fun decode(leftType: Type, rightType: Type, leftCaller: Expression, op: GreaterExpr, rightCaller: Expression, ctx: CompilationContext) {
+    fun decode(leftType: Type,
+               rightType: Type,
+               leftCaller: Expression,
+               op: GreaterExpr,
+               rightCaller: Expression,
+               ctx: CompilationContext
+    ) {
+
         when(leftType.typeEnum) {
             TypeEnum.int8,
             TypeEnum.int16,
@@ -33,11 +42,11 @@ object GreaterOpTypeDecoder {
                     TypeEnum.int32 -> {
                         when {
                             rightCaller.isZero -> {
-                                rightCaller.ignored = true
+                                rightCaller.isIgnored = true
                                 op.instructionToCall = JumpInstruction.isGreaterThanZero
                             }
                             leftCaller.isZero -> {
-                                leftCaller.ignored = true
+                                leftCaller.isIgnored = true
                                 op.instructionToCall = JumpInstruction.isLessThanZero
                             }
                             else -> {
@@ -47,9 +56,10 @@ object GreaterOpTypeDecoder {
                     }
                     TypeEnum.objectT -> {
                         if (rightType.isWrapper) {
-                            rightType.visit(CastToVisitor(rightCaller, rightType.primitiveType), ctx)
+                            rightType.accept(CastToVisitor(rightCaller, rightType.primitiveType), ctx)
                         }
                     }
+                    else -> CompilerHelper.raiseTypeCompileError("operator.applyError", op, leftType, rightType)
                 }
             }
             TypeEnum.int64 -> {
@@ -57,6 +67,7 @@ object GreaterOpTypeDecoder {
                     TypeEnum.int64 -> {
                         op.instructionToCall = JumpInstruction.lcmp
                     }
+                    else -> CompilerHelper.raiseTypeCompileError("operator.applyError", op, leftType, rightType)
                 }
             }
             TypeEnum.float32 -> {
@@ -65,8 +76,10 @@ object GreaterOpTypeDecoder {
                         rightCaller.parent.replaceWith(rightCaller, Int32ToFloat32Node(rightCaller))
                         op.instructionToCall = JumpInstruction.floatGreater
                     }
+                    else -> CompilerHelper.raiseTypeCompileError("operator.applyError", op, leftType, rightType)
                 }
             }
+            else -> CompilerHelper.raiseTypeCompileError("operator.applyError", op, leftType, rightType)
         }
     }
 }

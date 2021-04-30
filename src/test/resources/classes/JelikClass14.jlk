@@ -1,1 +1,4 @@
-fun expr() -> []String {   ret ["foo","bar"]}
+fun expr() -> []Byte { 
+var foo = [1,2,3,4,5]Byte
+ret foo[1:3] 
+}

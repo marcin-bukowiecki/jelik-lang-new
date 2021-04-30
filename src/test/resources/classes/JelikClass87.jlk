@@ -1,2 +1,1 @@
-fun expr(a Int) -> Int {  
- ret ++a }
+fun adder Int

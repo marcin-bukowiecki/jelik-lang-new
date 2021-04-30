@@ -16,7 +16,7 @@
 
 package org.jelik.types.jvm;
 
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.compiler.common.TypeEnum;
 import org.jelik.types.JVMObjectType;
 import org.jelik.types.Type;
@@ -51,7 +51,7 @@ public abstract class NumberType extends Type {
         if (type instanceof NumberType) {
             return isNumberAssignableTo(type, compilationContext);
         }
-        return type.getCanonicalName().equals("java.lang.Object");
+        return super.isAssignableTo(type, compilationContext);
     }
 
     public abstract NumberType getWrapperType();

@@ -1,1 +1,1 @@
-fun expr(a String) -> Boolean { ret Null != a }
+fun expr() -> Long {   ret [3 as Long,4 as Long][1]}

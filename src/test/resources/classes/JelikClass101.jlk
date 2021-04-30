@@ -1,1 +1,2 @@
-fun expr(a Int, b Int) -> Boolean { ret a > b and a > b }
+import java.util.List
+fun expr(a List<Int>) -> Boolean { ret a.size() > 1 }

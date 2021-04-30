@@ -1,18 +1,23 @@
 package org.jelik.types;
 
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.compiler.JelikCompiler;
 import org.jelik.compiler.asm.visitor.TypeVisitor;
 import org.jelik.compiler.common.TypeEnum;
-import org.jelik.compiler.data.ClassDataImpl;
+import org.jelik.compiler.data.ClassData;
 import org.jelik.compiler.data.MethodData;
-import org.jelik.parser.ast.Expression;
+import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.casts.CastObjectToObjectNode;
+import org.jelik.parser.ast.numbers.Float32ToWrapperNode;
+import org.jelik.parser.ast.numbers.Float64ToWrapperNode;
 import org.jelik.parser.ast.numbers.Int32ToWrapperNode;
 import org.jelik.parser.ast.resolvers.DefaultImportedTypeResolver;
 import org.jelik.parser.ast.types.JelikWildCardType;
 import org.jelik.parser.ast.types.TypeMappingContext;
 import org.jelik.types.jvm.IntegerWrapperType;
+import org.jelik.types.jvm.JVMDoubleType;
+import org.jelik.types.jvm.JVMFloatType;
+import org.jelik.types.jvm.JVMLongType;
 import org.jelik.types.resolver.TypeVariablesHelper;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,6 +27,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -39,10 +45,10 @@ public class Type {
     public final TypeEnum typeEnum;
 
     //i.e. List<E>
-    private final List<Type> typeParameters;
+    protected final List<Type> typeParameters;
 
     //i.e. List<String>
-    private final List<Type> typeVariables;
+    protected final List<Type> typeVariables;
 
     public Type(String name, String canonicalName, TypeEnum typeEnum) {
         this.name = name;
@@ -104,6 +110,7 @@ public class Type {
         return typeEnum;
     }
 
+    @NotNull
     public String getCanonicalName() {
         return canonicalName;
     }
@@ -136,13 +143,12 @@ public class Type {
         );
     }
 
-    public ClassDataImpl findClassData(@NotNull CompilationContext compilationContext) {
-        ClassDataImpl classData = JelikCompiler.INSTANCE.classDataRegister.get(this.canonicalName);
+    public ClassData findClassData(@NotNull CompilationContext compilationContext) {
+        var classData = JelikCompiler.INSTANCE.classDataRegister.get(this.canonicalName);
         if (classData != null) {
             return classData;
         } else {
-            JelikCompiler.INSTANCE.findClass(this.canonicalName);
-            return JelikCompiler.INSTANCE.classDataRegister.get(this.canonicalName);
+            return JelikCompiler.INSTANCE.findClassData(this.canonicalName, compilationContext).orElse(null);
         }
     }
 
@@ -211,8 +217,12 @@ public class Type {
         return false;
     }
 
+    public boolean isNullAssignableTo(Type type, CompilationContext compilationContext) {
+        return true;
+    }
+
     public boolean isInterface() {
-        return false;
+        return JelikCompiler.INSTANCE.isInterface(this);
     }
 
     public Set<Type> getAssignableToTypes(CompilationContext compilationContext) {
@@ -271,7 +281,7 @@ public class Type {
         return false;
     }
 
-    public void visit(TypeVisitor typeVisitor, CompilationContext compilationContext) {
+    public void accept(TypeVisitor typeVisitor, CompilationContext compilationContext) {
         typeVisitor.visit(this, compilationContext);
     }
 
@@ -280,23 +290,34 @@ public class Type {
     }
 
     public void castFrom(Expression expression, JVMIntType type, CompilationContext compilationContext) {
-        expression.parent.replaceWith(expression, new Int32ToWrapperNode(expression));
+        expression.getParent().replaceWith(expression, new Int32ToWrapperNode(expression));
+    }
+
+    public void castFrom(Expression expression, JVMLongType type, CompilationContext compilationContext) {
+
+    }
+
+    public void castFrom(Expression expression, JVMFloatType type, CompilationContext compilationContext) {
+        expression.getParent().replaceWith(expression, new Float32ToWrapperNode(expression));
+    }
+
+    public void castFrom(Expression expression, JVMDoubleType type, CompilationContext compilationContext) {
+        expression.getParent().replaceWith(expression, new Float64ToWrapperNode(expression));
     }
 
     public void castFrom(Expression expression, Type type, CompilationContext compilationContext) {
         if (type.equals(this)) {
             return;
         }
-        expression.parent.replaceWith(expression, new CastObjectToObjectNode(expression, expression.getFurtherExpression(), type, this));
+        expression.getParent().replaceWith(expression, new CastObjectToObjectNode(expression, type, this));
     }
 
     public void castFrom(Expression expression, JVMObjectType type, CompilationContext compilationContext) {
         if (type.equals(this)) {
             return;
         }
-        expression.parent.replaceWith(expression, new CastObjectToObjectNode(expression, expression.getFurtherExpression(), type, this));
+        expression.getParent().replaceWith(expression, new CastObjectToObjectNode(expression, type, this));
     }
-
 
     public void castFrom(Expression expression, IntegerWrapperType type, CompilationContext compilationContext) {
 
@@ -353,7 +374,16 @@ public class Type {
         return false;
     }
 
-    public List<MethodData> findMethodData(@NotNull String name, @NotNull CompilationContext compilationContext) {
+    public Optional<Type> getParentType(CompilationContext compilationContext) {
+        return compilationContext.findClassData(getCanonicalName()).map(ClassData::getParentType);
+    }
+
+    public List<Type> getInterfaceTypes(CompilationContext compilationContext) {
+        return compilationContext.findClassData(getCanonicalName()).map(ClassData::getInterfaceTypes).orElseThrow();
+    }
+
+    public List<? extends MethodData> findMethodData(@NotNull String name,
+                                                     @NotNull CompilationContext compilationContext) {
         return findClassData(compilationContext).findByName(name, compilationContext);
     }
 

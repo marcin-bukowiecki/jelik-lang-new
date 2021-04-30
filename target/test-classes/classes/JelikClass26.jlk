@@ -1,3 +1,0 @@
-fun expr() -> Byte {   val a = [1 as Byte, 2 as Byte, 3 as Byte] 
- a[2] = 6 as Byte 
- ret a[2]}

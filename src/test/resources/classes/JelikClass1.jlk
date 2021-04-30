@@ -1,3 +1,4 @@
-class Test
-
-fun test() -> Test { ret Test() }
+import java.lang.Runnable
+fun get() -> Runnable {
+    ret Runnable()
+}

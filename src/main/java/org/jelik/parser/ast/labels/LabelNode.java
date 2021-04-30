@@ -1,12 +1,16 @@
 package org.jelik.parser.ast.labels;
 
 import lombok.Getter;
+import org.jelik.compiler.config.CompilationContext;
+import org.jelik.parser.ast.ASTNodeImpl;
+import org.jelik.parser.ast.visitors.AstVisitor;
+import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.Label;
 
 /**
  * @author Marcin Bukowiecki
  */
-public class LabelNode {
+public class LabelNode extends ASTNodeImpl {
 
     @Getter
     private final int id;
@@ -29,5 +33,9 @@ public class LabelNode {
                 ", name='" + name + '\'' +
                 ", label=" + label +
                 '}';
+    }
+
+    public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
+        astVisitor.visitLabelNode(this, compilationContext);
     }
 }

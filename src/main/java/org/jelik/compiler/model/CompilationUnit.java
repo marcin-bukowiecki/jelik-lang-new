@@ -1,6 +1,6 @@
 package org.jelik.compiler.model;
 
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.parser.ast.resolvers.FindSymbolResult;
 import org.jelik.parser.ast.types.SingleTypeNode;
 import org.jelik.parser.ast.types.TypeNode;
@@ -20,5 +20,9 @@ public interface CompilationUnit {
 
     Map<String, TypeNode> getTypeParametersMappings();
 
+    void addTypeParameterMapping(String symbol, TypeNode typeNode);
+
     Map<String, TypeNode> getGenericTypeParametersMappings();
+
+    void addGenericTypeParameterMapping(String symbol, TypeNode typeNode);
 }

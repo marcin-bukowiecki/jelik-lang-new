@@ -1,4 +1,1 @@
-fun toCall(a Int) -> Int { ret 123 + a}
-fun expr(a Int) -> Int {
-   val b = toCall
-   ret b(678) + a}
+fun expr() -> []Byte {   ret [1 as Byte, 2 as Byte, 3 as Byte]}

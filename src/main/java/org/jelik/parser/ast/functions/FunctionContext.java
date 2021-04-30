@@ -1,14 +1,15 @@
 package org.jelik.parser.ast.functions;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.Data;
 import org.apache.commons.collections4.iterators.ReverseListIterator;
 import org.jelik.compiler.locals.LocalVariable;
-import org.jelik.parser.ast.BasicBlock;
+import org.jelik.compiler.mir.MIRFunction;
+import org.jelik.parser.ast.classes.ClassDeclaration;
 import org.jelik.parser.ast.expression.TryExpression;
 import org.jelik.parser.ast.types.TypeNode;
-import org.jelik.types.Type;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -21,8 +22,6 @@ import java.util.stream.Collectors;
  */
 @Data
 public class FunctionContext {
-
-    private String signature;
 
     private Map<String, LocalVariable> localVariableNamesMap = Maps.newHashMap();
 
@@ -39,6 +38,14 @@ public class FunctionContext {
     private int labelCounter = 0;
 
     private LinkedList<CodeEvent> codeEvents = Lists.newLinkedList();
+
+    private MIRFunction mirFunction;
+
+    private final FunctionDeclaration functionDeclaration;
+
+    public FunctionContext(FunctionDeclaration functionDeclaration) {
+        this.functionDeclaration = functionDeclaration;
+    }
 
     public void addLocalVariable(LocalVariable localVariable) {
         localVariable.index = localCounter++;
@@ -91,11 +98,27 @@ public class FunctionContext {
         return Collections.unmodifiableList(tryExpressionList);
     }
 
-    public Map<String, TypeNode> getGenericTypesMap() {
-        return typeParametersMap;
+    public Map<String, TypeNode> getTypeParametersMappings() {
+        return ImmutableMap.<String, TypeNode>builder()
+                .putAll(Collections.unmodifiableMap(typeParametersMap))
+                .putAll(functionDeclaration.getParent() == null ? Collections.emptyMap() :
+                        Collections.unmodifiableMap(((ClassDeclaration) functionDeclaration.getParent())
+                                .getTypeParametersMappings()))
+                .build();
     }
 
     public Map<String, TypeNode> getGenericTypeParametersMappings() {
-        return genericTypeParametersMap;
+        return ImmutableMap.<String, TypeNode>builder()
+                .putAll(Collections.unmodifiableMap(genericTypeParametersMap))
+                .putAll(Collections.unmodifiableMap(((ClassDeclaration) functionDeclaration.getParent()).getGenericTypeParametersMappings()))
+                .build();
+    }
+
+    public void addTypeParameterMapping(String symbol, TypeNode typeNode) {
+        this.typeParametersMap.put(symbol, typeNode);
+    }
+
+    public void addGenericTypeParameterMapping(String symbol, TypeNode typeNode) {
+        this.genericTypeParametersMap.put(symbol, typeNode);
     }
 }

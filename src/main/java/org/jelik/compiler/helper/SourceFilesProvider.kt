@@ -1,6 +1,6 @@
 package org.jelik.compiler.helper
 
-import org.jelik.CompilationContext
+import org.jelik.compiler.config.CompilationContext
 import java.io.File
 import kotlin.system.exitProcess
 

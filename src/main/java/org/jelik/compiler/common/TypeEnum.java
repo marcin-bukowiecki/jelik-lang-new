@@ -1,5 +1,8 @@
 package org.jelik.compiler.common;
 
+/**
+ * Type enum for Type definition
+ */
 public enum TypeEnum {
 
     generic,
@@ -35,5 +38,10 @@ public enum TypeEnum {
     booleanT,
     booleanWrapper,
 
-    charT, interfaceT, nullT, arrayT, characterWrapper
+    charT,
+    interfaceT,
+    nullT,
+    arrayT,
+
+    characterWrapper
 }

@@ -1,10 +1,10 @@
 package org.jelik.compiler.asm.visitor;
 
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.compiler.asm.MethodVisitorAdapter;
 import org.jelik.compiler.exceptions.CompileException;
 import org.jelik.parser.ast.ConsumingExpression;
-import org.jelik.parser.ast.Expression;
+import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.locals.GetLocalNode;
 import org.jelik.parser.ast.operators.AbstractOpExpr;
 import org.jelik.parser.ast.operators.IncrExpr;
@@ -48,7 +48,7 @@ public class IncrByteCodeVisitor extends TypeVisitor {
             if (incrExpr.getParent() instanceof ConsumingExpression) {
                 methodVisitorAdapter.intLoad(index);
             }
-            if (subject.parent instanceof ConsumingExpression || subject.parent instanceof AbstractOpExpr) {
+            if (subject.getParent() instanceof ConsumingExpression || subject.getParent() instanceof AbstractOpExpr) {
                 methodVisitorAdapter.intLoad(index);
             }
         } else {

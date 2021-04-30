@@ -18,6 +18,9 @@ package org.jelik.types;
 
 import org.jelik.compiler.common.TypeEnum;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * @author Marcin Bukowiecki
  */
@@ -27,8 +30,33 @@ public class InterfaceType extends Type {
         super(name, canonicalName, TypeEnum.interfaceT);
     }
 
+    public InterfaceType(String name,
+                         String canonicalName,
+                         TypeEnum typeEnum,
+                         List<Type> typeParameters,
+                         List<Type> typeVariables) {
+        super(name, canonicalName, typeEnum, typeParameters, typeVariables);
+    }
+
     public static InterfaceType of(final String name, final String canonicalName) {
         return new InterfaceType(name, canonicalName);
+    }
+
+    @Override
+    public Type deepGenericCopy() {
+        return new InterfaceType(
+                name,
+                canonicalName,
+                typeEnum,
+                typeVariables
+                        .stream()
+                        .map(Type::deepGenericCopy)
+                        .collect(Collectors.toList()),
+                typeParameters
+                        .stream()
+                        .map(Type::deepGenericCopy)
+                        .collect(Collectors.toList())
+        );
     }
 
     public InterfaceType(Class<?> clazz) {
@@ -38,5 +66,10 @@ public class InterfaceType extends Type {
     @Override
     public boolean isInterface() {
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return canonicalName;
     }
 }

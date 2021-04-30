@@ -1,12 +1,9 @@
 package org.jelik.parser.ast.resolvers.decoders
 
-import org.jelik.CompilationContext
+import org.jelik.compiler.config.CompilationContext
 import org.jelik.compiler.common.TypeEnum
-import org.jelik.parser.ast.Expression
-import org.jelik.parser.ast.numbers.CharToInt64Node
+import org.jelik.parser.ast.expression.Expression
 import org.jelik.parser.ast.numbers.Int32ToFloat32Node
-import org.jelik.parser.ast.operators.EqualExpr
-import org.jelik.parser.ast.operators.GreaterExpr
 import org.jelik.parser.ast.operators.JumpInstruction
 import org.jelik.parser.ast.operators.LesserExpr
 import org.jelik.parser.ast.resolvers.CastToVisitor
@@ -33,10 +30,10 @@ object LesserOpTypeDecoder {
                     TypeEnum.int16,
                     TypeEnum.int32 -> {
                         if (rightCaller.isZero) {
-                            rightCaller.ignored = true
+                            rightCaller.isIgnored = true
                             op.instructionToCall = JumpInstruction.isLessThanZero
                         } else if (leftCaller.isZero) {
-                            leftCaller.ignored = true
+                            leftCaller.isIgnored = true
                             op.instructionToCall = JumpInstruction.isGreaterThanZero
                         } else {
                             op.instructionToCall = JumpInstruction.if_icmplt
@@ -44,7 +41,7 @@ object LesserOpTypeDecoder {
                     }
                     TypeEnum.objectT -> {
                         if (rightType.isWrapper) {
-                            rightType.visit(CastToVisitor(rightCaller, rightType.primitiveType), ctx)
+                            rightType.accept(CastToVisitor(rightCaller, rightType.primitiveType), ctx)
                         }
                     }
                 }

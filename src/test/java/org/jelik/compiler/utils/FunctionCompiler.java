@@ -19,10 +19,14 @@ package org.jelik.compiler.utils;
 import com.google.common.annotations.VisibleForTesting;
 import org.apache.commons.io.FileUtils;
 import org.assertj.core.api.Assertions;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.compiler.JelikCompiler;
+import org.jelik.compiler.asm.utils.ByteCodeLogger;
 import org.jelik.compiler.asm.visitor.ToByteCodeResult;
 import org.jelik.compiler.cl.JelikClassLoader;
 import org.jelik.compiler.exceptions.CompileException;
+import org.jelik.compiler.passes.ProblemDescriptor;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,23 +56,42 @@ public class FunctionCompiler {
         return INSTANCE;
     }
 
+    public JelikClassLoader getJelikClassLoader() {
+        return jelikClassLoader;
+    }
+
     public CompilationResult compile(final String expression) {
         return new CompilationResult(compile("JelikClass" + nameCounter++, expression));
     }
 
     public Class<?> compile(final String className, final String expression) {
+        return compile(className, expression, new CompilationContext());
+    }
+
+    public @Nullable Class<?> compile(final String className,
+                                      final String expression,
+                                      final CompilationContext compilationContext) {
+
         log.info("Compiling class: " + className);
         var fileName =  className + ".jlk";
         var tempFile = new File("./src/test/resources/classes/" + fileName);
         try {
             FileUtils.writeByteArrayToFile(tempFile, expression.getBytes());
-            List<ToByteCodeResult> result = JelikCompiler.INSTANCE.compile(Collections.singletonList(tempFile));
+            List<ToByteCodeResult> result = JelikCompiler.INSTANCE
+                    .compile(Collections.singletonList(tempFile), compilationContext);
+
+            for (ToByteCodeResult toByteCodeResult : result) {
+                ByteCodeLogger.logASM(toByteCodeResult.getBytes());
+            }
 
             final List<? extends Class<?>> classes = result.stream().map(bcr -> jelikClassLoader.defineClass(
-                    bcr.getClassDeclaration().getCanonicalName(),
+                    bcr.getType().getCanonicalName(),
                     bcr.getBytes())).collect(Collectors.toList());
 
-            return classes.stream().filter(c -> c.getSimpleName().equals(className)).findFirst().orElseThrow();
+            return classes.stream()
+                    .filter(c -> c.getSimpleName().equals(className))
+                    .findFirst()
+                    .orElse(null);
         } catch (CompileException ex) {
             ex.printErrorMessage();
             throw ex;
@@ -99,5 +122,15 @@ public class FunctionCompiler {
         } catch (CompileException ex) {
             Assertions.assertThat(ex.getMessage()).isEqualTo(message);
         }
+    }
+
+    public void compileAndExpectProblem(String expr, String message) {
+        final CompilationContext compilationContext = new CompilationContext();
+        final String className = "JelikClass" + nameCounter++;
+        compile(className, expr, compilationContext);
+        Assertions.assertThat(compilationContext
+                .getProblemHolder()
+                .getProblems().stream().map(ProblemDescriptor::getMessageText).collect(Collectors.toList()))
+                .anyMatch(m -> m.equals(message));
     }
 }

@@ -3,7 +3,7 @@ package org.jelik.parser.ast.strings;
 import com.google.common.collect.Lists;
 import org.jelik.parser.Lexer;
 import org.jelik.parser.ParseContext;
-import org.jelik.parser.ast.ParseVisitor;
+import org.jelik.parser.ast.TokenVisitor;
 import org.jelik.parser.token.ApostropheToken;
 import org.jelik.parser.token.ElementType;
 import org.jelik.parser.token.Token;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 /**
  * @author Marcin Bukowiecki
  */
-public class StringParser implements ParseVisitor<StringExpression> {
+public class StringParser implements TokenVisitor<StringExpression> {
 
     private final ApostropheToken apostropheToken;
 

@@ -1,5 +1,0 @@
-fun expr(a Object, b Object) -> Boolean { 
- if a == b and a == "foo" then 
-   ret True 
-else    ret False
-end }

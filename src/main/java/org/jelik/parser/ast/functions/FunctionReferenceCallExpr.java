@@ -2,6 +2,7 @@ package org.jelik.parser.ast.functions;
 
 import org.jelik.parser.ast.LiteralExpr;
 import org.jelik.parser.ast.arguments.ArgumentList;
+import org.jelik.parser.ast.functions.providers.TargetFunctionCallProvider;
 import org.jelik.types.Type;
 
 /**

@@ -16,9 +16,11 @@
 
 package org.jelik.types.jvm;
 
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.compiler.asm.visitor.TypeVisitor;
 import org.jelik.compiler.common.TypeEnum;
+import org.jelik.parser.ast.expression.Expression;
+import org.jelik.types.JVMIntType;
 import org.jelik.types.Type;
 
 import java.util.Objects;
@@ -35,7 +37,7 @@ public class JVMShortType extends NumberType {
     }
 
     @Override
-    public void visit(TypeVisitor typeVisitor, CompilationContext compilationContext) {
+    public void accept(TypeVisitor typeVisitor, CompilationContext compilationContext) {
         typeVisitor.visit(this, compilationContext);
     }
 
@@ -87,5 +89,10 @@ public class JVMShortType extends NumberType {
     @Override
     public Type deepGenericCopy() {
         return this;
+    }
+
+    @Override
+    public void castFrom(Expression expression, JVMIntType type, CompilationContext compilationContext) {
+
     }
 }

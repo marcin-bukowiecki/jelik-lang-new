@@ -1,9 +1,9 @@
 package org.jelik.types
 
-import org.jelik.CompilationContext
+import org.jelik.compiler.config.CompilationContext
 import org.jelik.compiler.asm.MethodVisitorAdapter
 import org.jelik.compiler.common.TypeEnum
-import org.jelik.compiler.data.LambdaMethodData
+import org.jelik.compiler.data.FunctionReferenceMethodData
 import org.jelik.compiler.data.MethodData
 import org.jelik.compiler.locals.LocalVariable
 import org.jelik.parser.ast.functions.FunctionReferenceNode
@@ -13,13 +13,13 @@ import java.util.*
 /**
  * @author Marcin Bukowiecki
  */
-open class FunctionType: Type {
+open class FunctionType : Type {
 
-    constructor(clazz: Class<*>): super(clazz) {
+    constructor(clazz: Class<*>) : super(clazz) {
 
     }
 
-    constructor(name: String, canonicalName: String): super(name, canonicalName, TypeEnum.objectT) {
+    constructor(name: String, canonicalName: String) : super(name, canonicalName, TypeEnum.objectT) {
 
     }
 
@@ -46,14 +46,14 @@ open class FunctionType: Type {
         }
     }
 
-    fun getFunctionalInterfaceMethod(lv: LocalVariable,
-                                     compilationContext: CompilationContext): Optional<MethodData> {
+    fun getFunctionalInterfaceMethod(lv: LocalVariable, compilationContext: CompilationContext): Optional<MethodData> {
         return Optional.ofNullable(
-                LambdaMethodData(
-                        (lv.typeRef as InferredTypeRef).ref as FunctionReferenceNode,
-                        { mv: MethodVisitorAdapter ->
-                            mv.aload(lv.getIndex())
-                        },
-                        findClassData (compilationContext).methodScope.first { m -> !m.isStatic && m.isAbstract }))
+            FunctionReferenceMethodData(
+                (lv.typeRef as InferredTypeRef).ref as FunctionReferenceNode,
+                { mv: MethodVisitorAdapter ->
+                    mv.aload(lv.getIndex())
+                },
+                findClassData(compilationContext).methodScope.first { m -> !m.isStatic && m.isAbstract })
+        )
     }
 }

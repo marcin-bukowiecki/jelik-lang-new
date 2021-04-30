@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.expression;
 
-import org.jelik.parser.ast.Expression;
+import org.jelik.parser.ast.ASTNodeImpl;
 import org.jelik.parser.ast.context.TypedNodeContext;
 import org.jelik.types.Type;
 import org.jetbrains.annotations.NotNull;
@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Marcin Bukowiecki
  */
-public abstract class ExpressionWithType extends Expression {
+public abstract class ExpressionWithType extends ASTNodeImpl implements Expression {
 
     protected final TypedNodeContext nodeContext = new TypedNodeContext();
 
@@ -18,7 +18,6 @@ public abstract class ExpressionWithType extends Expression {
         super();
     }
 
-    @Override
     @NotNull
     public TypedNodeContext getNodeContext() {
         return nodeContext;
@@ -36,29 +35,21 @@ public abstract class ExpressionWithType extends Expression {
 
     @Override
     public Type getReturnType() {
-        if (furtherExpression == null) {
-            return getType();
-        } else {
-            return furtherExpression.getReturnType();
-        }
+        return getType();
     }
 
     @Override
     public Type getGenericReturnType() {
-        if (furtherExpression == null) {
-            return getGenericType();
-        } else {
-            return furtherExpression.getGenericReturnType();
-        }
+        return getGenericType();
     }
 
     @Override
-    public void setType(Type type) {
+    public void setType(@NotNull Type type) {
         this.nodeContext.setType(type);
     }
 
     @Override
-    public void setGenericType(Type type) {
+    public void setGenericType(@NotNull Type type) {
         this.nodeContext.setGenericType(type);
     }
 }

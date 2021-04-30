@@ -9,8 +9,18 @@ import org.junit.Test;
 public class FunctionStringsTest {
 
     @Test
-    public void addTwoStrings() {
+    public void testAddTwoStrings_1() {
         var expr = "fun expr(a String, b String) -> String { ret a + b }";
+        FunctionCompiler
+                .getInstance()
+                .compile(expr)
+                .invoke("expr", "foo", "bar")
+                .isEqualTo("foobar");
+    }
+
+    @Test
+    public void testAddTwoStrings_2() {
+        var expr = "fun expr(a java.lang.String, b String) -> String { ret a + b }";
         FunctionCompiler
                 .getInstance()
                 .compile(expr)
@@ -33,6 +43,6 @@ public class FunctionStringsTest {
         var expr = "fun expr(a String, b String) -> String { ret a + b - 1 }";
         FunctionCompiler
                 .getInstance()
-                .compileAndExpectError(expr, "Operator '-' can't be applied to 'java.lang.String' and 'int'");
+                .compileAndExpectError(expr, "Operator '-' can't be applied to 'java.lang.String' and 'Int'");
     }
 }

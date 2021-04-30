@@ -1,0 +1,143 @@
+package jelik.lang
+
+import java.util.Collection
+
+fun checkBounds(index Int, arraySize Int) -> Boolean {
+    ret index < arraySize
+}
+
+fun calculateArrayIndex<T>(collection Collection<T>, index Int) -> Int {
+    val collectionSize = collection.size()
+    if index < 0 then
+        ret collectionSize + index
+    end
+    ret index
+}
+
+fun calculateArrayIndex(array []String, index Int) -> Int {
+    val arraySize = len(array)
+    if index < 0 then
+        ret arraySize + index
+    end
+    ret index
+}
+
+fun calculateArrayIndex(array []Int, index Int) -> Int {
+    val arraySize = len(array)
+    if index < 0 then
+        ret arraySize + index
+    end
+    ret index
+}
+
+fun calculateArrayIndex(array []Long, index Int) -> Int {
+    val arraySize = len(array)
+    if index < 0 then
+        ret arraySize + index
+    end
+    ret index
+}
+
+fun calculateArrayIndex(array []Byte, index Int) -> Int {
+    val arraySize = len(array)
+    if index < 0 then
+        ret arraySize + index
+    end
+    ret index
+}
+
+fun calculateArrayIndex(array []Short, index Int) -> Int {
+    val arraySize = len(array)
+    if index < 0 then
+        ret arraySize + index
+    end
+    ret index
+}
+
+fun calculateArrayIndex(array []Char, index Int) -> Int {
+    val arraySize = len(array)
+    if index < 0 then
+        ret arraySize + index
+    end
+    ret index
+}
+
+fun calculateArrayIndex(array []Double, index Int) -> Int {
+    val arraySize = len(array)
+    if index < 0 then
+        ret arraySize + index
+    end
+    ret index
+}
+
+fun calculateArrayIndex(array []Float, index Int) -> Int {
+    val arraySize = len(array)
+    if index < 0 then
+        ret arraySize + index
+    end
+    ret index
+}
+
+fun calculateArrayIndex(array []Object, index Int) -> Int {
+    val arraySize = len(array)
+    if index < 0 then
+        ret arraySize + index
+    end
+    ret index
+}
+
+fun arraySlice(array []Char, start Int, stop Int) -> []Char {
+    val newStart = calculateArrayIndex(array, start)
+    val newStop = calculateArrayIndex(array, stop)
+    val result = []Char(newStop - newStart)
+    System.arraycopy(array, newStart, result, 0, newStop - newStart)
+    ret result
+}
+
+fun arraySlice(array []Byte, start Int, stop Int) -> []Byte {
+    val newStart = calculateArrayIndex(array, start)
+    val newStop = calculateArrayIndex(array, stop)
+    val result = []Byte(newStop - newStart)
+    System.arraycopy(array, newStart, result, 0, newStop - newStart)
+    ret result
+}
+
+fun arraySlice(array []Short, start Int, stop Int) -> []Short {
+    val newStart = calculateArrayIndex(array, start)
+    val newStop = calculateArrayIndex(array, stop)
+    val result = []Short(newStop - newStart)
+    System.arraycopy(array, newStart, result, 0, newStop - newStart)
+    ret result
+}
+
+fun arraySlice(array []Int, start Int, stop Int) -> []Int {
+    val newStart = calculateArrayIndex(array, start)
+    val newStop = calculateArrayIndex(array, stop)
+    val result = []Int(newStop - newStart)
+    System.arraycopy(array, newStart, result, 0, newStop - newStart)
+    ret result
+}
+
+fun arraySlice(array []Long, start Int, stop Int) -> []Long {
+    val newStart = calculateArrayIndex(array, start)
+    val newStop = calculateArrayIndex(array, stop)
+    val result = []Long(newStop - newStart)
+    System.arraycopy(array, newStart, result, 0, newStop - newStart)
+    ret result
+}
+
+fun arraySlice(array []Float, start Int, stop Int) -> []Float {
+    val newStart = calculateArrayIndex(array, start)
+    val newStop = calculateArrayIndex(array, stop)
+    val result = []Float(newStop - newStart)
+    System.arraycopy(array, newStart, result, 0, newStop - newStart)
+    ret result
+}
+
+fun arraySlice(array []Double, start Int, stop Int) -> []Double {
+    val newStart = calculateArrayIndex(array, start)
+    val newStop = calculateArrayIndex(array, stop)
+    val result = []Double(newStop - newStart)
+    System.arraycopy(array, newStart, result, 0, newStop - newStart)
+    ret result
+}

@@ -1,14 +1,14 @@
 package org.jelik.parser.ast.arrays
 
-import org.jelik.CompilationContext
-import org.jelik.parser.ast.Expression
+import org.jelik.compiler.config.CompilationContext
+import org.jelik.parser.ast.expression.Expression
 import org.jelik.parser.ast.types.TypeNode
 import org.jelik.parser.ast.visitors.AstVisitor
 import org.jelik.parser.token.LeftBracketToken
 import org.jelik.parser.token.RightBracketToken
 
 /**
- * Represents [expr, expr, expr]Type or
+ * Represents [expr, expr, expr]Type
  *
  * @author Marcin Bukowiecki
  */
@@ -21,7 +21,7 @@ class TypedArrayCreateExpr(leftBracket: LeftBracketToken,
         typeNode.parent = this
     }
 
-    override fun visit(astVisitor: AstVisitor, compilationContext: CompilationContext) {
-        astVisitor.visit(this, compilationContext)
+    override fun accept(astVisitor: AstVisitor, compilationContext: CompilationContext) {
+        astVisitor.visitTypedArrayCreateExpr(this, compilationContext)
     }
 }

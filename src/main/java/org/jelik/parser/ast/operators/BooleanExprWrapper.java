@@ -1,6 +1,7 @@
 package org.jelik.parser.ast.operators;
 
-import org.jelik.parser.ast.Expression;
+import org.jelik.parser.ast.ConsumingExpression;
+import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.token.operators.AbstractOperator;
 
 /**
@@ -8,7 +9,7 @@ import org.jelik.parser.token.operators.AbstractOperator;
  *
  * @author Marcin Bukowiecki
  */
-public class BooleanExprWrapper extends EqualExpr {
+public class BooleanExprWrapper extends EqualExpr implements ConsumingExpression {
 
     public BooleanExprWrapper(Expression left, AbstractOperator abstractOperator, Expression right) {
         super(left, abstractOperator, right);
@@ -36,6 +37,6 @@ public class BooleanExprWrapper extends EqualExpr {
 
     @Override
     public String toString() {
-        return left.toString();
+        return left.toString() + op.toString() + right.toString();
     }
 }

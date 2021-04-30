@@ -1,1 +1,15 @@
-fun function(: a
+fun calculateArrayIndex(array []Object, index Int) -> Int {
+    val arraySize = len(array)
+    if index < 0 then
+        ret arraySize + index
+    end
+    ret index
+}
+
+fun arraySlice(array []Object, start Int, stop Int) -> []Object {
+    val newStart = calculateArrayIndex(array, start)
+    val newStop = calculateArrayIndex(array, stop)
+    val result = []Object(newStop - newStart)
+    System.arraycopy(array, newStart, result, 0, newStop - newStart)
+    ret result
+}

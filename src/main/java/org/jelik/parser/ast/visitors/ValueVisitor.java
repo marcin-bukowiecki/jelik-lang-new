@@ -2,8 +2,8 @@ package org.jelik.parser.ast.visitors;
 
 import org.jelik.parser.Lexer;
 import org.jelik.parser.ParseContext;
-import org.jelik.parser.ast.Expression;
-import org.jelik.parser.ast.ParseVisitor;
+import org.jelik.parser.ast.expression.Expression;
+import org.jelik.parser.ast.TokenVisitor;
 import org.jelik.parser.ast.types.TypeNode;
 import org.jelik.parser.ast.locals.ValueDeclaration;
 import org.jelik.parser.ast.types.UndefinedTypeNode;
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Marcin Bukowiecki
  */
-public class ValueVisitor implements ParseVisitor<ValueDeclaration> {
+public class ValueVisitor implements TokenVisitor<ValueDeclaration> {
 
     private final ValKeyword valKeyword;
 
@@ -35,14 +35,14 @@ public class ValueVisitor implements ParseVisitor<ValueDeclaration> {
         Lexer lexer = parseContext.getLexer();
         Token name = lexer.nextToken();
         Token nextToken = lexer.nextToken();
-        nextToken.visit(this, parseContext);
+        nextToken.accept(this, parseContext);
         return new ValueDeclaration(valKeyword, (LiteralToken) name, typeNode, assignOperator, expression);
     }
 
     @Override
     public void visitLiteral(@NotNull LiteralToken literalToken, @NotNull ParseContext parseContext) {
         this.typeNode = new TypeNodeVisitor(literalToken).visit(parseContext);
-        parseContext.getLexer().getCurrent().visit(this, parseContext);
+        parseContext.getLexer().nextToken().accept(this, parseContext);
     }
 
     @Override

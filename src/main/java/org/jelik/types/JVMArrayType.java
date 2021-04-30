@@ -1,6 +1,11 @@
 package org.jelik.types;
 
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.compiler.common.TypeEnum;
+import org.jelik.parser.ast.types.JelikGenericType;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Collections;
 
 /**
  * @author Marcin Bukowiecki
@@ -10,7 +15,12 @@ public class JVMArrayType extends Type {
     private final Type inner;
 
     public JVMArrayType(Type inner) {
-        super("[" + inner.getName(), "[" + inner.getCanonicalName(), TypeEnum.arrayT);
+        super("[" + inner.getName(),
+                "[" + inner.getCanonicalName(),
+                TypeEnum.arrayT,
+                Collections.singletonList(new JelikGenericType("_Dummy_")),
+                Collections.singletonList(inner)
+        );
         this.inner = inner;
     }
 
@@ -33,7 +43,7 @@ public class JVMArrayType extends Type {
         if (inner instanceof JVMArrayType) {
             return "[Ljava/lang/Object;";
         } else {
-            return "[" + inner.getInternalName();
+            return "[L" + inner.getInternalName() + ";";
         }
     }
 
@@ -51,5 +61,15 @@ public class JVMArrayType extends Type {
     @Override
     public String toString() {
         return getCanonicalName();
+    }
+
+    @Override
+    public boolean isAssignableTo(@NotNull Type type, @NotNull CompilationContext compilationContext) {
+        if (type instanceof JVMArrayType) {
+            if (this.inner.isAssignableTo(((JVMArrayType) type).inner, compilationContext)) {
+                return true;
+            }
+        }
+        return super.isAssignableTo(type, compilationContext);
     }
 }

@@ -16,9 +16,12 @@
 
 package org.jelik.types.jvm;
 
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.compiler.asm.visitor.TypeVisitor;
 import org.jelik.compiler.common.TypeEnum;
+import org.jelik.parser.ast.expression.Expression;
+import org.jelik.parser.ast.numbers.Int32ToInt64Node;
+import org.jelik.types.JVMIntType;
 import org.jelik.types.Type;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,7 +35,7 @@ public class JVMLongType extends NumberType {
     public static final JVMLongType INSTANCE = new JVMLongType();
 
     public JVMLongType() {
-        super("long", "long", TypeEnum.int64);
+        super("Long", "Long", TypeEnum.int64);
     }
 
     @Override
@@ -77,7 +80,7 @@ public class JVMLongType extends NumberType {
     }
 
     @Override
-    public void visit(TypeVisitor typeVisitor, CompilationContext compilationContext) {
+    public void accept(TypeVisitor typeVisitor, CompilationContext compilationContext) {
         typeVisitor.visit(this, compilationContext);
     }
 
@@ -89,5 +92,10 @@ public class JVMLongType extends NumberType {
     @Override
     public boolean isPrimitive() {
         return true;
+    }
+
+    @Override
+    public void castFrom(Expression expression, JVMIntType type, CompilationContext compilationContext) {
+        expression.getParent().replaceWith(expression, new Int32ToInt64Node(expression));
     }
 }

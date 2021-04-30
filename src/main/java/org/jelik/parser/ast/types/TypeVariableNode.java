@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.types;
 
-import org.jelik.CompilationContext;
+import org.jelik.compiler.config.CompilationContext;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.types.Type;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +17,7 @@ public class TypeVariableNode extends TypeNode {
     }
 
     @Override
-    public void visit(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
+    public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
         astVisitor.visit(this, compilationContext);
     }
 
@@ -29,5 +29,10 @@ public class TypeVariableNode extends TypeNode {
     @Override
     public String getSymbol() {
         return typeNode.getSymbol();
+    }
+
+    @Override
+    public int getEndRow() {
+        return typeNode.getEndRow();
     }
 }

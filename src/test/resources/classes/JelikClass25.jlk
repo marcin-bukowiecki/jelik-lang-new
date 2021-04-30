@@ -1,3 +1,3 @@
-fun expr() -> String {
-   val a = ["a","b","c"]
-   ret a[2]}
+fun expr() -> Int {
+   val a = [1,2,3,4]
+   ret a[3]}

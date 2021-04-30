@@ -1,1 +1,1 @@
-fun expr(a Double, b Long) -> Long {   ret a as Long / b}
+fun expr() -> []String {   ret ["foo","bar"]String)}

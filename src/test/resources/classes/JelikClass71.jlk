@@ -1,1 +1,1 @@
-fun expr(b Float) -> Float { ret - b }
+fun expr() { print(123) }

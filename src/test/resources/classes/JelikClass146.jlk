@@ -1,1 +1,1 @@
-fun expr() -> String { ret Null }
+fun expr(a Double, b Double) -> Double {   ret a / b}

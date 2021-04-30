@@ -10,7 +10,7 @@ import org.jelik.parser.ast.labels.LabelNode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class IfNodeContext extends TypedRefNodeContext {
+public class IfNodeContext extends ElseNodeContext {
 
     private boolean jumpOver;
 }
