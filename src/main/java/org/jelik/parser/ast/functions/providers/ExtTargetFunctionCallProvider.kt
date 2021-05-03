@@ -37,4 +37,8 @@ open class ExtTargetFunctionCallProvider(methodData: MethodData): TargetFunction
             )
         }
     }
+
+    override fun isExt(): Boolean {
+        return true
+    }
 }

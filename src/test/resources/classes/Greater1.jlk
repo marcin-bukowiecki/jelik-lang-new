@@ -1,6 +1,6 @@
-fun greater(a Int, b Int) -> Int {    if (a > b) then
+fun greater(a Int, b Int) -> Int {    if (a > b) {
        ret a
-   else
-       ret b
-   end
+   } else
+{       ret b
+   }
 }

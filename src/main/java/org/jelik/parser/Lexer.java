@@ -2,6 +2,7 @@ package org.jelik.parser;
 
 import com.google.common.annotations.VisibleForTesting;
 import lombok.Getter;
+import org.jelik.parser.token.ElementType;
 import org.jelik.parser.token.Token;
 
 import java.io.File;

@@ -1,3 +1,6 @@
-fun c<T>(arg T) -> Int {
-   ret arg.hashCode()
+import java.util.List
+import java.util.ArrayList
+
+fun expr() -> List<Int> {
+   ret ArrayList<Int>()
 }

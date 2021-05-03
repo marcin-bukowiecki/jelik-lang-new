@@ -9,12 +9,13 @@ import org.jelik.parser.ast.branching.ConditionExpression;
 import org.jelik.parser.ast.branching.ElifExpression;
 import org.jelik.parser.ast.branching.ElseExpressionImpl;
 import org.jelik.parser.ast.branching.IfExpressionImpl;
+import org.jelik.parser.token.ElementType;
+import org.jelik.parser.token.LeftCurlToken;
+import org.jelik.parser.token.RightCurlToken;
 import org.jelik.parser.token.Token;
 import org.jelik.parser.token.keyword.ElifKeyword;
 import org.jelik.parser.token.keyword.ElseKeyword;
-import org.jelik.parser.token.keyword.EndKeyword;
 import org.jelik.parser.token.keyword.IfKeyword;
-import org.jelik.parser.token.keyword.ThenKeyword;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -36,34 +37,31 @@ public class IfVisitor implements TokenVisitor<IfExpressionImpl> {
         final Token nextToken = lexer.nextToken();
 
         var condition = new IfConditionVisitor(nextToken).visit(parseContext);
-        var thenKeyword = (ThenKeyword) lexer.nextToken();
+        var leftCurl = (LeftCurlToken) lexer.getCurrent();
 
-        var block = new ConditionBlockVisitor(thenKeyword).visit(parseContext);
-        TokenUtils.checkCurrentNotMatching(parseContext, EndKeyword.class, ElseKeyword.class, ElifKeyword.class);
-        EndKeyword endKeyword = null;
-        if (lexer.getCurrent() instanceof EndKeyword) {
-            endKeyword = ((EndKeyword) lexer.getCurrent());
+        var block = new ConditionBlockVisitor(leftCurl).visit(parseContext);
+        TokenUtils.checkCurrent("token.unexpected", parseContext, RightCurlToken.class);
+        RightCurlToken rightCurl = null;
+        if (lexer.getCurrent() instanceof RightCurlToken) {
+            rightCurl = ((RightCurlToken) lexer.getCurrent());
         }
 
-        var ifExpression = new IfExpressionImpl(ifKeyword, condition, thenKeyword, block, endKeyword);
+        var ifExpression = new IfExpressionImpl(ifKeyword, condition, leftCurl, block, rightCurl);
         lastCondition = ifExpression;
 
-        var current = lexer.getCurrent();
-        current.accept(this, parseContext);
+        var peeked = lexer.peekNext();
+        if (peeked.getTokenType() == ElementType.elifKeyword || peeked.getTokenType() == ElementType.elseKeyword) {
+            lexer.nextToken().accept(this, parseContext);
+        }
 
         return ifExpression;
     }
 
     @Override
-    public void visit(EndKeyword endKeyword, ParseContext parseContext) {
-
-    }
-
-    @Override
     public void visitElseKeyword(ElseKeyword elseKeyword, ParseContext parseContext) {
-        var elseBlock = new ConditionBlockVisitor(elseKeyword).visit(parseContext);
-        var endKeyword = ((EndKeyword) parseContext.getLexer().getCurrent());
-        var elseExpr =  new ElseExpressionImpl(elseKeyword, elseBlock, endKeyword);
+        var elseBlock = new ConditionBlockVisitor(parseContext.getLexer().nextToken()).visit(parseContext);
+        var rightCurlToken = ((RightCurlToken) parseContext.getLexer().getCurrent());
+        var elseExpr =  new ElseExpressionImpl(elseKeyword, elseBlock, rightCurlToken);
         this.lastCondition.setElseExpression(elseExpr);
     }
 
@@ -72,25 +70,27 @@ public class IfVisitor implements TokenVisitor<IfExpressionImpl> {
         var condition = new IfConditionVisitor(parseContext.getLexer().nextToken())
                 .visit(parseContext);
 
-        var thenKeyword = parseContext.getLexer().nextToken();
-        if (!(thenKeyword instanceof ThenKeyword)) {
-            throw new SyntaxException("Expected then keyword", thenKeyword, parseContext);
+        var leftCurl = parseContext.getLexer().getCurrent();
+        if (!(leftCurl instanceof LeftCurlToken)) {
+            throw new SyntaxException("Expected '{'", leftCurl, parseContext);
         }
 
-        var elseBlock = new ConditionBlockVisitor(thenKeyword).visit(parseContext);
+        var elseBlock = new ConditionBlockVisitor(leftCurl).visit(parseContext);
         var current = parseContext.getLexer().getCurrent();
-        final EndKeyword endKeyword;
-        if (current instanceof EndKeyword) {
-            endKeyword = ((EndKeyword) current);
+        final RightCurlToken rightCurl;
+        if (current instanceof RightCurlToken) {
+            rightCurl = ((RightCurlToken) current);
         } else {
-            endKeyword = null;
+            rightCurl = null;
         }
-        var elif = new ElifExpression(elifKeyword, condition, ((ThenKeyword) thenKeyword), elseBlock, endKeyword);
+        var elif = new ElifExpression(elifKeyword, condition, leftCurl, elseBlock, rightCurl);
         this.lastCondition.setElseExpression(elif);
         this.lastCondition = elif;
 
-        if (endKeyword == null) {
-            current.accept(this, parseContext);
+        if (parseContext.getLexer().peekNext().getTokenType() == ElementType.elseKeyword) {
+            parseContext.getLexer().nextToken().accept(this, parseContext);
+        } else if (parseContext.getLexer().peekNext().getTokenType() == ElementType.elifKeyword) {
+            parseContext.getLexer().nextToken().accept(this, parseContext);
         }
     }
 }

@@ -1,0 +1,9 @@
+fun compute1() -> Int {
+    val a = 10 + 11 - 1
+    ret a
+}
+
+fun box() -> Boolean {
+    if compute1() != 20 { ret false }
+    ret true
+}

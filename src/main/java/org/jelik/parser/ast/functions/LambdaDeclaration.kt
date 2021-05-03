@@ -5,7 +5,6 @@ import org.jelik.parser.ast.types.TypeVariableListNode
 import org.jelik.parser.token.ArrowToken
 import org.jelik.parser.token.LiteralToken
 import org.jelik.parser.token.Token
-import org.jelik.parser.token.keyword.FunKeyword
 import org.jelik.types.FunctionType
 import org.jelik.types.FunctionType.Companion.getFunctionType
 import org.jelik.types.JVMVoidType
@@ -31,5 +30,9 @@ class LambdaDeclaration(
             return getFunctionType(parameterTypes.size, JVMVoidType.INSTANCE)
         }
         return getFunctionType(parameterTypes.size, returnType)
+    }
+
+    override fun getEndRow(): Int {
+        return functionBody.endRow
     }
 }

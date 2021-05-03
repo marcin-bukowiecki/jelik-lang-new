@@ -1,7 +1,6 @@
-ext fun Int getString() -> String {
-    ret this.toString()
-}
 
-fun expr() -> String {
-    ret 123.getString()
-}
+            fun expr(a Int) -> Int {
+                   val l = lam b -> { ret b }
+                   ret a + l(a)
+                }
+            

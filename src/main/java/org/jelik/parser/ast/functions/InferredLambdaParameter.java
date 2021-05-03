@@ -20,4 +20,9 @@ public class InferredLambdaParameter extends FunctionParameter implements Lambda
     public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
         astVisitor.visitInferredLambdaParameter(this, compilationContext);
     }
+
+    @Override
+    public boolean isInferred() {
+        return true;
+    }
 }

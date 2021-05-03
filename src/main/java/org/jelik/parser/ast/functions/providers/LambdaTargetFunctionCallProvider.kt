@@ -5,7 +5,10 @@ import org.jelik.compiler.asm.MethodVisitorAdapter
 import org.jelik.compiler.asm.visitor.ToByteCodeVisitor
 import org.jelik.compiler.data.FunctionReferenceMethodData
 import org.jelik.compiler.exceptions.CompileException
+import org.jelik.compiler.types.LambdaTypeInference
+import org.jelik.compiler.types.TypeInferenceWalker
 import org.jelik.parser.ast.functions.FunctionCallExpr
+import org.jelik.parser.ast.functions.FunctionReferenceNode
 import org.jelik.parser.ast.resolvers.CastToVisitor
 import org.jelik.parser.ast.resolvers.FunctionCallResolver
 
@@ -16,7 +19,7 @@ class LambdaTargetFunctionCallProvider(methodData: FunctionReferenceMethodData) 
     TargetFunctionCallProvider<FunctionReferenceMethodData>(methodData) {
 
     override fun resolveCallback(functionCallExpr: FunctionCallExpr, compilationContext: CompilationContext) {
-
+        LambdaTypeInference.resolve(this, functionCallExpr, compilationContext)
 
         val resolvedCall = FunctionCallResolver()
             .resolveCall(
@@ -34,9 +37,15 @@ class LambdaTargetFunctionCallProvider(methodData: FunctionReferenceMethodData) 
         } else {
             val found = resolvedCall.get().methodData
             val returnType = found.returnType
+            if (!returnType.isVoid && methodData.returnType.isVoid) {
+                methodData = FunctionReferenceMethodData(
+                    methodData.ref,
+                    methodData.callerProvider,
+                    found.functionType.getFunctionalInterfaceMethod(compilationContext)
+                )
+            }
             methodData.ref.setTargetFunction(found)
-            methodData.ref.setFunctionReferenceMethod(methodData)
-            methodData.returnType.accept(CastToVisitor(functionCallExpr, returnType), compilationContext)
+            methodData.genericReturnType.accept(CastToVisitor(functionCallExpr, returnType), compilationContext)
         }
     }
 
@@ -56,5 +65,9 @@ class LambdaTargetFunctionCallProvider(methodData: FunctionReferenceMethodData) 
                 targetFunctionCall.methodData.parameterTypes
             )
         }
+    }
+
+    fun functionReference(): FunctionReferenceNode {
+        return methodData.ref
     }
 }

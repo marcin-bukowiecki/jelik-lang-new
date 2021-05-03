@@ -15,9 +15,9 @@ class ForLoopTest {
         val expr = "import java.util.List\n" +
                 "\n" +
                 "fun expr(l List<Int>) -> Int {\n" +
-                "   for e in l do\n" +
+                "   for e in l {\n" +
                 "       System.out.println(e)\n" +
-                "   end\n" +
+                "   }\n" +
                 "   ret 1" +
                 "}"
         FunctionCompiler
@@ -31,9 +31,9 @@ class ForLoopTest {
         val expr = "import java.util.List\n" +
                 "\n" +
                 "fun expr(l List<Int>) -> Int {\n" +
-                "   for e in l do\n" +
+                "   for e in l {\n" +
                 "       System.out.println(e)\n" +
-                "   end\n" +
+                "   }\n" +
                 "   ret 1" +
                 "}"
         FunctionCompiler
@@ -47,9 +47,9 @@ class ForLoopTest {
         val expr = "import java.util.ArrayList\n" +
                 "\n" +
                 "fun expr(l ArrayList<Int>) -> Int {\n" +
-                "   for e in l do\n" +
+                "   for e in l {\n" +
                 "       System.out.println(e)\n" +
-                "   end\n" +
+                "   }\n" +
                 "   ret 1" +
                 "}"
         FunctionCompiler
@@ -63,9 +63,9 @@ class ForLoopTest {
         val expr = "import java.util.ArrayList\n" +
                 "\n" +
                 "fun expr(l ArrayList<Int>) -> Int {\n" +
-                "   for e in l do\n" +
+                "   for e in l {\n" +
                 "       System.out.println(e)\n" +
-                "   end\n" +
+                "   }\n" +
                 "   ret 1" +
                 "}"
         FunctionCompiler
@@ -79,8 +79,8 @@ class ForLoopTest {
         val expr = "import java.util.ArrayList\n" +
                 "\n" +
                 "fun expr(l ArrayList<Int>) -> Int {\n" +
-                "   for e in l do\n" +
-                "   end\n" +
+                "   for e in l {\n" +
+                "   }\n" +
                 "   ret 1" +
                 "}"
         FunctionCompiler
@@ -94,9 +94,9 @@ class ForLoopTest {
         val expr = "import java.util.ArrayList\n" +
                 "\n" +
                 "fun expr(l ArrayList<Int>) -> Int {\n" +
-                "   for e in l do\n" +
+                "   for e in l {\n" +
                 "       ret e" +
-                "   end\n" +
+                "   }\n" +
                 "   ret 1" +
                 "}"
         Assertions.assertThatThrownBy {
@@ -111,9 +111,9 @@ class ForLoopTest {
         val expr = "import java.util.ArrayList\n" +
                 "\n" +
                 "fun expr(l ArrayList<Int>) -> Int {\n" +
-                "   for e in do\n" +
+                "   for e in {\n" +
                 "       System.out.println(1)" +
-                "   end\n" +
+                "   }\n" +
                 "   ret 1" +
                 "}"
         Assertions.assertThatThrownBy {
@@ -128,9 +128,9 @@ class ForLoopTest {
         val expr = "import java.util.ArrayList\n" +
                 "\n" +
                 "fun expr(l ArrayList<Int>) -> Int {\n" +
-                "   for in l do\n" +
+                "   for in l {\n" +
                 "       System.out.println(1)" +
-                "   end\n" +
+                "   }\n" +
                 "   ret 1" +
                 "}"
         Assertions.assertThatThrownBy {
@@ -145,9 +145,9 @@ class ForLoopTest {
         val expr = "import java.util.ArrayList\n" +
                 "\n" +
                 "fun expr(l ArrayList<Int>) -> Int {\n" +
-                "   for do\n" +
+                "   for {\n" +
                 "       System.out.println(1)" +
-                "   end\n" +
+                "   }\n" +
                 "   ret 1" +
                 "}"
         Assertions.assertThatThrownBy {
@@ -164,9 +164,9 @@ class ForLoopTest {
                 "import java.util.stream.Collectors\n" +
                 "\n" +
                 "fun expr(l ArrayList<Int>) -> Int {\n" +
-                "   for e in l.stream().collect(Collectors.toList()) do\n" +
+                "   for e in l.stream().collect(Collectors.toList()) {\n" +
                 "       System.out.println(e)\n" +
-                "   end\n" +
+                "   }\n" +
                 "   ret 1" +
                 "}"
         FunctionCompiler
@@ -181,9 +181,9 @@ class ForLoopTest {
         val expr = "" +
                 "\n" +
                 "fun expr(l []Int) -> Int {\n" +
-                "   for e in l do\n" +
+                "   for e in l {\n" +
                 "       println(e)\n" +
-                "   end\n" +
+                "   }\n" +
                 "   ret 1" +
                 "}"
         FunctionCompiler
@@ -198,9 +198,9 @@ class ForLoopTest {
         val expr = "" +
                 "\n" +
                 "fun expr(l []Int) -> Int {\n" +
-                "   for e in l do\n" +
+                "   for e in l {\n" +
                 "       println(e)\n" +
-                "   end\n" +
+                "   }\n" +
                 "   ret 1" +
                 "}"
         FunctionCompiler
@@ -215,9 +215,9 @@ class ForLoopTest {
         val expr = "" +
                 "\n" +
                 "fun expr(l []Long) -> Int {\n" +
-                "   for e in l do\n" +
+                "   for e in l {\n" +
                 "       System.out.println(e)\n" +
-                "   end\n" +
+                "   }\n" +
                 "   ret 1" +
                 "}"
         FunctionCompiler
@@ -232,9 +232,9 @@ class ForLoopTest {
         val expr = "" +
                 "\n" +
                 "fun expr(l []Long) -> Int {\n" +
-                "   for e in l do\n" +
+                "   for e in l {\n" +
                 "       System.out.println(e)\n" +
-                "   end\n" +
+                "   }\n" +
                 "   ret 1" +
                 "}"
         FunctionCompiler
@@ -249,9 +249,9 @@ class ForLoopTest {
         val expr = "" +
                 "\n" +
                 "fun expr(l []Long) -> Int {\n" +
-                "   for e in l do\n" +
+                "   for e in l {\n" +
 
-                "   end\n" +
+                "   }\n" +
                 "   ret 1" +
                 "}"
         FunctionCompiler
@@ -266,9 +266,9 @@ class ForLoopTest {
         val expr = "" +
                 "\n" +
                 "fun expr(l []String) -> Int {\n" +
-                "   for e in l do\n" +
+                "   for e in l {\n" +
                 "       System.out.println(e)\n" +
-                "   end\n" +
+                "   }\n" +
                 "   ret 1" +
                 "}"
         FunctionCompiler
@@ -283,9 +283,9 @@ class ForLoopTest {
         val expr = "" +
                 "\n" +
                 "fun expr(l []String) -> Int {\n" +
-                "   for e in l do\n" +
+                "   for e in l {\n" +
                 "       System.out.println(e)\n" +
-                "   end\n" +
+                "   }\n" +
                 "   ret 1" +
                 "}"
         FunctionCompiler
@@ -300,9 +300,9 @@ class ForLoopTest {
         val expr = "" +
                 "\n" +
                 "fun expr(l []Object) -> Int {\n" +
-                "   for e in l do\n" +
+                "   for e in l {\n" +
                 "       System.out.println(e)\n" +
-                "   end\n" +
+                "   }\n" +
                 "   ret 1" +
                 "}"
         FunctionCompiler
@@ -317,8 +317,8 @@ class ForLoopTest {
         val expr = "" +
                 "\n" +
                 "fun expr(l []Object) -> Int {\n" +
-                "   for e in l do\n" +
-                "   end\n" +
+                "   for e in l {\n" +
+                "   }\n" +
                 "   ret 1" +
                 "}"
         FunctionCompiler

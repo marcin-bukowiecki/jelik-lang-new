@@ -18,6 +18,7 @@ import org.jelik.parser.token.Token;
 import org.jelik.types.JVMVoidType;
 import org.jelik.types.Type;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
@@ -105,11 +106,11 @@ public class FunctionDeclaration extends ASTNodeImpl implements CompilationUnit,
 
     @Override
     public Optional<FindSymbolResult> findSymbol(String text, CompilationContext compilationContext) {
-        Optional<LocalVariable> local = LocalVariableFinder.INSTANCE.tryFindLocalVariable(text, compilationContext);
-        if (local.isPresent()) {
-            return Optional.of(local.get().toFindSymbolResult());
+        var localOpt = LocalVariableFinder.INSTANCE.tryFindLocalVariable(text, compilationContext);
+        if (localOpt.isPresent()) {
+            return Optional.of(localOpt.get().toFindSymbolResult());
         }
-        final TypeNode typeNode = functionContext.getTypeParametersMappings().get(text);
+        var typeNode = functionContext.getTypeParametersMappings().get(text);
         if (typeNode != null) {
             return Optional.of(new TypeAccessSymbolResult(typeNode.getType()));
         }

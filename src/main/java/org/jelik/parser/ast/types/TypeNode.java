@@ -40,4 +40,8 @@ public abstract class TypeNode extends ASTNodeImpl {
     public boolean isMaybe() {
         return false;
     }
+
+    public boolean isInferred() {
+        return false;
+    }
 }

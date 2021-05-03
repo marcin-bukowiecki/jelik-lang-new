@@ -23,4 +23,8 @@ class InferredTypeNode : TypeNode() {
     override fun toString(): String {
         return "INFERRED"
     }
+
+    override fun isInferred(): Boolean {
+        return true;
+    }
 }

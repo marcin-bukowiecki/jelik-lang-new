@@ -3,6 +3,7 @@ package org.jelik.parser.ast;
 import org.jelik.compiler.config.CompilationContext;
 import org.jelik.parser.ast.common.DupNodeImpl;
 import org.jelik.parser.ast.expression.Expression;
+import org.jelik.parser.ast.utils.ASTDataKey;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,6 +33,10 @@ public interface ASTNode {
     boolean isZero();
 
     void setIgnored(boolean ignored);
+
+    <T> void putData(ASTDataKey<T> key, T data);
+
+    <T> T getData(ASTDataKey<T> key);
 
     boolean isIgnored();
 

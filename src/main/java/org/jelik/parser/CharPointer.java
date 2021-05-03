@@ -65,9 +65,7 @@ public class CharPointer {
                     new LiteralToken(lineNumber, columnNumber - 3, "eof"),
                     fileAbsolutePath);
         }
-
         columnNumber++;
-
         return current;
     }
 

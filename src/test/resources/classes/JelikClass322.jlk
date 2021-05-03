@@ -1,5 +1,9 @@
-import java.util.List
+fun f1(a Int) -> Int {
+    ret a + 10
+}
 
-fun expr(a List<Int>) -> Int {
-   ret a.get(1)
+fun expr(a Int) -> Int {
+    val ref1 = f1
+    val ref2 = ref1
+    ret ref2(a)
 }

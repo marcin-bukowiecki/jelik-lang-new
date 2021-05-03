@@ -1,5 +1,5 @@
 ext fun Int getString() -> String {
-    ret "foo"
+    ret this.toString()
 }
 
 fun expr() -> String {

@@ -1,14 +1,8 @@
 package org.jelik.types
 
-import org.jelik.compiler.config.CompilationContext
-import org.jelik.compiler.asm.MethodVisitorAdapter
 import org.jelik.compiler.common.TypeEnum
-import org.jelik.compiler.data.FunctionReferenceMethodData
+import org.jelik.compiler.config.CompilationContext
 import org.jelik.compiler.data.MethodData
-import org.jelik.compiler.locals.LocalVariable
-import org.jelik.parser.ast.functions.FunctionReferenceNode
-import org.jelik.parser.ast.types.InferredTypeRef
-import java.util.*
 
 /**
  * @author Marcin Bukowiecki
@@ -46,14 +40,9 @@ open class FunctionType : Type {
         }
     }
 
-    fun getFunctionalInterfaceMethod(lv: LocalVariable, compilationContext: CompilationContext): Optional<MethodData> {
-        return Optional.ofNullable(
-            FunctionReferenceMethodData(
-                (lv.typeRef as InferredTypeRef).ref as FunctionReferenceNode,
-                { mv: MethodVisitorAdapter ->
-                    mv.aload(lv.getIndex())
-                },
-                findClassData(compilationContext).methodScope.first { m -> !m.isStatic && m.isAbstract })
-        )
+    fun getFunctionalInterfaceMethod(compilationContext: CompilationContext): MethodData {
+        return findClassData(compilationContext)
+            .methodScope
+            .first { m -> m.isAbstract && !m.isStatic }
     }
 }

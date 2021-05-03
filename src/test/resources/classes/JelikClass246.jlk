@@ -1,7 +1,7 @@
 import java.util.Collection
 import java.util.Map
 fun expr() -> Map<Int, Int> {
-   val map Map<Int, Int> = {}
+   val map Map<Int, Int> = map{}
    map[2] = 100
    map[3] = 100
    ret map}

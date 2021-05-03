@@ -20,18 +20,11 @@ public class ConditionBlockVisitor extends BlockVisitor {
     @Override
     public @NotNull BasicBlockImpl visit(@NotNull ParseContext parseContext) {
         Lexer lexer = parseContext.getLexer();
-
-        while (lexer.hasNextToken() &&
-                lexer.peekNext().getTokenType() != ElementType.endKeyword &&
-                lexer.peekNext().getTokenType() != ElementType.elifKeyword &&
-                lexer.peekNext().getTokenType() != ElementType.elseKeyword) {
-
+        while (lexer.hasNextToken() && lexer.peekNext().getTokenType() != ElementType.rightCurl) {
             Token nextToken = lexer.nextToken();
             nextToken.accept(this, parseContext);
         }
-
         lexer.nextToken();
-
         return new BasicBlockImpl(expressionList);
     }
 }

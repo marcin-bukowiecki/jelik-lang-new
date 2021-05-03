@@ -1,7 +1,7 @@
 import java.util.List
 
 fun expr(l List<Int>) -> Int {
-   for e in l do
+   for e in l {
        System.out.println(e)
-   end
+   }
    ret 1}

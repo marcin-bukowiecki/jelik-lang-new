@@ -1,2 +1,2 @@
 import java.util.Collection
-fun expr() -> Collection<Int> {   ret {"foo": 11, "bar": 12}.values()}
+fun expr() -> Collection<Int> {   ret map{"foo": 11, "bar": 12}.values()}

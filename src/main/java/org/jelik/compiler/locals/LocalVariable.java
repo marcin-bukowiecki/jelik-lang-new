@@ -1,13 +1,14 @@
 package org.jelik.compiler.locals;
 
-import lombok.Setter;
 import org.jelik.parser.ast.expression.Expression;
+import org.jelik.parser.ast.functions.FunctionReferenceNode;
 import org.jelik.parser.ast.labels.LabelNode;
 import org.jelik.parser.ast.resolvers.FindSymbolResult;
 import org.jelik.parser.ast.resolvers.LocalVariableAccessSymbolResult;
 import org.jelik.parser.ast.types.AbstractTypeRef;
 import org.jelik.parser.ast.types.TypeNode;
 import org.jelik.types.Type;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -118,5 +119,14 @@ public class LocalVariable {
 
     public FindSymbolResult toFindSymbolResult() {
         return new LocalVariableAccessSymbolResult(this);
+    }
+
+    public Optional<FunctionReferenceNode> getFunctionReference() {
+        return this.typeRef.getFunctionReference();
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

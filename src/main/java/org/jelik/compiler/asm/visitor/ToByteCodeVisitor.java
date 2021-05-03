@@ -985,7 +985,8 @@ public class ToByteCodeVisitor extends AstVisitor {
         var targetFunction = possibleFunctionsToCall.get(0);
         InvokeDynamicHelper.INSTANCE.codeGen(classWriterAdapter.getCurrentMethodVisitor(),
                 targetFunction,
-                Objects.requireNonNull(functionReferenceNode.getFunctionReferenceMethod()));
+                targetFunction.getFunctionType().getFunctionalInterfaceMethod(compilationContext).getName()
+                );
     }
 
     @Override
@@ -1109,5 +1110,15 @@ public class ToByteCodeVisitor extends AstVisitor {
     @Override
     public void visitLabelNode(LabelNode labelNode, CompilationContext compilationContext) {
         classWriterAdapter.getCurrentMethodVisitor().visitLabel(labelNode.getLabel());
+    }
+
+    @Override
+    public void visitLambdaDeclarationExpression(@NotNull LambdaDeclarationExpression lambdaDeclarationExpression,
+                                                 @NotNull CompilationContext compilationContext) {
+        var targetFunction = lambdaDeclarationExpression.getLambdaDeclaration();
+        InvokeDynamicHelper.INSTANCE.codeGen(classWriterAdapter.getCurrentMethodVisitor(),
+                Objects.requireNonNull(targetFunction),
+                targetFunction.getFunctionType().getFunctionalInterfaceMethod(compilationContext).getName()
+        );
     }
 }

@@ -23,11 +23,9 @@ import org.jelik.parser.ast.expression.Expression
 import org.jelik.parser.ast.expression.ExpressionWithType
 import org.jelik.parser.ast.labels.LabelNode
 import org.jelik.parser.ast.visitors.AstVisitor
-import org.jelik.parser.token.keyword.DoKeyword
-import org.jelik.parser.token.keyword.EndKeyword
+import org.jelik.parser.token.Token
 import org.jelik.parser.token.keyword.WhileKeyword
 import org.jelik.types.JVMVoidType
-import java.lang.IllegalArgumentException
 
 /**
  * Represents while expr do
@@ -39,9 +37,9 @@ import java.lang.IllegalArgumentException
 class WhileLoopImpl(
     private val whileKeyword: WhileKeyword,
     override var condition: WhileConditionExpression,
-    private val doKeyword: DoKeyword,
+    private val left: Token,
     override var block: BasicBlockImpl,
-    val endKeyword: EndKeyword
+    val right: Token
 ) : ExpressionWithType(), WhileLoop {
 
     override lateinit var loopStart: LabelNode
@@ -85,11 +83,11 @@ class WhileLoopImpl(
     }
 
     override fun getEndCol(): Int {
-        return endKeyword.endCol
+        return right.endCol
     }
 
     override fun getEndRow(): Int {
-        return endKeyword.endRow
+        return right.endRow
     }
 
     fun getCondition(): Expression {
@@ -97,6 +95,6 @@ class WhileLoopImpl(
     }
 
     override fun toString(): String {
-        return "$whileKeyword $condition $doKeyword $block $endKeyword"
+        return "$whileKeyword $condition $left $block $right"
     }
 }

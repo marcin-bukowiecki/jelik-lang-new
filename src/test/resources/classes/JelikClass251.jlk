@@ -1,2 +1,2 @@
 import java.util.Map
-fun expr() -> Int {   ret {"foo": 11, "bar": 12}.size()}
+fun expr() -> Int {   ret map{"foo": 11, "bar": 12}.size()}

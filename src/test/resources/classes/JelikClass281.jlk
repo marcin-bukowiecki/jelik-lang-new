@@ -2,7 +2,7 @@ import java.util.ArrayList
 import java.util.stream.Collectors
 
 fun expr(l ArrayList<Int>) -> Int {
-   for e in l.stream().collect(Collectors.toList()) do
+   for e in l.stream().collect(Collectors.toList()) {
        System.out.println(e)
-   end
+   }
    ret 1}

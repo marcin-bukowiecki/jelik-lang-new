@@ -6,10 +6,12 @@ import org.jelik.compiler.JelikCompiler;
 import org.jelik.compiler.asm.visitor.TypeVisitor;
 import org.jelik.compiler.common.TypeEnum;
 import org.jelik.compiler.data.ClassData;
+import org.jelik.compiler.helper.CompilerHelper;
 import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.numbers.Float32ToInt32Node;
 import org.jelik.parser.ast.numbers.IntegerWrapperToInt32Node;
 import org.jelik.parser.ast.numbers.ObjectToInt32Node;
+import org.jelik.parser.ast.types.JelikGenericType;
 import org.jelik.types.jvm.IntegerWrapperType;
 import org.jelik.types.jvm.JVMFloatType;
 import org.jelik.types.jvm.NumberType;
@@ -119,6 +121,10 @@ public class JVMIntType extends NumberType {
 
     @Override
     public void castFrom(Expression expression, Type type, CompilationContext compilationContext) {
-
+        if (type instanceof JelikGenericType) {
+            expression.getParent().replaceWith(expression, new ObjectToInt32Node(expression));
+        } else {
+            CompilerHelper.INSTANCE.raiseTypeCompileError("type.cast.error", expression, type, this);
+        }
     }
 }

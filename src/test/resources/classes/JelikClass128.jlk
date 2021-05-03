@@ -1,5 +1,5 @@
 fun expr(a Object, b Object) -> Boolean { 
- if a.equals(b) == true then 
+ if a.equals(b) == true { 
    ret true 
-else    ret false
-end }
+} else {   ret false
+}}

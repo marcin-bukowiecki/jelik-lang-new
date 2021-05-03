@@ -16,19 +16,19 @@ import org.jelik.types.Type
 class LambdaDeclarationExpression(val lambdaDeclaration: LambdaDeclaration) : ASTNodeImpl(), Expression, FunctionReferenceNode {
 
     override fun getReturnType(): Type {
-        TODO("Not yet implemented")
+        return lambdaDeclaration.functionType
     }
 
     override fun getGenericReturnType(): Type {
-        TODO("Not yet implemented")
+        return lambdaDeclaration.functionType
     }
 
     override fun getType(): Type {
-        TODO("Not yet implemented")
+        return lambdaDeclaration.functionType
     }
 
     override fun getGenericType(): Type {
-        TODO("Not yet implemented")
+        return lambdaDeclaration.functionType
     }
 
     override fun accept(astVisitor: AstVisitor, compilationContext: CompilationContext) {
@@ -43,15 +43,11 @@ class LambdaDeclarationExpression(val lambdaDeclaration: LambdaDeclaration) : AS
 
     }
 
-    override fun setFunctionReferenceMethod(data: FunctionReferenceMethodData) {
-
-    }
-
     override fun getPossibleFunctionsToCall(): List<MethodData> {
         return listOf(lambdaDeclaration)
     }
 
-    override fun getFunctionReferenceMethod(): FunctionReferenceMethodData? {
-        TODO("Not yet implemented")
+    override fun getEndRow(): Int {
+        return lambdaDeclaration.endRow
     }
 }

@@ -16,16 +16,22 @@
 
 package org.jelik.compiler.asm.utils;
 
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.jelik.compiler.config.CompilationContext;
 import org.jelik.compiler.asm.ClassWriterAdapter;
 import org.jelik.compiler.asm.MethodVisitorAdapter;
+import org.jelik.parser.ast.classes.ClassDeclaration;
+import org.jelik.parser.ast.functions.LambdaDeclaration;
 import org.jelik.parser.ast.labels.LabelNode;
 import org.jelik.parser.ast.operators.AbstractLogicalOpExpr;
+import org.jelik.parser.ast.utils.ASTDataKey;
+import org.jelik.parser.ast.utils.ASTUtils;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 
 import java.lang.reflect.Modifier;
+import java.util.Objects;
 
 /**
  * @author Marcin Bukowiecki
@@ -108,5 +114,18 @@ public class ASMUtils {
         constructor.visitInsn(Opcodes.RETURN);
         constructor.visitMaxs(1, 1);
         constructor.visitEnd();
+    }
+
+    public static String generateLambdaName(final LambdaDeclaration lambdaDeclaration) {
+        final String name = lambdaDeclaration.getOwner().getName();
+        final ClassDeclaration classDeclaration = ASTUtils.getClassDeclaration(lambdaDeclaration);
+        Objects.requireNonNull(classDeclaration);
+        final MutableInt mutableInt = classDeclaration.getData(ASTDataKey.LAMBDA_ID_COUNTER);
+        if (mutableInt == null) {
+            classDeclaration.putData(ASTDataKey.LAMBDA_ID_COUNTER, new MutableInt(0));
+            return name + "$0";
+        } else {
+            return name + mutableInt.incrementAndGet();
+        }
     }
 }

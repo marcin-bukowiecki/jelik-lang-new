@@ -1,1 +1,7 @@
-fun function(: a
+ext fun Int getString() -> String {
+    ret "foo"
+}
+
+fun expr() -> String {
+    ret 123.getString()
+}

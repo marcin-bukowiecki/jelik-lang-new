@@ -1,6 +1,6 @@
 
 fun expr(l []Object) -> Int {
-   for e in l do
+   for e in l {
        System.out.println(e)
-   end
+   }
    ret 1}

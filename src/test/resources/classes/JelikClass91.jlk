@@ -1,11 +1,11 @@
 
             fun expr(a Int) -> Int {
-                if a > 10 and a < 100 then
+                if a > 10 and a < 100 {
                     ret 1
-                elif a > 100 then
+                } elif a > 100 {
                     ret 2
-                else 
+                } else {
                     ret 0
-                end    
+                }    
             }
         

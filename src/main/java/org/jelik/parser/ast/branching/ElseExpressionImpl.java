@@ -6,8 +6,8 @@ import org.jelik.parser.ast.ASTNodeImpl;
 import org.jelik.parser.ast.blocks.BasicBlockImpl;
 import org.jelik.parser.ast.labels.LabelNode;
 import org.jelik.parser.ast.visitors.AstVisitor;
+import org.jelik.parser.token.Token;
 import org.jelik.parser.token.keyword.ElseKeyword;
-import org.jelik.parser.token.keyword.EndKeyword;
 import org.jelik.types.Type;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,16 +26,16 @@ public class ElseExpressionImpl
     private final BasicBlockImpl basicBlock;
 
     @Getter
-    private final EndKeyword endKeyword;
+    private final Token rightCurlToken;
 
     private final ElseNodeContext nodeContext;
 
-    public ElseExpressionImpl(ElseKeyword elseKeyword, BasicBlockImpl block, EndKeyword endKeyword) {
+    public ElseExpressionImpl(ElseKeyword elseKeyword, BasicBlockImpl block, Token rightCurlToken) {
         this.nodeContext = new ElseNodeContext();
         this.elseKeyword = elseKeyword;
         this.basicBlock = block;
         this.basicBlock.setParent(this);
-        this.endKeyword = endKeyword;
+        this.rightCurlToken = rightCurlToken;
     }
 
     @Override

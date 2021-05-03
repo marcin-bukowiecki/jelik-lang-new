@@ -1,5 +1,4 @@
 import java.io.Serializable
-fun call() -> Serializable { ret c("foo") }
 fun c<T : Serializable>(arg T) -> T {
    ret arg as T
 }

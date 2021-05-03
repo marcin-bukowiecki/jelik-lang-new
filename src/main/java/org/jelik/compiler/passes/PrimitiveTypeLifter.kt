@@ -17,7 +17,7 @@ object PrimitiveTypeLifter : BasePass() {
     override fun visitFunctionCall(functionCallExpr: FunctionCallExpr, compilationContext: CompilationContext) {
         functionCallExpr.argumentList.accept(this, compilationContext)
 
-        if (functionCallExpr.targetFunctionCallProvider.methodData.isExt) {
+        if (functionCallExpr.targetFunctionCallProvider.isExt()) {
             return
         }
 

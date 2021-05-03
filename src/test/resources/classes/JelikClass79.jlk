@@ -1,2 +1,2 @@
-fun expr() {
-    if true then
+fun a:Int
+ { let}

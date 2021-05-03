@@ -1,5 +1,5 @@
 
 fun expr(l []Long) -> Int {
-   for e in l do
-   end
+   for e in l {
+   }
    ret 1}

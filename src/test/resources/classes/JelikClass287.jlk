@@ -1,6 +1,6 @@
 
 fun expr(l []Int) -> Int {
-   for e in l do
+   for e in l {
        println(e)
-   end
+   }
    ret 1}

@@ -72,9 +72,9 @@ class ArraySliceTest {
     fun objectArraySlice_1() {
         val expr = "fun calculateArrayIndex(array []Object, index Int) -> Int {\n" +
                 "    val arraySize = len(array)\n" +
-                "    if index < 0 then\n" +
+                "    if index < 0 {\n" +
                 "        ret arraySize + index\n" +
-                "    end\n" +
+                "    }\n" +
                 "    ret index\n" +
                 "}\n" +
                 "\n" +

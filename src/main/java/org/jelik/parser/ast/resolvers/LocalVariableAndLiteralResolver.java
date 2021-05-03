@@ -18,7 +18,6 @@ import org.jelik.parser.ast.functions.ConstructorDeclaration;
 import org.jelik.parser.ast.functions.FunctionBodyBlock;
 import org.jelik.parser.ast.functions.FunctionCallExpr;
 import org.jelik.parser.ast.functions.FunctionDeclaration;
-import org.jelik.parser.ast.functions.LambdaDeclarationExpression;
 import org.jelik.parser.ast.locals.ValueDeclaration;
 import org.jelik.parser.ast.locals.VariableDeclaration;
 import org.jelik.parser.ast.locals.WithLocalVariableDeclaration;
@@ -26,11 +25,7 @@ import org.jelik.parser.ast.loops.ForEachLoop;
 import org.jelik.parser.ast.nullsafe.NullSafeCallExpr;
 import org.jelik.parser.ast.operators.AssignExpr;
 import org.jelik.parser.ast.resolvers.constructors.ParentConstructorCallResolver;
-import org.jelik.parser.ast.types.AbstractTypeRef;
-import org.jelik.parser.ast.types.InferredTypeRef;
-import org.jelik.parser.ast.types.TypeAccessNode;
-import org.jelik.parser.ast.types.TypeNodeRef;
-import org.jelik.parser.ast.types.UndefinedTypeNode;
+import org.jelik.parser.ast.types.*;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.token.operators.AssignOperator;
 import org.jetbrains.annotations.NotNull;
@@ -221,15 +216,5 @@ public class LocalVariableAndLiteralResolver extends AstVisitor {
         });
         forEachloop.setLocals(localVariables);
         forEachloop.getBlock().accept(this, compilationContext);
-    }
-
-    @Override
-    public void visitLambdaDeclarationExpression(@NotNull LambdaDeclarationExpression lambdaDeclarationExpression,
-                                                 @NotNull CompilationContext compilationContext) {
-
-        lambdaDeclarationExpression.getLambdaDeclaration().accept(new FunctionSignatureResolver(), compilationContext);
-        lambdaDeclarationExpression.getLambdaDeclaration().accept(
-                new LocalVariableAndLiteralResolver(),
-                compilationContext);
     }
 }

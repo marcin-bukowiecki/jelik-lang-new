@@ -52,4 +52,8 @@ public class FunctionParameter extends ASTNodeImpl {
     public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
         astVisitor.visit(this, compilationContext);
     }
+
+    public boolean isInferred() {
+        return false;
+    }
 }

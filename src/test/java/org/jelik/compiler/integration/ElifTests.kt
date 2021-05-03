@@ -2,7 +2,6 @@ package org.jelik.compiler.integration
 
 import org.jelik.compiler.utils.FunctionCompiler
 import org.junit.Test
-import java.util.*
 
 /**
  * @author Marcin Bukowiecki
@@ -13,13 +12,13 @@ class ElifTests {
     fun testElif_1() {
         val expr = """
             fun expr(a Int) -> Int {
-                if a > 10 and a < 100 then
+                if a > 10 and a < 100 {
                     ret 1
-                elif a > 100 then
+                } elif a > 100 {
                     ret 2
-                else 
+                } else {
                     ret 0
-                end    
+                }    
             }
         """
 
@@ -34,13 +33,13 @@ class ElifTests {
         val expr = """
             fun expr(a Int) -> Int {
                 var b = 123
-                if a > 10 and a < 100 then
+                if a > 10 and a < 100 {
                     b = 1
-                elif a > 100 then
+                } elif a > 100 {
                     b = 2
-                else 
+                } else {
                     b = 0
-                end    
+                }    
                 ret b
             }
         """
@@ -56,11 +55,11 @@ class ElifTests {
         val expr = """
             fun expr(a Int) -> Int {
                 var b = 123
-                if a > 10 and a < 100 then
+                if a > 10 and a < 100 {
                     b = 1
-                elif a > 100 then
+                } elif a > 100 {
                     b = 2
-                end    
+                }    
                 ret b
             }
         """
@@ -76,13 +75,13 @@ class ElifTests {
         val expr = """
             fun expr(a Int) -> Int {
                 var b = 123
-                if a > 10 and a < 100 then
+                if a > 10 and a < 100 {
                     b = 1
-                elif a > 100 and a <= 200 then
+                } elif a > 100 and a <= 200 {
                     b = 2
-                elif a > 200 then
+                } elif a > 200 {
                     b = 3
-                end    
+                }   
                 ret b
             }
         """
@@ -98,15 +97,15 @@ class ElifTests {
         val expr = """
             fun expr(a Int) -> Int {
                 var b = 123
-                if a > 10 and a < 100 then
+                if a > 10 and a < 100 {
                     b = 1
-                elif a > 100 then
+                } elif a > 100 {
                     b = 2
-                elif a > 200 then
+                } elif a > 200 {
                     b = 3
-                else 
+                } else {
                     b = 4
-                end    
+                }    
                 ret b
             }
         """
@@ -122,16 +121,16 @@ class ElifTests {
         val expr = """
             fun expr(a Int) -> Int {
                 var b = 123
-                if a > 10 and a < 100 then
+                if a > 10 and a < 100 {
                     b = 1
-                elif a > 100 then
+                } elif a > 100 {
                     b = 2
-                end    
-                if a > 200 then
+                }    
+                if a > 200 {
                     b = 3
-                else 
+                } else { 
                     b = 4
-                end    
+                }    
                 ret b
             }
         """
@@ -150,11 +149,11 @@ class ElifTests {
 
             fun expr(a Iterator<Int>, b List<Int>) -> Int {
                 var c = 123
-                if a.hasNext() and b.size() > 1 then
+                if a.hasNext() and b.size() > 1 {
                     c = 1
-                elif b.size() > 100 then
+                } elif b.size() > 100 {
                     c = 2
-                end    
+                }    
                 ret c
             }
         """

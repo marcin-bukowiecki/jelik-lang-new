@@ -54,11 +54,11 @@ public class FunctionIntegrationTest {
     @Test
     public void shouldReturnAForGivenGreaterValue() throws Exception {
        var expression = "fun greater(a Int, b Int) -> Int { " +
-                "   if (a > b) then\n" +
+                "   if (a > b) {\n" +
                 "       ret a\n" +
-                "   else\n" +
+                "   } else\n{" +
                 "       ret b\n" +
-                "   end\n" +
+                "   }\n" +
                 "}";
         var instance = FunctionCompiler.getInstance().compileAndGetInstance("Greater1", expression);
         Assertions.assertThat(instance.getClass().getMethod("greater", int.class, int.class).invoke(null, 12, 45))

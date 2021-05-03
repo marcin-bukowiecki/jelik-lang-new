@@ -13,9 +13,9 @@ class ForLoopExceptionTest {
         val expr = "import java.util.List\n" +
                 "\n" +
                 "fun expr(l Int) -> Int {\n" +
-                "   for e in l do\n" +
+                "   for e in l {\n" +
                 "       System.out.println(e)\n" +
-                "   end\n" +
+                "   }\n" +
                 "   ret 1" +
                 "}"
         FunctionCompiler
@@ -28,9 +28,9 @@ class ForLoopExceptionTest {
         val expr = "import java.util.List\n" +
                 "\n" +
                 "fun expr(l Int) -> Int {\n" +
-                "   for e in ll do\n" +
+                "   for e in ll {\n" +
                 "       System.out.println(e)\n" +
-                "   end\n" +
+                "   }\n" +
                 "   ret 1" +
                 "}"
         FunctionCompiler

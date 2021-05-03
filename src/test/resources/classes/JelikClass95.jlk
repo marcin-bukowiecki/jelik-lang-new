@@ -1,15 +1,15 @@
 
             fun expr(a Int) -> Int {
                 var b = 123
-                if a > 10 and a < 100 then
+                if a > 10 and a < 100 {
                     b = 1
-                elif a > 100 then
+                } elif a > 100 {
                     b = 2
-                elif a > 200 then
+                } elif a > 200 {
                     b = 3
-                else 
+                } else {
                     b = 4
-                end    
+                }    
                 ret b
             }
         

@@ -75,4 +75,23 @@ class RefTest {
         FunctionCompiler.getInstance()
             .compileAndExpectError(expr, "Unresolved function reference")
     }
+
+    @Test
+    fun testFunRef_3() {
+        val expr = """
+            fun f1(a Int) -> Int {
+                ret a + 10
+            }
+
+            fun expr(a Int) -> Int {
+                val ref1 = f1
+                val ref2 = ref1
+                ret ref2(a)
+            }
+        """.trimIndent()
+        FunctionCompiler.getInstance()
+            .compile(expr)
+            .invoke<String>("expr", 12)
+            .isEqualTo(22)
+    }
 }

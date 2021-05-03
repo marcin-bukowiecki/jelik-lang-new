@@ -10,7 +10,6 @@ import org.junit.Test
 class LambdaTest {
 
     @Test
-    @Ignore
     fun lambda_test_1() {
         val expr = """
             fun expr(a Int) -> Int {

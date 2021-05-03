@@ -1,8 +1,8 @@
 fun calculateArrayIndex(array []Object, index Int) -> Int {
     val arraySize = len(array)
-    if index < 0 then
+    if index < 0 {
         ret arraySize + index
-    end
+    }
     ret index
 }
 

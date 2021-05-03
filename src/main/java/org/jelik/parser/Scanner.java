@@ -1,40 +1,19 @@
 package org.jelik.parser;
 
 import lombok.Getter;
-import org.jelik.parser.token.ApostropheToken;
-import org.jelik.parser.token.ArrowToken;
-import org.jelik.parser.token.ColonToken;
-import org.jelik.parser.token.CommaToken;
-import org.jelik.parser.token.DotToken;
-import org.jelik.parser.token.EofTok;
-import org.jelik.parser.token.PipeToken;
+import org.jelik.parser.token.*;
 import org.jelik.parser.token.keyword.FalseToken;
-import org.jelik.parser.token.LeftBracketToken;
-import org.jelik.parser.token.LeftCurlToken;
-import org.jelik.parser.token.LeftParenthesisToken;
-import org.jelik.parser.token.LiteralToken;
-import org.jelik.parser.token.NewLineToken;
-import org.jelik.parser.token.NullToken;
-import org.jelik.parser.token.QuestionMarkToken;
-import org.jelik.parser.token.RightBracketToken;
-import org.jelik.parser.token.RightCurlToken;
-import org.jelik.parser.token.RightParenthesisToken;
-import org.jelik.parser.token.SingleApostropheToken;
-import org.jelik.parser.token.Token;
 import org.jelik.parser.token.keyword.ObjectKeyword;
 import org.jelik.parser.token.keyword.OperatorKeyword;
 import org.jelik.parser.token.keyword.TrueToken;
-import org.jelik.parser.token.WhitespaceToken;
 import org.jelik.parser.token.keyword.AbstractKeyword;
 import org.jelik.parser.token.keyword.BreakKeyword;
 import org.jelik.parser.token.keyword.CatchKeyword;
 import org.jelik.parser.token.keyword.ClassKeyword;
 import org.jelik.parser.token.keyword.ConstructorKeyword;
 import org.jelik.parser.token.keyword.ContinueKeyword;
-import org.jelik.parser.token.keyword.DoKeyword;
 import org.jelik.parser.token.keyword.ElifKeyword;
 import org.jelik.parser.token.keyword.ElseKeyword;
-import org.jelik.parser.token.keyword.EndKeyword;
 import org.jelik.parser.token.keyword.ExtKeyword;
 import org.jelik.parser.token.keyword.FinallyKeyword;
 import org.jelik.parser.token.keyword.ForKeyword;
@@ -49,7 +28,6 @@ import org.jelik.parser.token.keyword.PackageKeyword;
 import org.jelik.parser.token.keyword.ReturnKeyword;
 import org.jelik.parser.token.keyword.StaticKeyword;
 import org.jelik.parser.token.keyword.SuperKeyword;
-import org.jelik.parser.token.keyword.ThenKeyword;
 import org.jelik.parser.token.keyword.ThrowKeyword;
 import org.jelik.parser.token.keyword.TryKeyword;
 import org.jelik.parser.token.keyword.ValKeyword;
@@ -428,10 +406,6 @@ public class Scanner {
             return new VarKeyword(row, col);
         } else if ("if".equals(content)) {
             return new IfKeyword(row, col);
-        } else if ("then".equals(content)) {
-            return new ThenKeyword(row, col);
-        } else if ("end".equals(content)) {
-            return new EndKeyword(row, col);
         } else if ("else".equals(content)) {
             return new ElseKeyword(row, col);
         } else if ("elif".equals(content)) {
@@ -486,8 +460,6 @@ public class Scanner {
             return new WhileKeyword(row, col);
         } else if ("in".equals(content)) {
             return new InKeyword(row, col);
-        } else if ("do".equals(content)) {
-            return new DoKeyword(row, col);
         } else if ("break".equals(content)) {
             return new BreakKeyword(row, col);
         } else if ("continue".equals(content)) {
@@ -505,5 +477,9 @@ public class Scanner {
         }
 
         return new LiteralToken(row, col, content);
+    }
+
+    public void incrLineNumber() {
+        cp.incrLineNumber();
     }
 }

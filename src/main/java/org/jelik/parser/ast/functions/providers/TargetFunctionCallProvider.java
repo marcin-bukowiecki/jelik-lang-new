@@ -20,7 +20,7 @@ import java.util.Map;
  */
 public abstract class TargetFunctionCallProvider<T extends MethodData> {
 
-    private final T methodData;
+    protected T methodData;
 
     public TargetFunctionCallProvider(T methodData) {
         this.methodData = methodData;
@@ -50,4 +50,8 @@ public abstract class TargetFunctionCallProvider<T extends MethodData> {
     }
 
     public abstract Function3<FunctionCallExpr, ToByteCodeVisitor, MethodVisitorAdapter, Unit> getCodeGenProvider();
+
+    public boolean isExt() {
+        return false;
+    }
 }

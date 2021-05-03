@@ -1,1 +1,1 @@
-fun expr(a Int, b Int) -> Boolean { ret if a == b then true else false end }
+fun expr(a Int, b Int) -> Boolean { ret if a == b { true } else { false } }

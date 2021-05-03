@@ -8,6 +8,7 @@ import org.jelik.parser.ast.classes.ClassDeclaration;
 import org.jelik.parser.ast.classes.InterfaceDeclaration;
 import org.jelik.parser.ast.classes.ModuleDeclaration;
 import org.jelik.parser.ast.functions.FunctionDeclaration;
+import org.jelik.parser.ast.functions.LambdaDeclaration;
 import org.jelik.parser.ast.visitors.ClassDeclarationVisitor;
 import org.jelik.parser.ast.visitors.ImportVisitor;
 import org.jelik.parser.ast.visitors.functions.ExtensionFunctionDeclarationVisitor;
@@ -57,6 +58,11 @@ public class ModuleParser implements TokenVisitor<ModuleDeclaration> {
             nextToken.accept(this, parseContext);
         }
         String baseName = FilenameUtils.getBaseName(absoluteFilePath);
+        List<LambdaDeclaration> lambdaDeclarations = parseContext.lambdaDeclarations;
+        parseContext.lambdaDeclarations = new ArrayList<>();
+        if (!lambdaDeclarations.isEmpty()) {
+            functionDeclarations.addAll(lambdaDeclarations);
+        }
         if (classDeclarations.isEmpty() && interfaceDeclarations.isEmpty()) {
             return new ModuleDeclaration(baseName,
                     absoluteFilePath,

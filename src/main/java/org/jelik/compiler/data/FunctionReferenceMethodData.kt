@@ -2,6 +2,8 @@ package org.jelik.compiler.data
 
 import org.jelik.compiler.asm.MethodVisitorAdapter
 import org.jelik.parser.ast.functions.FunctionReferenceNode
+import org.jelik.parser.ast.functions.LambdaDeclarationExpression
+import org.jelik.parser.ast.functions.providers.FunctionReferenceTargetFunctionCallProvider
 import org.jelik.parser.ast.functions.providers.LambdaTargetFunctionCallProvider
 import org.jelik.parser.ast.functions.providers.TargetFunctionCallProvider
 import org.jelik.types.Type
@@ -55,6 +57,7 @@ class FunctionReferenceMethodData(val ref: FunctionReferenceNode,
     }
 
     override fun getCallProvider(): TargetFunctionCallProvider<FunctionReferenceMethodData> {
-        return LambdaTargetFunctionCallProvider(this)
+        if (ref is LambdaDeclarationExpression) return LambdaTargetFunctionCallProvider(this)
+        return FunctionReferenceTargetFunctionCallProvider(this)
     }
 }

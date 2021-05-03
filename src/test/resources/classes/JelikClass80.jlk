@@ -1,2 +1,2 @@
-fun a:Int
- { let}
+fun test(Int )
+ { }

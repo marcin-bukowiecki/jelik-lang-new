@@ -21,7 +21,7 @@ public class FunctionConditionsTest {
 
     @Test
     public void testReturnBooleanFromSimpleEqualExpr_2() {
-        var expr = "fun expr(a Int, b Int) -> Boolean { ret if a == b then true else false end }";
+        var expr = "fun expr(a Int, b Int) -> Boolean { ret if a == b { true } else { false } }";
         FunctionCompiler.getInstance()
                 .compile(expr)
                 .invoke("expr", 12, 12)
@@ -30,7 +30,7 @@ public class FunctionConditionsTest {
 
     @Test
     public void testReturnBooleanFromSimpleEqualExpr_3() {
-        var expr = "fun expr(a Int, b Int) -> Boolean { var a = if a == b then true else false end \n ret a }";
+        var expr = "fun expr(a Int, b Int) -> Boolean { var a = if a == b { true } else { false } \n ret a }";
         FunctionCompiler.getInstance()
                 .compile(expr)
                 .invoke("expr", 12, 12)
@@ -229,12 +229,12 @@ public class FunctionConditionsTest {
     @Test
     public void testObjectsEqual_5() {
         var expr = "fun expr(a Object, b Object) -> Boolean { \n " +
-                "if a == b and a == \"foo\" then \n" +
+                "if a == b and a == \"foo\" { \n" +
                 "   ret true \n" +
-                "else " +
+                "} else {" +
                 "   ret false\n" +
-                "end" +
-                " }";
+                "}" +
+                "}";
         FunctionCompiler.getInstance()
                 .compile(expr)
                 .invoke("expr", "foo", "foo")
@@ -244,12 +244,12 @@ public class FunctionConditionsTest {
     @Test
     public void testObjectsEqual_6() {
         var expr = "fun expr(a Object, b Object) -> Boolean { \n " +
-                "if a.equals(b) == true then \n" +
+                "if a.equals(b) == true { \n" +
                 "   ret true \n" +
-                "else " +
+                "} else {" +
                 "   ret false\n" +
-                "end" +
-                " }";
+                "}" +
+                "}";
         FunctionCompiler.getInstance()
                 .compile(expr)
                 .invoke("expr", "foo", "foo")
@@ -259,12 +259,12 @@ public class FunctionConditionsTest {
     @Test
     public void testObjectsEqual_7() {
         var expr = "fun expr(a Object, b Object) -> Boolean { \n " +
-                "if a.equals(b) then \n" +
+                "if a.equals(b) { \n" +
                 "   ret true \n" +
-                "else " +
+                "} else {" +
                 "   ret false\n" +
-                "end" +
-                " }";
+                "}" +
+                "}";
         FunctionCompiler.getInstance()
                 .compile(expr)
                 .invoke("expr", "foo", "foo")

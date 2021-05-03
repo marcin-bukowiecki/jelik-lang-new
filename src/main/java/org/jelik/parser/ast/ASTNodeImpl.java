@@ -1,7 +1,6 @@
 package org.jelik.parser.ast;
 
 import org.jelik.compiler.config.CompilationContext;
-import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.utils.ASTDataHolder;
 import org.jelik.parser.ast.utils.ASTDataKey;
 import org.jelik.parser.ast.visitors.AstVisitor;
@@ -34,7 +33,7 @@ public abstract class ASTNodeImpl implements ASTNode {
     }
 
     public int getStartCol() {
-        return -1;
+        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 
     public int getStartRow() {
@@ -42,11 +41,21 @@ public abstract class ASTNodeImpl implements ASTNode {
     }
 
     public int getEndCol() {
-        return -1;
+        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 
     public int getEndRow() {
-        return -1;
+        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
+    }
+
+    @Override
+    public <T> void putData(ASTDataKey<T> key, T data) {
+        dataHolder.putData(key, data);
+    }
+
+    @Override
+    public <T> T getData(ASTDataKey<T> key) {
+        return dataHolder.getData(key);
     }
 
     @Override

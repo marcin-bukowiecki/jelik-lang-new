@@ -6,9 +6,8 @@ import org.jelik.parser.ast.blocks.BasicBlockImpl;
 import org.jelik.parser.ast.expression.StackConsumer;
 import org.jelik.parser.ast.labels.LabelNode;
 import org.jelik.parser.ast.visitors.AstVisitor;
+import org.jelik.parser.token.Token;
 import org.jelik.parser.token.keyword.ElifKeyword;
-import org.jelik.parser.token.keyword.EndKeyword;
-import org.jelik.parser.token.keyword.ThenKeyword;
 import org.jelik.types.Type;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,11 +23,11 @@ public class ElifExpression extends ASTNodeImpl implements StackConsumer, IfExpr
 
     private final IfConditionExpressionImpl conditionExpression;
 
-    private final ThenKeyword thenKeyword;
+    private final Token leftCurl;
 
     private final BasicBlockImpl basicBlock;
 
-    private final EndKeyword endKeyword;
+    private final Token rightCurl;
 
     private ElseExpression elseExpression;
 
@@ -36,17 +35,17 @@ public class ElifExpression extends ASTNodeImpl implements StackConsumer, IfExpr
 
     public ElifExpression(@NotNull ElifKeyword elifKeyword,
                           @NotNull IfConditionExpressionImpl ifConditionExpression,
-                          @NotNull ThenKeyword thenKeyword,
+                          @NotNull Token leftCurl,
                           @NotNull BasicBlockImpl block,
-                          @Nullable EndKeyword endKeyword) {
+                          @Nullable Token rightCurl) {
         this.nodeContext = new IfNodeContext();
         this.elifKeyword = elifKeyword;
         this.conditionExpression = ifConditionExpression;
         this.conditionExpression.setParent(this);
-        this.thenKeyword = thenKeyword;
+        this.leftCurl = leftCurl;
         this.basicBlock = block;
         this.basicBlock.setParent(this);
-        this.endKeyword = endKeyword;
+        this.rightCurl = rightCurl;
     }
 
     public void setElseExpression(@NotNull ElseExpression elseExpression) {
@@ -62,16 +61,8 @@ public class ElifExpression extends ASTNodeImpl implements StackConsumer, IfExpr
         return conditionExpression;
     }
 
-    public ThenKeyword getThenKeyword() {
-        return thenKeyword;
-    }
-
     public BasicBlockImpl getBasicBlock() {
         return basicBlock;
-    }
-
-    public EndKeyword getEndKeyword() {
-        return endKeyword;
     }
 
     public Optional<ElseExpression> getElseExpressionOpt() {
@@ -81,7 +72,7 @@ public class ElifExpression extends ASTNodeImpl implements StackConsumer, IfExpr
     @NotNull
     @Override
     public IfNodeContext getContext() {
-        return ((IfNodeContext) this.nodeContext);
+        return this.nodeContext;
     }
 
     public @Nullable ElseExpression getElseExpression() {
@@ -95,9 +86,9 @@ public class ElifExpression extends ASTNodeImpl implements StackConsumer, IfExpr
 
     @Override
     public String toString() {
-        return "elif " + conditionExpression.toString() +
-                " then " + basicBlock.toString() +
-                (endKeyword == null ? elseExpression.toString() : endKeyword.toString());
+        return getElifKeyword() + " " + conditionExpression.toString() +
+                leftCurl.toString() + basicBlock.toString() + rightCurl.toString() +
+                (elseExpression != null ? elseExpression.toString() : "");
     }
 
     @Nullable

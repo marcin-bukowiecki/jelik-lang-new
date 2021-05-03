@@ -14,9 +14,9 @@ class WhileLoopTest {
                 "\n" +
                 "fun expr(l List<Int>) -> Int {\n" +
                 "   val it = l.iterator()\n" +
-                "   while it.hasNext() do\n" +
+                "   while it.hasNext() {\n" +
                 "       System.out.println(it.next())\n" +
-                "   end\n" +
+                "   }\n" +
                 "   ret 1" +
                 "}"
         FunctionCompiler
@@ -31,9 +31,9 @@ class WhileLoopTest {
                 "\n" +
                 "fun expr(l List<Int>) -> Int {\n" +
                 "   val it = l.iterator()\n" +
-                "   while it.hasNext() and l.size() > 1 do\n" +
+                "   while it.hasNext() and l.size() > 1 {\n" +
                 "       System.out.println(it.next())\n" +
-                "   end\n" +
+                "   }\n" +
                 "   ret 1" +
                 "}"
         FunctionCompiler
@@ -48,10 +48,10 @@ class WhileLoopTest {
                 "\n" +
                 "fun expr(l List<Int>) -> Int {\n" +
                 "   val it = l.iterator()\n" +
-                "   while it.hasNext() and l.size() > 1 do\n" +
+                "   while it.hasNext() and l.size() > 1 {\n" +
                 "       System.out.println(it.next())\n" +
                 "       break" +
-                "   end\n" +
+                "   }\n" +
                 "   ret 1" +
                 "}"
         FunctionCompiler
@@ -66,10 +66,10 @@ class WhileLoopTest {
                 "\n" +
                 "fun expr(l List<Int>) -> Int {\n" +
                 "   val it = l.iterator()\n" +
-                "   while it.hasNext() and l.size() > 1 do\n" +
+                "   while it.hasNext() and l.size() > 1 {\n" +
                 "       System.out.println(it.next())\n" +
                 "       continue" +
-                "   end\n" +
+                "   }\n" +
                 "   ret 1" +
                 "}"
         FunctionCompiler

@@ -8,9 +8,10 @@ import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.expression.StackConsumer;
 import org.jelik.parser.ast.labels.LabelNode;
 import org.jelik.parser.ast.visitors.AstVisitor;
-import org.jelik.parser.token.keyword.EndKeyword;
+import org.jelik.parser.token.LeftCurlToken;
+import org.jelik.parser.token.RightCurlToken;
+import org.jelik.parser.token.Token;
 import org.jelik.parser.token.keyword.IfKeyword;
-import org.jelik.parser.token.keyword.ThenKeyword;
 import org.jelik.types.Type;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,13 +30,13 @@ public class IfExpressionImpl extends ASTNodeImpl implements StackConsumer, IfEx
     private IfConditionExpressionImpl conditionExpression;
 
     @Getter
-    private final ThenKeyword thenKeyword;
+    private final Token leftCurlToken;
 
     @Getter
     private BasicBlockImpl basicBlock;
 
     @Getter
-    private final EndKeyword endKeyword;
+    private final Token rightCurlToken;
 
     private ElseExpression elseExpression;
 
@@ -43,18 +44,18 @@ public class IfExpressionImpl extends ASTNodeImpl implements StackConsumer, IfEx
 
     public IfExpressionImpl(@NotNull IfKeyword ifKeyword,
                             @NotNull IfConditionExpressionImpl condition,
-                            @NotNull ThenKeyword thenKeyword,
+                            @NotNull LeftCurlToken leftCurlToken,
                             @NotNull BasicBlockImpl block,
-                            @Nullable EndKeyword endKeyword) {
+                            @Nullable RightCurlToken rightCurlToken) {
 
         this.nodeContext = new IfNodeContext();
         this.ifKeyword = ifKeyword;
         this.conditionExpression = condition;
         condition.setParent(this);
-        this.thenKeyword = thenKeyword;
+        this.leftCurlToken = leftCurlToken;
         this.basicBlock = block;
         block.setParent(this);
-        this.endKeyword = endKeyword;
+        this.rightCurlToken = rightCurlToken;
     }
 
     public void setElseExpression(@NotNull ElseExpression elseExpression) {

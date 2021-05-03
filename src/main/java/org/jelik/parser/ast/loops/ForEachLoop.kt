@@ -26,8 +26,7 @@ import org.jelik.parser.ast.labels.LabelNode
 import org.jelik.parser.ast.types.InferredTypeRef
 import org.jelik.parser.ast.types.InnerInferredTypeRef
 import org.jelik.parser.ast.visitors.AstVisitor
-import org.jelik.parser.token.keyword.DoKeyword
-import org.jelik.parser.token.keyword.EndKeyword
+import org.jelik.parser.token.Token
 import org.jelik.parser.token.keyword.ForKeyword
 import org.jelik.parser.token.keyword.InKeyword
 import org.jelik.types.JVMVoidType
@@ -45,9 +44,9 @@ class ForEachLoop(
     private val varExpr: LoopVar,
     private val inKeyword: InKeyword,
     private var iterExpression: Expression,
-    private val doKeyword: DoKeyword,
+    private val left: Token,
     private val block: BasicBlockImpl,
-    private val endKeyword: EndKeyword
+    private val right: Token
 ) : ExpressionWithType() {
 
     lateinit var loopStart: LabelNode
@@ -93,15 +92,15 @@ class ForEachLoop(
     }
 
     override fun getEndCol(): Int {
-        return endKeyword.endCol
+        return right.endCol
     }
 
     override fun getEndRow(): Int {
-        return endKeyword.endRow
+        return right.endRow
     }
 
     override fun toString(): String {
-        return "$forKeyword $varExpr $inKeyword $iterExpression $doKeyword $block $endKeyword"
+        return "$forKeyword $varExpr $inKeyword $iterExpression $left $block $right"
     }
 
     fun getForEachASMProvider(compilationContext: CompilationContext): ForEachASMProvider {

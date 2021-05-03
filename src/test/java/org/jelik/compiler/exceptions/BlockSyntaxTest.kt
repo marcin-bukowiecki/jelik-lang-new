@@ -12,44 +12,31 @@ class BlockSyntaxTest {
     fun testBlock_1() {
         val expr = """
             fun expr() {
-                if true do
+                if true 
                 
                 }
             }
         """.trimIndent()
         FunctionCompiler.getInstance()
-            .compileAndExpectError(expr, "Expected then keyword")
+            .compileAndExpectError(expr, "Expected '{'")
     }
 
     @Test
     fun testBlock_2() {
         val expr = """
             fun expr() {
-                if true then
-                
-                }
-            }
         """.trimIndent()
         FunctionCompiler.getInstance()
-            .compileAndExpectError(expr, "Unexpected token")
+            .compileAndExpectError(expr, "Expected '}'")
     }
 
     @Test
     fun testBlock_3() {
         val expr = """
             fun expr() {
+                if true tasda
         """.trimIndent()
         FunctionCompiler.getInstance()
-            .compileAndExpectError(expr, "Expected right curl")
-    }
-
-    @Test
-    fun testBlock_4() {
-        val expr = """
-            fun expr() {
-                if true then
-        """.trimIndent()
-        FunctionCompiler.getInstance()
-            .compileAndExpectError(expr, "Unexpected token")
+            .compileAndExpectError(expr, "Expected '{'")
     }
 }

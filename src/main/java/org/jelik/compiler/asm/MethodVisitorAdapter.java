@@ -271,7 +271,7 @@ public class MethodVisitorAdapter {
     }
 
     public void intStore(int index) {
-        stackMap.popFromStack();
+        //stackMap.popFromStack();
         mv.visitVarInsn(Opcodes.ISTORE, index);
     }
 

@@ -64,8 +64,7 @@ public class BlockVisitor implements TokenVisitor<BasicBlockImpl> {
         final Lexer lexer = parseContext.getLexer();
 
         while (lexer.hasNextToken() &&
-                lexer.peekNext().getTokenType() != ElementType.rightCurl &&
-                lexer.peekNext().getTokenType() != ElementType.endKeyword) {
+                lexer.peekNext().getTokenType() != ElementType.rightCurl) {
 
             Token nextToken = lexer.nextToken();
             nextToken.accept(this, parseContext);

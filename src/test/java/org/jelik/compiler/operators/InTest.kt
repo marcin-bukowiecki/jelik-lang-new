@@ -22,9 +22,9 @@ class InTest {
     fun inListTest_2() {
         val expr = "import java.util.List\n" +
                 "fun expr(a List<Int>) -> Boolean { \n" +
-                "if 123 in a then\n" +
+                "if 123 in a {\n" +
                 "   ret true\n" +
-                "end\n" +
+                "}\n" +
                 "ret false\n" +
                 "}";
         FunctionCompiler.getInstance()
@@ -37,9 +37,9 @@ class InTest {
     fun inListTest_3() {
         val expr = "import java.util.List\n" +
                 "fun expr(a List<Int>) -> Boolean { \n" +
-                "if 123 in a then\n" +
+                "if 123 in a {\n" +
                 "   ret true\n" +
-                "end\n" +
+                "}\n" +
                 "ret false\n" +
                 "}";
         FunctionCompiler.getInstance()

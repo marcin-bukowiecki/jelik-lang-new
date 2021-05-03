@@ -56,17 +56,6 @@ public class CompileException extends RuntimeException {
         this.endRow = astNode.getEndRow();
     }
 
-/*
-    public CompileException(String message, ASTNode astNode, String fileName) {
-        super(message);
-        this.fileName = fileName;
-        this.message = message;
-        //this.startCol = astNode.getStartCol();
-        //this.startRow = astNode.getLineNumber();
-        //this.endCol = astNode.getEndCol();
-        //this.endRow = astNode.getEndRow();
-    }
-*/
     public CompileException(String message, int startRow, int startCol, int endRow, int endCol, String fileName) {
         super(message);
         this.fileName = fileName;

@@ -1,6 +1,7 @@
 package org.jelik.parser.ast.functions;
 
 import org.jelik.compiler.config.CompilationContext;
+import org.jelik.parser.ast.ASTNodeImpl;
 import org.jelik.parser.ast.blocks.BasicBlockImpl;
 import org.jelik.parser.ast.labels.LabelNode;
 import org.jelik.parser.ast.visitors.AstVisitor;
@@ -8,12 +9,10 @@ import org.jelik.parser.token.LeftCurlToken;
 import org.jelik.parser.token.RightCurlToken;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-
 /**
  * @author Marcin Bukowiecki
  */
-public class FunctionBodyBlock extends FunctionBody {
+public class FunctionBodyBlock extends ASTNodeImpl implements FunctionBody {
 
     private final LeftCurlToken leftCurlToken;
 
@@ -70,11 +69,6 @@ public class FunctionBodyBlock extends FunctionBody {
         return leftCurlToken.toString() + "\n" +
                bb.toString() +
                rightCurlToken.toString() + "\n";
-    }
-
-    @Override
-    public String getSymbol() {
-        throw new UnsupportedOperationException();
     }
 
     @Override

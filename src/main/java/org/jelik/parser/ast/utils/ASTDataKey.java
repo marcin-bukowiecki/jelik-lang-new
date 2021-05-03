@@ -1,10 +1,11 @@
 package org.jelik.parser.ast.utils;
 
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.jelik.parser.ast.labels.LabelNode;
-import org.jetbrains.annotations.NotNull;
+import org.jelik.types.Type;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -20,6 +21,10 @@ public class ASTDataKey<T> {
 
     public static final ASTDataKey<LabelNode> LABEL_NODE = new ASTDataKey<>(null);
 
+    public static final ASTDataKey<List<Type>> PROVIDED_ARGUMENT_TYPES = new ASTDataKey<>(Collections.emptyList());
+
+    public static final ASTDataKey<MutableInt> LAMBDA_ID_COUNTER = new ASTDataKey<>(null);
+
     private final T defaultValue;
 
     public ASTDataKey(@Nullable T defaultValue) {
@@ -29,12 +34,5 @@ public class ASTDataKey<T> {
     @Nullable
     public T getDefaultValue() {
         return defaultValue;
-    }
-
-    public static @NotNull List<@NotNull ASTDataKey<?>> getAllKeys() {
-        return Arrays.asList(
-                IS_IGNORED,
-                IS_ABSTRACT
-        );
     }
 }

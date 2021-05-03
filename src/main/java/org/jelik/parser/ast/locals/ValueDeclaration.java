@@ -62,7 +62,7 @@ public class ValueDeclaration extends ExpressionWrapper implements Statement, Wi
     public String toString() {
         return valKeyword.toString() + " " +
                 literalToken.toString() + " " +
-                assignOperator.toString() + " " +
-                (typeNode != null ? typeNode.toString() : "") + getExpression().toString();
+                (typeNode != null ? typeNode.toString() : "") +
+                assignOperator.toString() + " " + getExpression().toString();
     }
 }

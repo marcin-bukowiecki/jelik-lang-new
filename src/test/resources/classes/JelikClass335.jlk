@@ -1,6 +1,5 @@
-import java.util.stream.Stream
-import java.util.stream.Collectors
-
-fun ints(stream Stream<Int>) -> Int {
-   ret stream.collect(Collectors.toList()).get(0)
+import java.io.Serializable
+fun call() -> String { ret c<String>(Integer.valueOf(100).toString()) }
+fun c<T : Serializable>(arg T) -> T {
+   ret "" + arg as T + 123
 }

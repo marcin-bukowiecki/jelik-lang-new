@@ -13,7 +13,7 @@ import org.objectweb.asm.Type
  */
 object InvokeDynamicHelper {
 
-    fun codeGen(mv: MethodVisitorAdapter, targetFunction: MethodData, functionReferenceMethod: FunctionReferenceMethodData) {
+    fun codeGen(mv: MethodVisitorAdapter, targetFunction: MethodData, functionalMethodName: String) {
         val targetFunctionName = targetFunction.name
         val targetFunctionDescriptor = targetFunction.descriptor
         val owner = targetFunction.owner.internalName
@@ -54,7 +54,7 @@ object InvokeDynamicHelper {
 
         mv
                 .visitInvokeDynamicInsn(
-                        functionReferenceMethod.name,  //method name
+                        functionalMethodName,
                         methodSignature,  //method signature
                         lambdaMetaFactoryHandler,
                         Type.getMethodType(Type.getType(JVMObjectType.INSTANCE.descriptor), *interfaceArgs),

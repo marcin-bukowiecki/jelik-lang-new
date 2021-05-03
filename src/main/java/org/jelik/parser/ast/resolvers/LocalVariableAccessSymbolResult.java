@@ -1,6 +1,7 @@
 package org.jelik.parser.ast.resolvers;
 
 import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.data.FunctionReferenceMethodData;
 import org.jelik.compiler.data.MethodData;
 import org.jelik.compiler.helper.CompilerHelper;
 import org.jelik.compiler.locals.LocalVariable;
@@ -12,11 +13,11 @@ import org.jelik.parser.ast.locals.GetLocalNode;
 import org.jelik.parser.ast.locals.StoreLocalNode;
 import org.jelik.parser.ast.operators.AssignExpr;
 import org.jelik.parser.token.LiteralToken;
-import org.jelik.types.FunctionType;
 import org.jelik.types.UnresolvedFunctionType;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Marcin Bukowiecki
@@ -38,8 +39,7 @@ public class LocalVariableAccessSymbolResult implements FindSymbolResult {
             newExpr.setParent(literalExpr.getParent());
             newExpr.getParent().replaceWith(literalExpr, newExpr);
             return newExpr;
-        }
-        else {
+        } else {
             var newExpr = new GetLocalNode(literalToken, localVariable);
             newExpr.setParent(literalExpr.getParent());
             newExpr.getParent().replaceWith(literalExpr, newExpr);
@@ -50,20 +50,22 @@ public class LocalVariableAccessSymbolResult implements FindSymbolResult {
     @Override
     public List<? extends MethodData> findMethodData(FunctionCall caller, CompilationContext compilationContext) {
         if (localVariable.isFunctionReference()) {
+            var ref = localVariable.getFunctionReference().orElseThrow();
             if (localVariable.getType() instanceof UnresolvedFunctionType) {
-                if (!TypeInferenceWalker.INSTANCE
-                        .resolveTargetCallForFunctionReference(localVariable, caller, compilationContext)) {
+                if (!TypeInferenceWalker.INSTANCE.resolveTargetCallForFunctionReference(localVariable,
+                        caller,
+                        compilationContext)) {
+
                     CompilerHelper.INSTANCE.raiseTypeCompileError("type.function.unresolvedReference", caller);
                     return Collections.emptyList();
                 }
             }
-            var ft = (FunctionType) localVariable.getType();
-            return ft
-                    .getFunctionalInterfaceMethod(localVariable, compilationContext)
-                    .map(Collections::singletonList)
-                    .orElse(Collections.emptyList());
-        }
-        else {
+            return ref.getPossibleFunctionsToCall().stream()
+                    .map(m -> new FunctionReferenceMethodData(ref,
+                            mv -> { mv.aload(localVariable.index); return null; },
+                            m.getFunctionType().getFunctionalInterfaceMethod(compilationContext)))
+                    .collect(Collectors.toList());
+        } else {
             return localVariable.getType().findMethodData(caller.getName(), compilationContext);
         }
     }

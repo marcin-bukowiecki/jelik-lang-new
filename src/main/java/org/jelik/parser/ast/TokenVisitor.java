@@ -32,10 +32,8 @@ import org.jelik.parser.token.keyword.CatchKeyword;
 import org.jelik.parser.token.keyword.ClassKeyword;
 import org.jelik.parser.token.keyword.ConstructorKeyword;
 import org.jelik.parser.token.keyword.ContinueKeyword;
-import org.jelik.parser.token.keyword.DoKeyword;
 import org.jelik.parser.token.keyword.ElifKeyword;
 import org.jelik.parser.token.keyword.ElseKeyword;
-import org.jelik.parser.token.keyword.EndKeyword;
 import org.jelik.parser.token.keyword.ExtKeyword;
 import org.jelik.parser.token.keyword.FinallyKeyword;
 import org.jelik.parser.token.keyword.ForKeyword;
@@ -52,7 +50,6 @@ import org.jelik.parser.token.keyword.PublicKeyword;
 import org.jelik.parser.token.keyword.ReturnKeyword;
 import org.jelik.parser.token.keyword.StaticKeyword;
 import org.jelik.parser.token.keyword.SuperKeyword;
-import org.jelik.parser.token.keyword.ThenKeyword;
 import org.jelik.parser.token.keyword.ThrowKeyword;
 import org.jelik.parser.token.keyword.TryKeyword;
 import org.jelik.parser.token.keyword.ValKeyword;
@@ -206,14 +203,6 @@ public interface TokenVisitor<T extends ASTNode> {
 
     default void visitAssign(AssignOperator assignOperator, ParseContext parseContext) {
         throw new SyntaxException("Unexpected token", assignOperator, parseContext.getCurrentFilePath());
-    }
-
-    default void visit(ThenKeyword thenKeyword, ParseContext parseContext) {
-        throw new SyntaxException("Unexpected token", thenKeyword, parseContext.getCurrentFilePath());
-    }
-
-    default void visit(EndKeyword endKeyword, ParseContext parseContext) {
-        throw new SyntaxException("Unexpected token", endKeyword, parseContext.getCurrentFilePath());
     }
 
     default void visit(ApostropheToken apostropheToken, ParseContext parseContext) {
@@ -370,10 +359,6 @@ public interface TokenVisitor<T extends ASTNode> {
 
     default void visitInKeyword(@NotNull InKeyword inKeyword, @NotNull ParseContext parseContext) {
         throw new SyntaxException("Unexpected token", inKeyword, parseContext.getCurrentFilePath());
-    }
-
-    default void visitDoKeyword(@NotNull DoKeyword doKeyword, @NotNull ParseContext parseContext) {
-        throw new SyntaxException("Unexpected token", doKeyword, parseContext.getCurrentFilePath());
     }
 
     default void visitContinueKeyword(@NotNull ContinueKeyword continueKeyword, @NotNull ParseContext parseContext) {
