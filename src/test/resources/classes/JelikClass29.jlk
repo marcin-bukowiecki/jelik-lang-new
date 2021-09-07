@@ -1,1 +1,1 @@
-fun expr() -> []Byte {   ret [1 as Byte, 2 as Byte, 3 as Byte]}
+fun expr() -> []Long {   ret [1]Long}

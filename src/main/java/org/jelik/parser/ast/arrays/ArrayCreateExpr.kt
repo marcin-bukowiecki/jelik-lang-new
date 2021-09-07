@@ -1,8 +1,8 @@
 package org.jelik.parser.ast.arrays
 
-import org.jelik.compiler.config.CompilationContext
+import org.jelik.compiler.CompilationContext
 import org.jelik.parser.ast.expression.Expression
-import org.jelik.parser.ast.expression.ExpressionWithType
+import org.jelik.parser.ast.expression.TypedExpression
 import org.jelik.parser.ast.visitors.AstVisitor
 import org.jelik.parser.token.LeftBracketToken
 import org.jelik.parser.token.RightBracketToken
@@ -14,7 +14,7 @@ import org.jelik.parser.token.RightBracketToken
  */
 open class ArrayCreateExpr(protected val leftBracket: LeftBracketToken,
                            val expressions: MutableList<Expression>,
-                           protected val rightBracket: RightBracketToken) : ExpressionWithType() {
+                           protected val rightBracket: RightBracketToken) : TypedExpression() {
 
     init {
         expressions.forEach { expr -> expr.parent = this }
@@ -35,20 +35,12 @@ open class ArrayCreateExpr(protected val leftBracket: LeftBracketToken,
         astVisitor.visitArrayCreateExpr(this, compilationContext)
     }
 
-    override fun getStartCol(): Int {
-        return leftBracket.col
+    override fun getStartOffset(): Int {
+        return leftBracket.startOffset
     }
 
-    override fun getEndCol(): Int {
-        return rightBracket.col
-    }
-
-    override fun getStartRow(): Int {
-        return leftBracket.row
-    }
-
-    override fun getEndRow(): Int {
-        return rightBracket.row
+    override fun getEndOffset(): Int {
+        return rightBracket.endOffset
     }
 
     override fun toString(): String {

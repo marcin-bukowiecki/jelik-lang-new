@@ -1,1 +1,1 @@
-fun expr() -> Char {   ret [1 as Char, 2 as Char, 3 as Char][0]}
+fun expr() -> Byte {   ret [1 as Byte, 2 as Byte, 3 as Byte][0]}

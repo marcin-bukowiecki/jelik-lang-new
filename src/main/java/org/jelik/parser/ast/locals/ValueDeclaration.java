@@ -1,8 +1,6 @@
 package org.jelik.parser.ast.locals;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.compiler.locals.LocalVariable;
 import org.jelik.parser.ast.Statement;
 import org.jelik.parser.ast.expression.Expression;
@@ -13,12 +11,12 @@ import org.jelik.parser.token.LiteralToken;
 import org.jelik.parser.token.keyword.ValKeyword;
 import org.jelik.parser.token.operators.AssignOperator;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Marcin Bukowiecki
  */
-@Getter
-public class ValueDeclaration extends ExpressionWrapper implements Statement, WithLocalVariableDeclaration {
+public class ValueDeclaration extends ExpressionWrapper implements Statement, ValueOrVariableDeclaration {
 
     private final ValKeyword valKeyword;
 
@@ -28,13 +26,12 @@ public class ValueDeclaration extends ExpressionWrapper implements Statement, Wi
 
     private final AssignOperator assignOperator;
 
-    @Setter
     private LocalVariable localVariable;
 
     public ValueDeclaration(@NotNull ValKeyword valKeyword,
                             @NotNull LiteralToken literalToken,
-                            @NotNull TypeNode typeNode,
-                            @NotNull AssignOperator assignOperator,
+                            @Nullable TypeNode typeNode,
+                            @Nullable AssignOperator assignOperator,
                             @NotNull Expression expression) {
         super(expression);
         this.valKeyword = valKeyword;
@@ -43,14 +40,35 @@ public class ValueDeclaration extends ExpressionWrapper implements Statement, Wi
         this.assignOperator = assignOperator;
     }
 
+    @NotNull
+    public ValKeyword getValKeyword() {
+        return valKeyword;
+    }
+
+    @NotNull
     @Override
-    public int getStartCol() {
-        return valKeyword.getCol();
+    public LiteralToken getLiteralToken() {
+        return literalToken;
+    }
+
+    @NotNull
+    @Override
+    public TypeNode getTypeNode() {
+        return typeNode;
+    }
+
+    @NotNull
+    public AssignOperator getAssignOperator() {
+        return assignOperator;
     }
 
     @Override
-    public int getStartRow() {
-        return valKeyword.getRow();
+    public void setLocalVariable(@NotNull LocalVariable localVariable) {
+        this.localVariable = localVariable;
+    }
+
+    public LocalVariable getLocalVariable() {
+        return localVariable;
     }
 
     @Override
@@ -63,6 +81,16 @@ public class ValueDeclaration extends ExpressionWrapper implements Statement, Wi
         return valKeyword.toString() + " " +
                 literalToken.toString() + " " +
                 (typeNode != null ? typeNode.toString() : "") +
-                assignOperator.toString() + " " + getExpression().toString();
+                (assignOperator != null ? assignOperator.toString() : "") + getExpression().toString();
+    }
+
+    @Override
+    public int getStartOffset() {
+        return valKeyword.getStartOffset();
+    }
+
+    @Override
+    public int getEndOffset() {
+        return getExpression().getEndOffset();
     }
 }

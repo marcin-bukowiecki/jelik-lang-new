@@ -1,7 +1,7 @@
 package org.jelik.types
 
-import org.jelik.compiler.common.TypeEnum
-import org.jelik.compiler.config.CompilationContext
+import org.jelik.compiler.runtime.TypeEnum
+import org.jelik.compiler.CompilationContext
 import org.jelik.compiler.data.MethodData
 
 /**
@@ -9,13 +9,9 @@ import org.jelik.compiler.data.MethodData
  */
 open class FunctionType : Type {
 
-    constructor(clazz: Class<*>) : super(clazz) {
+    constructor(clazz: Class<*>) : super(clazz)
 
-    }
-
-    constructor(name: String, canonicalName: String) : super(name, canonicalName, TypeEnum.objectT) {
-
-    }
+    constructor(name: String, canonicalName: String) : super(name, canonicalName, TypeEnum.objectT)
 
     companion object {
 

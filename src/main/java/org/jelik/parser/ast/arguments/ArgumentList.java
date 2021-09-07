@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.arguments;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.ASTNodeImpl;
 import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.visitors.AstVisitor;
@@ -23,9 +23,9 @@ import java.util.stream.Collectors;
 public class ArgumentList extends ASTNodeImpl implements Expression {
 
     public static ArgumentList EMPTY = new ArgumentList(
-            new LeftParenthesisToken(-1,-1),
+            new LeftParenthesisToken(-1),
             Collections.emptyList(),
-            new RightParenthesisToken(-1, -1)
+            new RightParenthesisToken(-1)
     );
 
     private final LeftParenthesisToken leftParenthesisToken;
@@ -46,9 +46,9 @@ public class ArgumentList extends ASTNodeImpl implements Expression {
     }
 
     public ArgumentList(@NotNull Argument argument) {
-        this.leftParenthesisToken = new LeftParenthesisToken(-1,-1);
+        this.leftParenthesisToken = new LeftParenthesisToken(-1);
         this.arguments = Collections.singletonList(argument);
-        this.rightParenthesisToken = new RightParenthesisToken(-1, -1);
+        this.rightParenthesisToken = new RightParenthesisToken(-1);
         argument.setParent(this);
     }
 
@@ -65,23 +65,13 @@ public class ArgumentList extends ASTNodeImpl implements Expression {
     }
 
     @Override
-    public int getStartCol() {
-        return leftParenthesisToken.getCol();
+    public int getStartOffset() {
+        return leftParenthesisToken.getStartOffset();
     }
 
     @Override
-    public int getEndCol() {
-        return rightParenthesisToken.getCol();
-    }
-
-    @Override
-    public int getStartRow() {
-        return leftParenthesisToken.getRow();
-    }
-
-    @Override
-    public int getEndRow() {
-        return rightParenthesisToken.getRow();
+    public int getEndOffset() {
+        return rightParenthesisToken.getEndOffset();
     }
 
     @Override

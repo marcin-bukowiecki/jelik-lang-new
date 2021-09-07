@@ -1,6 +1,6 @@
 package org.jelik.parser.ast;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.token.Token;
 import org.jelik.parser.token.keyword.PackageKeyword;
@@ -24,23 +24,13 @@ public class PackageDeclaration extends ASTNodeImpl {
     }
 
     @Override
-    public int getStartCol() {
-        return packageKeyword.getCol();
+    public int getStartOffset() {
+        return packageKeyword.getStartOffset();
     }
 
     @Override
-    public int getStartRow() {
-        return packageKeyword.getRow();
-    }
-
-    @Override
-    public int getEndCol() {
-        return tokens.get(tokens.size()-1).getEndCol();
-    }
-
-    @Override
-    public int getEndRow() {
-        return tokens.get(tokens.size()-1).getEndRow();
+    public int getEndOffset() {
+        return tokens.get(tokens.size() - 1).getEndOffset();
     }
 
     @Override

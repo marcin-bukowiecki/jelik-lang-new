@@ -1,7 +1,1 @@
-ext fun Int getString() -> String {
-    ret this.toString()
-}
-
-fun expr() -> String {
-    ret 123.getString()
-}
+fun expr(a Object, b Object) -> Boolean { ret a.equals(b) and b.equals(a) }

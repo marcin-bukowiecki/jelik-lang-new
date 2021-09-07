@@ -1,7 +1,5 @@
-ext fun Int getString() -> String {
-    ret "foo"
-}
-
-fun expr() -> String {
-    ret 123.getString()
-}
+fun expr(a Object, b Object) -> Boolean { 
+ if a.equals(b) { 
+   ret true 
+} else {   ret false
+}}

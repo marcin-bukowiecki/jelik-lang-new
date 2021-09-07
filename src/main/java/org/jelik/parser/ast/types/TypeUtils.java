@@ -16,7 +16,7 @@
 
 package org.jelik.parser.ast.types;
 
-import org.jelik.compiler.common.TypeEnum;
+import org.jelik.compiler.runtime.TypeEnum;
 import org.jelik.parser.ast.ASTNode;
 import org.jelik.parser.ast.functions.ExtensionFunctionDeclaration;
 import org.jelik.parser.ast.utils.ASTUtils;

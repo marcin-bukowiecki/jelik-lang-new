@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.resolvers
 
-import org.jelik.compiler.config.CompilationContext
+import org.jelik.compiler.CompilationContext
 import org.jelik.compiler.data.MethodData
 import org.jelik.parser.ast.expression.Expression
 import org.jelik.parser.ast.LiteralExpr

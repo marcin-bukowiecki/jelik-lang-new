@@ -1,3 +1,1 @@
-fun expr() -> []Int {   val a = []Int(5)
-   a[2] = 123
-   ret a}
+fun expr() -> Int {   ret [1,2,3,4][3]}

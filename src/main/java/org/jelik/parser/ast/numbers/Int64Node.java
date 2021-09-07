@@ -1,7 +1,7 @@
 package org.jelik.parser.ast.numbers;
 
-import org.jelik.compiler.config.CompilationContext;
-import org.jelik.parser.ast.expression.ExpressionWithType;
+import org.jelik.compiler.CompilationContext;
+import org.jelik.parser.ast.expression.TypedExpression;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.token.LiteralToken;
 import org.jelik.types.jvm.JVMLongType;
@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Marcin Bukowiecki
  */
-public class Int64Node extends ExpressionWithType {
+public class Int64Node extends TypedExpression {
 
     private final LiteralToken literalToken;
 

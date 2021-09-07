@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.classes;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.compiler.data.ClassData;
 import org.jelik.compiler.model.CompilationUnit;
 import org.jelik.parser.ast.ImportDeclaration;
@@ -37,8 +37,8 @@ public class ModuleDeclaration extends ClassDeclaration implements CompilationUn
                              final PackageDeclaration packageDeclaration) {
         super(absolutePath,
                 Collections.emptyList(),
-                new ClassKeyword(-1, -1),
-                new LiteralToken(-1, -1, name),
+                new ClassKeyword(-1),
+                new LiteralToken(-1, name),
                 TypeVariableListNode.Companion.getEMPTY(),
                 Collections.emptyList(),
                 functionDeclarations,
@@ -54,6 +54,7 @@ public class ModuleDeclaration extends ClassDeclaration implements CompilationUn
         this.packageDeclaration = packageDeclaration;
         this.packageDeclaration.setParent(this);
         this.classes.forEach(c -> c.setParent(this));
+        this.interfaces.forEach(i -> i.setParent(this));
     }
 
     @NotNull

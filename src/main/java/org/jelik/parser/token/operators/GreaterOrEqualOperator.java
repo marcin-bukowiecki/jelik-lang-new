@@ -15,8 +15,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class GreaterOrEqualOperator extends AbstractOperator {
 
-    public GreaterOrEqualOperator(int row, int col) {
-        super(">=", row, col, ElementType.greaterOrEqualOperator);
+    public GreaterOrEqualOperator(int offset) {
+        super(">=", offset, ElementType.greaterOrEqualOperator);
     }
 
     @Override

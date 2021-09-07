@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ElseKeyword extends Token {
 
-    public ElseKeyword(int row, int col) {
-        super("else", row, col, ElementType.elseKeyword);
+    public ElseKeyword(int offset) {
+        super("else", offset, ElementType.elseKeyword);
     }
 
     @Override

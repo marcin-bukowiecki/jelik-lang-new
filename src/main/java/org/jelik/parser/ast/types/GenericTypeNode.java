@@ -1,7 +1,6 @@
 package org.jelik.parser.ast.types;
 
-import lombok.Getter;
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.types.InterfaceType;
 import org.jelik.types.Type;
@@ -14,7 +13,6 @@ import java.util.stream.Collectors;
  */
 public class GenericTypeNode extends TypeNode {
 
-    @Getter
     private final TypeNode singleTypeNode;
 
     private final TypeVariableListNode typeVariables;
@@ -22,6 +20,11 @@ public class GenericTypeNode extends TypeNode {
     public GenericTypeNode(@NotNull TypeNode singleTypeNode, @NotNull TypeVariableListNode typeVariables) {
         this.singleTypeNode = singleTypeNode;
         this.typeVariables = typeVariables;
+    }
+
+    @NotNull
+    public TypeNode getSingleTypeNode() {
+        return singleTypeNode;
     }
 
     public TypeVariableListNode getTypeVariables() {
@@ -34,23 +37,13 @@ public class GenericTypeNode extends TypeNode {
     }
 
     @Override
-    public int getStartCol() {
-        return singleTypeNode.getStartCol();
+    public int getStartOffset() {
+        return singleTypeNode.getStartOffset();
     }
 
     @Override
-    public int getStartRow() {
-        return singleTypeNode.getStartRow();
-    }
-
-    @Override
-    public int getEndCol() {
-        return typeVariables.getEndCol();
-    }
-
-    @Override
-    public int getEndRow() {
-        return typeVariables.getEndRow();
+    public int getEndOffset() {
+        return typeVariables.getEndOffset();
     }
 
     @Override

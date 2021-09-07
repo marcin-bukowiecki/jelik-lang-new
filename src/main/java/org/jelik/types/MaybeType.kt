@@ -1,6 +1,6 @@
 package org.jelik.types
 
-import org.jelik.compiler.config.CompilationContext
+import org.jelik.compiler.CompilationContext
 
 /**
  * Represents ? type i.e. String?, Int? etc.

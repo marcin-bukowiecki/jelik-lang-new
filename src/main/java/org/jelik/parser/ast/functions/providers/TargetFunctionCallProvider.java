@@ -2,7 +2,7 @@ package org.jelik.parser.ast.functions.providers;
 
 import kotlin.Unit;
 import kotlin.jvm.functions.Function3;
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.compiler.asm.MethodVisitorAdapter;
 import org.jelik.compiler.asm.visitor.ToByteCodeVisitor;
 import org.jelik.compiler.data.MethodData;

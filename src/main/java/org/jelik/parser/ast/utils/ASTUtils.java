@@ -1,6 +1,7 @@
 package org.jelik.parser.ast.utils;
 
 import org.jelik.compiler.exceptions.SyntaxException;
+import org.jelik.compiler.utils.TokenUtils;
 import org.jelik.parser.ParseContext;
 import org.jelik.parser.ast.ASTNode;
 import org.jelik.parser.ast.EmptyAstNode;
@@ -58,13 +59,13 @@ public class ASTUtils {
         return getModuleDeclaration(astNode.getParent());
     }
 
-    public static void checkNewLine(@NotNull Expression currentExpr,
-                                    @NotNull Token currentToken,
-                                    @NotNull ParseContext parseContext) {
+    public static void checkNewLine(@NotNull ParseContext parseContext,
+                                    @NotNull Expression currentExpr,
+                                    @NotNull Token nextToken) {
 
-        if (currentExpr.getEndRow() == currentToken.getRow()) {
-            throw new SyntaxException("Expected new line before: '" + currentToken.getText() + "'",
-                    currentToken,
+        if (!TokenUtils.isNewLine(parseContext, currentExpr.getEndOffset(), nextToken.getStartOffset())) {
+            throw new SyntaxException("Expected new line before: '" + nextToken.getText() + "'",
+                    nextToken,
                     parseContext.getCurrentFilePath());
         }
     }

@@ -1,2 +1,1 @@
-import java.util.List
-fun expr(a List<Int>) -> Boolean { ret a.size() > 1 }
+fun expr(a Double, b Float) -> Float {   ret a as Float / b}

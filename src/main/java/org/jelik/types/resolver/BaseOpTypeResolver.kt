@@ -1,14 +1,14 @@
 package org.jelik.types.resolver
 
-import org.jelik.compiler.config.CompilationContext
-import org.jelik.compiler.common.TypeEnum
+import org.jelik.compiler.CompilationContext
+import org.jelik.compiler.runtime.TypeEnum
 import org.jelik.compiler.exceptions.TypeCompileException
 import org.jelik.parser.ast.numbers.CharToInt64Node
 import org.jelik.parser.ast.numbers.Float32ToFloat64Node
 import org.jelik.parser.ast.numbers.Int32ToFloat32Node
 import org.jelik.parser.ast.numbers.Int32ToFloat64Node
 import org.jelik.parser.ast.numbers.Int32ToInt64Node
-import org.jelik.parser.ast.numbers.IntegerWrapperToInt32Node
+import org.jelik.parser.ast.numbers.IntegerToInt32NodeWrapper
 import org.jelik.parser.ast.operators.AbstractOpExpr
 import org.jelik.types.JVMIntType
 import org.jelik.types.Type
@@ -38,12 +38,18 @@ abstract class BaseOpTypeResolver {
             }
             TypeEnum.int32Wrapper -> when (rightType.getTypeEnum()) {
                 TypeEnum.int32Wrapper -> {
-                    opExpr.left.parent.replaceWith(opExpr.left, IntegerWrapperToInt32Node(opExpr.left))
-                    opExpr.right.parent.replaceWith(opExpr.right, IntegerWrapperToInt32Node(opExpr.right))
+                    opExpr.left.parent.replaceWith(opExpr.left,
+                        IntegerToInt32NodeWrapper(opExpr.left)
+                    )
+                    opExpr.right.parent.replaceWith(opExpr.right,
+                        IntegerToInt32NodeWrapper(opExpr.right)
+                    )
                     JVMIntType.INSTANCE
                 }
                 TypeEnum.int32 -> {
-                    opExpr.left.parent.replaceWith(opExpr.left, IntegerWrapperToInt32Node(opExpr.left))
+                    opExpr.left.parent.replaceWith(opExpr.left,
+                        IntegerToInt32NodeWrapper(opExpr.left)
+                    )
                     JVMIntType.INSTANCE
                 }
                 else -> throw createException(leftType, rightType, opExpr, compilationContext)
@@ -52,7 +58,9 @@ abstract class BaseOpTypeResolver {
             TypeEnum.int16,
             TypeEnum.int32 -> when (rightType.getTypeEnum()) {
                 TypeEnum.int32Wrapper -> {
-                    opExpr.right.parent.replaceWith(opExpr.right, IntegerWrapperToInt32Node(opExpr.right))
+                    opExpr.right.parent.replaceWith(opExpr.right,
+                        IntegerToInt32NodeWrapper(opExpr.right)
+                    )
                     JVMIntType.INSTANCE
                 }
                 TypeEnum.int8,

@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class LamKeyword extends Token {
 
-    public LamKeyword(int row, int col) {
-        super("lam", row, col, ElementType.lamKeyword);
+    public LamKeyword(int offset) {
+        super("lam", offset, ElementType.lamKeyword);
     }
 
     @Override

@@ -1,1 +1,1 @@
-fun expr() -> []Long {   ret []Long}
+fun expr() -> []String {   ret ["foo","bar"]String)}

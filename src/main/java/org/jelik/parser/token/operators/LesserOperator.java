@@ -13,8 +13,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class LesserOperator extends AbstractOperator {
 
-    public LesserOperator(int row, int col) {
-        super("<", row, col, ElementType.lesserOperator);
+    public LesserOperator(int offset) {
+        super("<", offset, ElementType.lesserOperator);
     }
 
     @Override

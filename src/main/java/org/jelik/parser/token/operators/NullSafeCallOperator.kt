@@ -10,7 +10,7 @@ import org.jelik.parser.token.Token
  *
  * @author Marcin Bukowiecki
  */
-class NullSafeCallOperator(row: Int, col: Int) : Token("?.", row, col, ElementType.nullSafeCall) {
+class NullSafeCallOperator(offset: Int) : Token("?.", offset, ElementType.nullSafeCall) {
 
     override fun accept(tokenVisitor: TokenVisitor<*>, parseContext: ParseContext) {
         tokenVisitor.visitNullSafeCallOperator(this, parseContext);

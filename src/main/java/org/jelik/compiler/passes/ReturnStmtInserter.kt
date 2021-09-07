@@ -1,9 +1,10 @@
 package org.jelik.compiler.passes
 
-import org.jelik.compiler.config.CompilationContext
+import org.jelik.compiler.CompilationContext
 import org.jelik.parser.ast.ReturnExpr
 import org.jelik.parser.ast.blocks.BasicBlock
 import org.jelik.parser.ast.functions.FunctionDeclaration
+import org.jelik.parser.ast.locals.ValueOrVariableDeclaration
 import org.jelik.parser.ast.visitors.AstVisitor
 
 /**
@@ -23,6 +24,7 @@ object ReturnStmtInserter : AstVisitor() {
 
     override fun visitBasicBlock(bb: BasicBlock, compilationContext: CompilationContext) {
         super.visitBasicBlock(bb, compilationContext)
+        if (bb.parent is ValueOrVariableDeclaration) return
         val currentFunction = compilationContext.currentFunction()
         if (currentFunction.returnType.isVoid) {
             if (bb.expressions.isEmpty() || bb.expressions.last() !is ReturnExpr) {

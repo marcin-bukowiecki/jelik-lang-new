@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class OperatorKeyword extends Token {
 
-    public OperatorKeyword(int row, int col) {
-        super("operator", row, col, ElementType.operatorKeyword);
+    public OperatorKeyword(int offset) {
+        super("operator", offset, ElementType.operatorKeyword);
     }
 
     @Override

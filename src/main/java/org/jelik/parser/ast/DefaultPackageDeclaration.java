@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class DefaultPackageDeclaration extends PackageDeclaration {
 
-    public static final DefaultPackageDeclaration INSTANCE = new DefaultPackageDeclaration(new PackageKeyword(-1,-1), Collections.emptyList());
+    public static final DefaultPackageDeclaration INSTANCE = new DefaultPackageDeclaration(new PackageKeyword(-1), Collections.emptyList());
 
 
     public DefaultPackageDeclaration(PackageKeyword packageKeyword, List<Token> tokens) {

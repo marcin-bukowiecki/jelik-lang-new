@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class SuperKeyword extends Token {
 
-    public SuperKeyword(int row, int col) {
-        super("super", row, col, ElementType.superKeyword);
+    public SuperKeyword(int offset) {
+        super("super", offset, ElementType.superKeyword);
     }
 
     @Override

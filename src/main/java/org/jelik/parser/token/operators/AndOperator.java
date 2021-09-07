@@ -13,8 +13,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class AndOperator extends AbstractOperator {
 
-    public AndOperator(int row, int col) {
-        super("and", row, col, ElementType.andOperator);
+    public AndOperator(int offset) {
+        super("and", offset, ElementType.andOperator);
     }
 
     @Override

@@ -18,6 +18,12 @@ package org.jelik.compiler;
 
 import org.jelik.compiler.cl.JelikClassLoader;
 
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * @author Marcin Bukowiecki
+ */
 public final class JelikCompileConfig {
 
     private final boolean printCompilerException;
@@ -34,23 +40,24 @@ public final class JelikCompileConfig {
 
     private final boolean createFiles;
 
-    private final String jelikHome;
-
     private final boolean loadClasses;
 
     private final JelikClassLoader jelikClassLoader;
 
-    public JelikCompileConfig(boolean printCompilerException,
+    private final List<String> filesToCompile;
+
+    public JelikCompileConfig(List<String> filesToCompile,
+                              boolean printCompilerException,
                               String outputDirectory,
                               String inputDirectory,
                               boolean printByteCode,
                               boolean logEnabled,
                               boolean run,
                               boolean createFiles,
-                              String jelikHome,
                               boolean loadClasses,
                               JelikClassLoader jelikClassLoader) {
 
+        this.filesToCompile = filesToCompile;
         this.printCompilerException = printCompilerException;
         this.outputDirectory = outputDirectory;
         this.inputDirectory = inputDirectory;
@@ -58,9 +65,12 @@ public final class JelikCompileConfig {
         this.logEnabled = logEnabled;
         this.run = run;
         this.createFiles = createFiles;
-        this.jelikHome = jelikHome;
         this.loadClasses = loadClasses;
         this.jelikClassLoader = jelikClassLoader;
+    }
+
+    public List<String> getFilesToCompile() {
+        return filesToCompile;
     }
 
     public JelikClassLoader getJelikClassLoader() {
@@ -99,11 +109,9 @@ public final class JelikCompileConfig {
         return loadClasses;
     }
 
-    public String getJelikHome() {
-        return jelikHome;
-    }
-
     public static class Builder {
+
+        private List<String> filesToCompile = Collections.emptyList();
 
         private boolean printCompilerException = true;
 
@@ -121,9 +129,12 @@ public final class JelikCompileConfig {
 
         private boolean createFiles = true;
 
-        private String jelikHome = "";
-
         private boolean loadClasses = false;
+
+        public Builder setFilesToCompile(List<String> filesToCompile) {
+            this.filesToCompile = filesToCompile;
+            return this;
+        }
 
         public Builder setJelikClassLoader(JelikClassLoader jelikClassLoader) {
             this.jelikClassLoader = jelikClassLoader;
@@ -165,19 +176,24 @@ public final class JelikCompileConfig {
             return this;
         }
 
-        public Builder setJelikHome(String jelikHome) {
-            this.jelikHome = jelikHome;
-            return this;
-        }
-
         public Builder setLoadClasses(boolean loadClasses) {
             this.loadClasses = loadClasses;
             return this;
         }
 
         public JelikCompileConfig build() {
-            return new JelikCompileConfig(printCompilerException, outputDirectory, inputDirectory, printByteCode,
-                    logEnabled, run, createFiles, jelikHome, loadClasses, jelikClassLoader == null ? new JelikClassLoader("") : jelikClassLoader);
+            return new JelikCompileConfig(
+                    filesToCompile,
+                    printCompilerException,
+                    outputDirectory,
+                    inputDirectory,
+                    printByteCode,
+                    logEnabled,
+                    run,
+                    createFiles,
+                    loadClasses,
+                    jelikClassLoader == null ? new JelikClassLoader() : jelikClassLoader
+            );
         }
     }
 }

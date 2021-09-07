@@ -1,6 +1,6 @@
 package org.jelik.types.resolver;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.compiler.exceptions.TypeCompileException;
 import org.jelik.parser.ast.functions.FunctionDeclaration;
 import org.jelik.parser.ast.functions.CodeEvent;

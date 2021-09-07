@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.resolvers;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.compiler.exceptions.SyntaxException;
 import org.jelik.compiler.locals.LocalVariable;
 import org.jelik.parser.ast.GetFieldNode;
@@ -13,14 +13,14 @@ import org.jelik.parser.ast.arrays.ArrayOrMapGetExpr;
 import org.jelik.parser.ast.arrays.ArrayOrMapSetExpr;
 import org.jelik.parser.ast.expression.CatchExpression;
 import org.jelik.parser.ast.expression.Expression;
-import org.jelik.parser.ast.expression.ParenthesisExpression;
+import org.jelik.parser.ast.expression.ParenthesisExpressionWrapper;
 import org.jelik.parser.ast.functions.ConstructorDeclaration;
 import org.jelik.parser.ast.functions.FunctionBodyBlock;
 import org.jelik.parser.ast.functions.FunctionCallExpr;
 import org.jelik.parser.ast.functions.FunctionDeclaration;
 import org.jelik.parser.ast.locals.ValueDeclaration;
+import org.jelik.parser.ast.locals.ValueOrVariableDeclaration;
 import org.jelik.parser.ast.locals.VariableDeclaration;
-import org.jelik.parser.ast.locals.WithLocalVariableDeclaration;
 import org.jelik.parser.ast.loops.ForEachLoop;
 import org.jelik.parser.ast.nullsafe.NullSafeCallExpr;
 import org.jelik.parser.ast.operators.AssignExpr;
@@ -57,7 +57,7 @@ public class LocalVariableAndLiteralResolver extends AstVisitor {
     }
 
     @Override
-    public void visit(@NotNull ParenthesisExpression parenthesisExpression,
+    public void visit(@NotNull ParenthesisExpressionWrapper parenthesisExpression,
                       @NotNull CompilationContext compilationContext) {
 
         parenthesisExpression.getParent().replaceWith(parenthesisExpression, parenthesisExpression.getExpression());
@@ -79,25 +79,25 @@ public class LocalVariableAndLiteralResolver extends AstVisitor {
     }
 
     @Override
-    public void visitWithLocalVariable(@NotNull WithLocalVariableDeclaration withLocalVariable,
+    public void visitWithLocalVariable(@NotNull ValueOrVariableDeclaration valueOrVariableDeclaration,
                                        @NotNull CompilationContext compilationContext) {
 
-        Objects.requireNonNull(withLocalVariable.getExpression());
-        withLocalVariable.getExpression().accept(this, compilationContext);
-        var typeNode = withLocalVariable.getTypeNode();
+        Objects.requireNonNull(valueOrVariableDeclaration.getExpression());
+        valueOrVariableDeclaration.getExpression().accept(this, compilationContext);
+        var typeNode = valueOrVariableDeclaration.getTypeNode();
         final AbstractTypeRef typeRef;
         if (typeNode == UndefinedTypeNode.UNDEFINED_TYPE_NODE) {
-            typeRef = new TypeNodeRef(withLocalVariable.getTypeNode());
+            typeRef = new TypeNodeRef(valueOrVariableDeclaration.getTypeNode());
         } else {
-            typeRef = new InferredTypeRef(withLocalVariable.getExpression());
+            typeRef = new InferredTypeRef(valueOrVariableDeclaration.getExpression());
         }
-        LocalVariable localVariable = new LocalVariable(withLocalVariable.getLiteralToken().getText(),
+        LocalVariable localVariable = new LocalVariable(valueOrVariableDeclaration.getLiteralToken().getText(),
                 typeRef,
                 false);
         compilationContext.blockStack.getLast().getBlockContext().addLocal(localVariable.getName(), localVariable);
         var functionDeclaration = (FunctionDeclaration) compilationContext.currentCompilationUnit();
         functionDeclaration.getFunctionContext().addLocalVariable(localVariable);
-        withLocalVariable.setLocalVariable(localVariable);
+        valueOrVariableDeclaration.setLocalVariable(localVariable);
     }
 
     @Override
@@ -132,7 +132,7 @@ public class LocalVariableAndLiteralResolver extends AstVisitor {
     @Override
     public void visit(@NotNull LiteralExpr literalExpr, @NotNull CompilationContext compilationContext) {
         if (literalExpr.getParent() instanceof ReferenceExpressionImpl &&
-                ((ReferenceExpressionImpl) literalExpr.getParent()).getReference() instanceof TypeAccessNode) {
+                ((ReferenceExpressionImpl) literalExpr.getParent()).getReference() instanceof TypeAccessNodeTyped) {
 
             literalExpr
                     .getParent()

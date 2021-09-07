@@ -1,2 +1,2 @@
-fun expr(a Double, b Double) -> Boolean {
-   ret a == b and a == b}
+fun expr(a Int) -> Short { val b = 10 
+ ret (a band b) as Short }

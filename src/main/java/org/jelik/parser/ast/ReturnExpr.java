@@ -1,6 +1,6 @@
 package org.jelik.parser.ast;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.expression.EmptyExpression;
 import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.expression.ExpressionWrapper;
@@ -27,23 +27,16 @@ public class ReturnExpr extends ExpressionWrapper implements ConsumingExpression
     }
 
     @Override
-    public int getStartRow() {
-        return returnKeyword.getRow();
+    public int getStartOffset() {
+        return returnKeyword.getStartOffset();
     }
 
     @Override
-    public int getStartCol() {
-        return returnKeyword.getCol();
-    }
-
-    @Override
-    public int getEndCol() {
-        return getExpression().getEndCol();
-    }
-
-    @Override
-    public int getEndRow() {
-        return getExpression().getEndRow();
+    public int getEndOffset() {
+        if (getExpression() == null) {
+            return returnKeyword.getEndOffset();
+        }
+        return getExpression().getEndOffset();
     }
 
     public Token getReturnKeyword() {

@@ -1,7 +1,6 @@
 package org.jelik.parser.ast.functions
 
-import org.jelik.compiler.config.CompilationContext
-import org.jelik.compiler.data.FunctionReferenceMethodData
+import org.jelik.compiler.CompilationContext
 import org.jelik.compiler.data.MethodData
 import org.jelik.parser.ast.ASTNodeImpl
 import org.jelik.parser.ast.expression.Expression
@@ -47,7 +46,11 @@ class LambdaDeclarationExpression(val lambdaDeclaration: LambdaDeclaration) : AS
         return listOf(lambdaDeclaration)
     }
 
-    override fun getEndRow(): Int {
-        return lambdaDeclaration.endRow
+    override fun getStartOffset(): Int {
+        return lambdaDeclaration.startOffset
+    }
+
+    override fun getEndOffset(): Int {
+        return lambdaDeclaration.endOffset
     }
 }

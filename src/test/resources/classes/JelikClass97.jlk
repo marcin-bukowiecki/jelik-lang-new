@@ -1,14 +1,1 @@
-
-            import java.util.List
-            import java.util.Iterator
-
-            fun expr(a Iterator<Int>, b List<Int>) -> Int {
-                var c = 123
-                if a.hasNext() and b.size() > 1 {
-                    c = 1
-                } elif b.size() > 100 {
-                    c = 2
-                }    
-                ret c
-            }
-        
+fun expr(a Float) -> Boolean { ret a < 0 or a < 123 }

@@ -1,7 +1,7 @@
 package org.jelik.parser.ast.blocks;
 
 import com.google.common.collect.ImmutableList;
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.ASTNode;
 import org.jelik.parser.ast.ASTNodeImpl;
 import org.jelik.parser.ast.ReturnExpr;
@@ -93,16 +93,6 @@ public class BasicBlockImpl extends ASTNodeImpl implements BasicBlock {
         } else {
             return expressions.get(expressions.size() - 1).getGenericType();
         }
-    }
-
-    @Override
-    public void setType(@NotNull Type type) {
-
-    }
-
-    @Override
-    public void setGenericType(@NotNull Type type) {
-
     }
 
     @Override

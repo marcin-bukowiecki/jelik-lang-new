@@ -1,11 +1,8 @@
 package org.jelik.parser.ast.blocks;
 
 import com.google.common.collect.Maps;
-import lombok.Data;
 import org.jelik.compiler.locals.LocalVariable;
 import org.jelik.parser.ast.context.NodeContext;
-import org.jelik.parser.ast.labels.LabelNode;
-import org.objectweb.asm.Label;
 
 import java.util.Collections;
 import java.util.Map;

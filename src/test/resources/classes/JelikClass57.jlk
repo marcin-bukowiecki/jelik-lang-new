@@ -1,1 +1,1 @@
-fun expr() -> []Double {   ret [1]Double}
+fun test {

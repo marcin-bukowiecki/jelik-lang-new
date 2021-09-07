@@ -1,6 +1,5 @@
 package org.jelik.parser.ast.context;
 
-import lombok.EqualsAndHashCode;
 import org.jelik.parser.ast.types.AbstractTypeRef;
 
 /**
@@ -10,7 +9,6 @@ import org.jelik.parser.ast.types.AbstractTypeRef;
  *
  * @author Marcin Bukowiecki
  */
-@EqualsAndHashCode(callSuper = true)
 public class TypedRefNodeContext extends NodeContext {
 
     private AbstractTypeRef typeRef;

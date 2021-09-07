@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class InterfaceKeyword extends Token {
 
-    public InterfaceKeyword(int row, int col) {
-        super("interface", row, col, ElementType.interfaceKeyword);
+    public InterfaceKeyword(int offset) {
+        super("interface", offset, ElementType.interfaceKeyword);
     }
 
     @Override

@@ -8,7 +8,6 @@ import org.jelik.parser.ast.resolvers.LocalVariableAccessSymbolResult;
 import org.jelik.parser.ast.types.AbstractTypeRef;
 import org.jelik.parser.ast.types.TypeNode;
 import org.jelik.types.Type;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 

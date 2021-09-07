@@ -16,7 +16,7 @@
 
 package org.jelik.parser.ast.loops
 
-import org.jelik.compiler.config.CompilationContext
+import org.jelik.compiler.CompilationContext
 import org.jelik.compiler.asm.MethodVisitorAdapter
 import org.jelik.compiler.asm.visitor.ToByteCodeVisitor
 import org.jelik.compiler.locals.LocalVariable

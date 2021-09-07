@@ -1,6 +1,6 @@
 package org.jelik.compiler.data;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.compiler.JelikCompiler;
 import org.jelik.types.JVMObjectType;
 

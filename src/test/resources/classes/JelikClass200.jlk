@@ -1,1 +1,7 @@
-fun expr(a Int, b Int) -> Boolean { ret a < 0 and b < 0 }
+import java.util.Collection
+import java.util.Map
+fun expr() -> Int {
+   val map Map<Int, Any> = mapOf{}
+   map[2] = 100
+   map[3] = "100"
+   ret len(map)}

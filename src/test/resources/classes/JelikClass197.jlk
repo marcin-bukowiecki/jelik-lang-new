@@ -1,1 +1,2 @@
-fun expr(a Int, b Int) -> Boolean { ret a < b and a < b }
+fun expression(a Int, b Int, c Int, d Int) -> Int {    val e = a + b * c + d 
+   ret e }

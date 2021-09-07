@@ -9,16 +9,16 @@ import org.jetbrains.annotations.NotNull;
  */
 public class LiteralToken extends Token {
 
-    public LiteralToken(int row, int col, String text) {
-        super(text, row, col, ElementType.literal);
+    public LiteralToken(int offset, String text) {
+        super(text, offset, ElementType.literal);
     }
 
     public LiteralToken(String text) {
-        super(text, -1, -1, ElementType.literal);
+        super(text, -1, ElementType.literal);
     }
 
-    public LiteralToken(int row, int col, String text, ElementType empty) {
-        super(text, row, col, empty);
+    public LiteralToken(int offset, String text, ElementType empty) {
+        super(text, offset, empty);
     }
 
     @Override

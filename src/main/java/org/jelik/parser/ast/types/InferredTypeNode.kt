@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.types
 
-import org.jelik.compiler.config.CompilationContext
+import org.jelik.compiler.CompilationContext
 import org.jelik.parser.ast.visitors.AstVisitor
 
 /**
@@ -12,8 +12,12 @@ class InferredTypeNode : TypeNode() {
         astVisitor.visitInferredTypeNode(this, compilationContext)
     }
 
-    override fun getEndRow(): Int {
-        throw UnsupportedOperationException()
+    override fun getStartOffset(): Int {
+        return -1
+    }
+
+    override fun getEndOffset(): Int {
+        return -1
     }
 
     override fun getSymbol(): String {

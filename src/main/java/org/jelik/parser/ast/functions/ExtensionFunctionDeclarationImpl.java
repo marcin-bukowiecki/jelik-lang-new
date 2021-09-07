@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.functions;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.types.TypeNode;
 import org.jelik.parser.ast.types.TypeVariableListNode;
 import org.jelik.parser.ast.visitors.AstVisitor;

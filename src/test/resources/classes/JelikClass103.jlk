@@ -1,3 +1,1 @@
-import java.util.Iterator
-import java.util.List
-fun expr(a Iterator<Int>, b List<Int>) -> Boolean { ret a.hasNext() and b.size() > 1}
+fun expr(a Double, b Long) -> Long {   ret a as Long / b}

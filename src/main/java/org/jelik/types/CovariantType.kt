@@ -1,7 +1,7 @@
 package org.jelik.types
 
-import org.jelik.compiler.config.CompilationContext
-import org.jelik.compiler.common.TypeEnum
+import org.jelik.compiler.CompilationContext
+import org.jelik.compiler.runtime.TypeEnum
 
 /**
  * @author Marcin Bukowiecki

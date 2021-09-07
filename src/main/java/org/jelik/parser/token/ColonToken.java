@@ -13,8 +13,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ColonToken extends AbstractOperator {
 
-    public ColonToken(int row, int col) {
-        super(":", row, col, ElementType.colon);
+    public ColonToken(int offset) {
+        super(":", offset, ElementType.colon);
     }
 
     @Override

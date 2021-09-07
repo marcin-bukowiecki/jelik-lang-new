@@ -9,8 +9,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class EofTok extends Token {
 
-    public EofTok(int row, int col) {
-        super("eof", row, col, ElementType.eof);
+    public EofTok(int offset) {
+        super("eof", offset, ElementType.eof);
     }
 
     @Override

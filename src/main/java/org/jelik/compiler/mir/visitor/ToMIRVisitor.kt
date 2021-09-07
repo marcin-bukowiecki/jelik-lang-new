@@ -1,6 +1,6 @@
 package org.jelik.compiler.mir.visitor
 
-import org.jelik.compiler.config.CompilationContext
+import org.jelik.compiler.CompilationContext
 import org.jelik.compiler.mir.MIRFunction
 import org.jelik.compiler.mir.MIRValue
 import org.jelik.parser.ast.ReturnExpr

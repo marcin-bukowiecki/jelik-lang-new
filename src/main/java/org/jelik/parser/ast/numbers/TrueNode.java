@@ -1,7 +1,7 @@
 package org.jelik.parser.ast.numbers;
 
-import org.jelik.compiler.config.CompilationContext;
-import org.jelik.parser.ast.expression.ExpressionWithType;
+import org.jelik.compiler.CompilationContext;
+import org.jelik.parser.ast.expression.TypedExpression;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.token.keyword.TrueToken;
 import org.jelik.types.JVMBooleanType;
@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Marcin Bukowiecki
  */
-public class TrueNode extends ExpressionWithType implements BooleanConstant {
+public class TrueNode extends TypedExpression implements BooleanConstant {
 
     private final TrueToken literalToken;
 
@@ -40,23 +40,13 @@ public class TrueNode extends ExpressionWithType implements BooleanConstant {
     }
 
     @Override
-    public int getStartRow() {
-        return literalToken.getRow();
+    public int getStartOffset() {
+        return literalToken.getStartOffset();
     }
 
     @Override
-    public int getEndRow() {
-        return literalToken.getEndRow();
-    }
-
-    @Override
-    public int getStartCol() {
-        return literalToken.getCol();
-    }
-
-    @Override
-    public int getEndCol() {
-        return literalToken.getEndCol();
+    public int getEndOffset() {
+        return literalToken.getEndOffset();
     }
 
     @Override

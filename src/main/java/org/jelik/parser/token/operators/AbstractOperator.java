@@ -11,8 +11,8 @@ import org.jelik.parser.token.ElementType;
  */
 public abstract class AbstractOperator extends Token {
 
-    public AbstractOperator(String text, int row, int col, ElementType elementType) {
-        super(text, row, col, elementType);
+    public AbstractOperator(String text, int offset, ElementType elementType) {
+        super(text, offset, elementType);
     }
 
     @Override

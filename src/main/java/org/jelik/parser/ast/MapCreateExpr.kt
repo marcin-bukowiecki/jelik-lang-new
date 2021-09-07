@@ -1,7 +1,7 @@
 package org.jelik.parser.ast
 
-import org.jelik.compiler.config.CompilationContext
-import org.jelik.parser.ast.expression.ExpressionWithType
+import org.jelik.compiler.CompilationContext
+import org.jelik.parser.ast.expression.TypedExpression
 import org.jelik.parser.ast.visitors.AstVisitor
 import org.jelik.parser.token.LeftCurlToken
 import org.jelik.parser.token.RightCurlToken
@@ -11,26 +11,18 @@ import org.jelik.parser.token.RightCurlToken
  */
 class MapCreateExpr(private val leftCurl: LeftCurlToken,
                     val entries: List<KeyValueExpr>,
-                    private val rightCurl: RightCurlToken): ExpressionWithType() {
+                    private val rightCurl: RightCurlToken): TypedExpression() {
 
     init {
         entries.forEach { e -> e.parent = this }
     }
 
-    override fun getStartCol(): Int {
-        return leftCurl.col
+    override fun getStartOffset(): Int {
+        return leftCurl.startOffset
     }
 
-    override fun getEndCol(): Int {
-        return rightCurl.endCol
-    }
-
-    override fun getStartRow(): Int {
-        return leftCurl.row
-    }
-
-    override fun getEndRow(): Int {
-        return rightCurl.endRow
+    override fun getEndOffset(): Int {
+        return rightCurl.endOffset
     }
 
     override fun accept(astVisitor: AstVisitor, compilationContext: CompilationContext) {

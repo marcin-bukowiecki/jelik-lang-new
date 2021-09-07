@@ -13,8 +13,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class NotEqualOperator extends AbstractOperator {
 
-    public NotEqualOperator(int row, int col) {
-        super("!=", row, col, ElementType.notEqualOperator);
+    public NotEqualOperator(int offset) {
+        super("!=", offset, ElementType.notEqualOperator);
     }
 
 

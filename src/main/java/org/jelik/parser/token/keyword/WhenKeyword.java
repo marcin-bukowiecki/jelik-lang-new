@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class WhenKeyword extends Token {
 
-    public WhenKeyword(int row, int col) {
-        super("when", row, col, ElementType.whenKeyword);
+    public WhenKeyword(int offset) {
+        super("when", offset, ElementType.whenKeyword);
     }
 
     @Override

@@ -10,7 +10,7 @@ import org.jelik.parser.token.Token
  *
  * @author Marcin Bukowiecki
  */
-class FinallyKeyword(row: Int, col: Int) : Token("finally", row, col, ElementType.finallyKeyword) {
+class FinallyKeyword(offset: Int,) : Token("finally", offset, ElementType.finallyKeyword) {
 
     override fun accept(parseVisitor: TokenVisitor<*>, parseContext: ParseContext) {
         parseVisitor.visit(this, parseContext)

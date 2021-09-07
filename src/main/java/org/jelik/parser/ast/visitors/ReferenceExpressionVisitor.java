@@ -5,15 +5,7 @@ import org.jelik.parser.ParseContext;
 import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.token.DotToken;
 import org.jelik.parser.token.Token;
-import org.jelik.parser.token.operators.AddOperator;
-import org.jelik.parser.token.operators.AndOperator;
-import org.jelik.parser.token.operators.EqualOperator;
-import org.jelik.parser.token.operators.GreaterOperator;
-import org.jelik.parser.token.operators.LesserOperator;
-import org.jelik.parser.token.operators.NotEqualOperator;
-import org.jelik.parser.token.operators.NullSafeCallOperator;
-import org.jelik.parser.token.operators.OrOperator;
-import org.jelik.parser.token.operators.SubtractOperator;
+import org.jelik.parser.token.operators.*;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -35,7 +27,14 @@ public class ReferenceExpressionVisitor extends ExpressionVisitor {
     }
 
     @Override
-    public void visitNullSafeCallOperator(@NotNull NullSafeCallOperator nullSafeCallOperator, @NotNull ParseContext parseContext) {
+    public void visitDefaultValueOperator(@NotNull DefaultValueOperator defaultValueOperator,
+                                          @NotNull ParseContext parseContext) {
+
+    }
+
+    @Override
+    public void visitNullSafeCallOperator(@NotNull NullSafeCallOperator nullSafeCallOperator,
+                                          @NotNull ParseContext parseContext) {
 
     }
 

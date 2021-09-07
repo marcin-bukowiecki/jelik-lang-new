@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.functions;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.token.keyword.ConstructorKeyword;
 import org.jetbrains.annotations.NotNull;
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public class DefaultConstructorDeclaration extends ConstructorDeclaration {
 
     public DefaultConstructorDeclaration() {
-        super(new ConstructorKeyword(-1,-1),
+        super(new ConstructorKeyword(-1),
                 FunctionParameterList.createEmpty(),
                 FunctionBodyBlock.createEmpty());
     }

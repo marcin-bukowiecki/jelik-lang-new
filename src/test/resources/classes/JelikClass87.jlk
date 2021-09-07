@@ -1,1 +1,5 @@
-fun function(: a
+fun expr(a Object, b Object) -> Boolean { 
+ if a.equals(b) == true { 
+   ret true 
+} else {   ret false
+}}

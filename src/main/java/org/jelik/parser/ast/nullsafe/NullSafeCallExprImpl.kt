@@ -1,10 +1,10 @@
 package org.jelik.parser.ast.nullsafe
 
-import org.jelik.compiler.config.CompilationContext
+import org.jelik.compiler.CompilationContext
 import org.jelik.parser.ast.ReferenceExpressionImpl
 import org.jelik.parser.ast.expression.Expression
 import org.jelik.parser.ast.labels.LabelNode
-import org.jelik.parser.ast.operators.BooleanExprWrapper
+import org.jelik.parser.ast.operators.NullSafeCheckExprWrapper
 import org.jelik.parser.ast.visitors.AstVisitor
 import org.jelik.parser.token.operators.NullSafeCallOperator
 
@@ -27,6 +27,6 @@ class NullSafeCallExprImpl(
     }
 
     override fun extractNullSubject(): Expression? {
-        return (reference as? BooleanExprWrapper)?.left
+        return (reference as? NullSafeCheckExprWrapper)?.left
     }
 }

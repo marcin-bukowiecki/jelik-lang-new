@@ -1,6 +1,6 @@
 package org.jelik.compiler.asm.visitor
 
-import org.jelik.compiler.config.CompilationContext
+import org.jelik.compiler.CompilationContext
 import org.jelik.parser.ast.labels.LabelNode
 import org.jelik.parser.ast.operators.AbstractLogicalOpExpr
 import org.jelik.parser.ast.operators.AndExpr

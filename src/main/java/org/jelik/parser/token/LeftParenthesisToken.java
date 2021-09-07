@@ -25,10 +25,10 @@ import org.jetbrains.annotations.NotNull;
  */
 public class LeftParenthesisToken extends Token {
 
-    public static final LeftParenthesisToken DUMMY = new LeftParenthesisToken(-1, -1);
+    public static final LeftParenthesisToken DUMMY = new LeftParenthesisToken(-1);
 
-    public LeftParenthesisToken(int row, int col) {
-        super("(", row, col, ElementType.leftParenthesis);
+    public LeftParenthesisToken(int offset) {
+        super("(", offset, ElementType.leftParenthesis);
     }
 
     @Override

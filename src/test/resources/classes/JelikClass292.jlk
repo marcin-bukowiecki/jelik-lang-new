@@ -1,5 +1,5 @@
 
-fun expr(l []Long) -> Int {
+fun expr(l []Object) -> Int {
    for e in l {
    }
    ret 1}

@@ -17,10 +17,10 @@
 package org.jelik.types.jvm;
 
 import com.google.common.collect.ImmutableSet;
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.compiler.asm.MethodVisitorAdapter;
 import org.jelik.compiler.asm.visitor.TypeVisitor;
-import org.jelik.compiler.common.TypeEnum;
+import org.jelik.compiler.runtime.TypeEnum;
 import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.numbers.Int32ToWrapperNode;
 import org.jelik.types.JVMIntType;

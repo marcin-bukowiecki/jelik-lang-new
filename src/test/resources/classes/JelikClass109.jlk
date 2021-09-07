@@ -1,1 +1,1 @@
-fun expr(a Int, b Int) -> Boolean { ret if a == b { true } else { false } }
+fun expr(a Double, b Float) -> Double {   ret a / b}

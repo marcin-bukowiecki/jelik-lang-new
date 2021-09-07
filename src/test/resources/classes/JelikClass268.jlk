@@ -1,7 +1,7 @@
-import java.util.ArrayList
+ext fun Int getString() -> String {
+    ret this.toString()
+}
 
-fun expr(a Int) -> Boolean { 
-   val b = ArrayList<Int>()
-   b.add(123)
-   ret b.get(0) is Int
+fun expr() -> String {
+    ret 123.getString()
 }

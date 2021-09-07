@@ -1,2 +1,1 @@
-fun expr(a Int) -> Int { ++a 
- ret a }
+fun expr(a Long, b Int) -> Long { ret a bor b }

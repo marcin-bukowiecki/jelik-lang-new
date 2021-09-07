@@ -1,6 +1,4 @@
-import java.util.List
-import java.util.ArrayList
-
-fun expr() -> List<Int> {
-   ret ArrayList<Int>()
+fun expr(a Integer?) -> Int {
+    val b = a?.toString()?.hashCode() ?: 1234
+    ret b
 }

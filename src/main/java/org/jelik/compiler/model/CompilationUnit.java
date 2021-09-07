@@ -1,6 +1,6 @@
 package org.jelik.compiler.model;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.resolvers.FindSymbolResult;
 import org.jelik.parser.ast.types.SingleTypeNode;
 import org.jelik.parser.ast.types.TypeNode;

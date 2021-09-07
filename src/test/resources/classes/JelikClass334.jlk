@@ -1,5 +1,3 @@
-import java.io.Serializable
-fun call() -> String { ret c<String>("foo") }
-fun c<T : Serializable>(arg T) -> T {
-   ret arg as T
+fun c<T>(arg T) -> Int {
+   ret arg.hashCode()
 }

@@ -1,7 +1,6 @@
 package org.jelik.parser.ast.operators;
 
-import lombok.Getter;
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.token.operators.GreaterOrEqualOperator;
@@ -10,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Marcin Bukowiecki
  */
-@Getter
 public class GreaterOrEqualExpr extends AbstractLogicalOpExpr {
 
     public GreaterOrEqualExpr(Expression left, GreaterOrEqualOperator greaterOrEqualOperator, Expression right) {

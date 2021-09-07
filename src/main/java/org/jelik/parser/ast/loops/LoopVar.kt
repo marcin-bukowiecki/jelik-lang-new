@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.loops
 
-import org.jelik.compiler.config.CompilationContext
+import org.jelik.compiler.CompilationContext
 import org.jelik.parser.ast.ASTNodeImpl
 import org.jelik.parser.ast.LiteralExpr
 import org.jelik.parser.ast.expression.Expression

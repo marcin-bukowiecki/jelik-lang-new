@@ -1,1 +1,6 @@
-fun expr(a Object) -> Boolean { ret a is String }
+
+            fun expr(a Int) -> Int {
+                   val l = lam b -> { ret b }
+                   ret a + l(a)
+                }
+            

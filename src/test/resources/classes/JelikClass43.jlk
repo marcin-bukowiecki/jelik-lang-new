@@ -1,1 +1,1 @@
-fun expr() -> []Long {   ret [1,2,3,4]Long}
+fun expr() -> []Double {   ret []Double}

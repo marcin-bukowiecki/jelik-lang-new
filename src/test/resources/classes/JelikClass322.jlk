@@ -1,9 +1,4 @@
-fun f1(a Int) -> Int {
-    ret a + 10
-}
-
-fun expr(a Int) -> Int {
-    val ref1 = f1
-    val ref2 = ref1
-    ret ref2(a)
+fun expr()->Boolean {
+    var a =!!!true
+    ret a
 }

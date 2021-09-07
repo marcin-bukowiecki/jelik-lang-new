@@ -1,0 +1,33 @@
+package test
+
+fun main(args []String) {
+    val inPlace {
+        val a = 1 + 5
+        a
+    }
+    val arrays = [1,2]
+
+    System.out.println("Hello world ")
+
+    System.out.println("test" + "a")
+
+    System.out.println("test" + "a" + 1)
+
+    System.out.println(2 + 1)
+
+    val b = 100
+
+    test(100)
+}
+
+fun stringAdder<T>(a T, b T) -> String {
+    ret a.toString() + b.toString()
+}
+
+fun test(a Double) -> Double {
+    ret a
+}
+
+fun box() -> Boolean {
+    ret true
+}

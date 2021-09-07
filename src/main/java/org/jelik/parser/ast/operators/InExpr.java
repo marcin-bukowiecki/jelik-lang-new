@@ -1,7 +1,6 @@
 package org.jelik.parser.ast.operators;
 
-import lombok.Getter;
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.compiler.asm.collections.ArrayInElementProvider;
 import org.jelik.compiler.asm.collections.CollectionInElementProvider;
 import org.jelik.compiler.asm.collections.InElementProvider;
@@ -16,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Marcin Bukowiecki
  */
-@Getter
 public class InExpr extends AbstractOpExpr {
 
     public InExpr(Expression left, InKeyword inKeyword, Expression right) {

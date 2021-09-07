@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ForKeyword extends Token {
 
-    public ForKeyword(int row, int col) {
-        super("for", row, col, ElementType.forKeyword);
+    public ForKeyword(int offset) {
+        super("for", offset, ElementType.forKeyword);
     }
 
     @Override

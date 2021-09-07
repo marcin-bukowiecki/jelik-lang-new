@@ -1,4 +1,1 @@
-fun expr() -> []Char { 
-var foo = ['a','b','c']Char
-ret foo[0:2] 
-}
+fun expr() -> Int {   ret len([1,2,3,4])}

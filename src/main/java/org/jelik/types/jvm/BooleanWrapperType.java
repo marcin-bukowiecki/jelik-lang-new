@@ -16,9 +16,9 @@
 
 package org.jelik.types.jvm;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.compiler.asm.visitor.TypeVisitor;
-import org.jelik.compiler.common.TypeEnum;
+import org.jelik.compiler.runtime.TypeEnum;
 import org.jelik.types.JVMBooleanType;
 import org.jelik.types.Type;
 import org.jetbrains.annotations.NotNull;

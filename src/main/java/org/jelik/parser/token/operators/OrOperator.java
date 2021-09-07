@@ -13,8 +13,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class OrOperator extends AbstractOperator {
 
-    public OrOperator(int row, int col) {
-        super("or", row, col, ElementType.orOperator);
+    public OrOperator(int offset) {
+        super("or", offset, ElementType.orOperator);
     }
 
     @Override

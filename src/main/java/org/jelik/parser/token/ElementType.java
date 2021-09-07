@@ -101,6 +101,7 @@ public enum ElementType {
     abstractKeyword,
     pipe,
     whenKeyword,
+    recordKeyword,
     operatorKeyword,
     defaultValue,
     objectKeyword,

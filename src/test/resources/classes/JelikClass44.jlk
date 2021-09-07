@@ -1,1 +1,1 @@
-fun expr() -> []Long {   ret [1]Long}
+fun expr() -> Int {   ret len([]String)}

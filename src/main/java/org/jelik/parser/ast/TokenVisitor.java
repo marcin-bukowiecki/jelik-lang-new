@@ -10,7 +10,7 @@ import org.jelik.parser.token.DotToken;
 import org.jelik.parser.token.EofTok;
 import org.jelik.parser.token.PipeToken;
 import org.jelik.parser.token.Token;
-import org.jelik.parser.token.keyword.FalseToken;
+import org.jelik.parser.token.keyword.*;
 import org.jelik.parser.token.LeftBracketToken;
 import org.jelik.parser.token.LeftCurlToken;
 import org.jelik.parser.token.LeftParenthesisToken;
@@ -22,68 +22,8 @@ import org.jelik.parser.token.RightBracketToken;
 import org.jelik.parser.token.RightCurlToken;
 import org.jelik.parser.token.RightParenthesisToken;
 import org.jelik.parser.token.SingleApostropheToken;
-import org.jelik.parser.token.keyword.ObjectKeyword;
-import org.jelik.parser.token.keyword.OperatorKeyword;
-import org.jelik.parser.token.keyword.TrueToken;
 import org.jelik.parser.token.WhitespaceToken;
-import org.jelik.parser.token.keyword.AbstractKeyword;
-import org.jelik.parser.token.keyword.BreakKeyword;
-import org.jelik.parser.token.keyword.CatchKeyword;
-import org.jelik.parser.token.keyword.ClassKeyword;
-import org.jelik.parser.token.keyword.ConstructorKeyword;
-import org.jelik.parser.token.keyword.ContinueKeyword;
-import org.jelik.parser.token.keyword.ElifKeyword;
-import org.jelik.parser.token.keyword.ElseKeyword;
-import org.jelik.parser.token.keyword.ExtKeyword;
-import org.jelik.parser.token.keyword.FinallyKeyword;
-import org.jelik.parser.token.keyword.ForKeyword;
-import org.jelik.parser.token.keyword.FunKeyword;
-import org.jelik.parser.token.keyword.IfKeyword;
-import org.jelik.parser.token.keyword.ImportKeyword;
-import org.jelik.parser.token.keyword.InKeyword;
-import org.jelik.parser.token.keyword.InterfaceKeyword;
-import org.jelik.parser.token.keyword.LamKeyword;
-import org.jelik.parser.token.keyword.MetKeyword;
-import org.jelik.parser.token.keyword.PackageKeyword;
-import org.jelik.parser.token.keyword.PrivateKeyword;
-import org.jelik.parser.token.keyword.PublicKeyword;
-import org.jelik.parser.token.keyword.ReturnKeyword;
-import org.jelik.parser.token.keyword.StaticKeyword;
-import org.jelik.parser.token.keyword.SuperKeyword;
-import org.jelik.parser.token.keyword.ThrowKeyword;
-import org.jelik.parser.token.keyword.TryKeyword;
-import org.jelik.parser.token.keyword.ValKeyword;
-import org.jelik.parser.token.keyword.VarKeyword;
-import org.jelik.parser.token.keyword.WhenKeyword;
-import org.jelik.parser.token.keyword.WhileKeyword;
-import org.jelik.parser.token.operators.AbstractOperator;
-import org.jelik.parser.token.operators.AddOperator;
-import org.jelik.parser.token.operators.AndOperator;
-import org.jelik.parser.token.operators.AsOperator;
-import org.jelik.parser.token.operators.AssignOperator;
-import org.jelik.parser.token.operators.BitAndOperator;
-import org.jelik.parser.token.operators.BitOrOperator;
-import org.jelik.parser.token.operators.BitSignedShiftLeftOperator;
-import org.jelik.parser.token.operators.BitSignedShiftRightOperator;
-import org.jelik.parser.token.operators.BitUnsignedShiftRightOperator;
-import org.jelik.parser.token.operators.BitXorOperator;
-import org.jelik.parser.token.operators.DecrOperator;
-import org.jelik.parser.token.operators.DefaultValueOperator;
-import org.jelik.parser.token.operators.DivideOperator;
-import org.jelik.parser.token.operators.EqualOperator;
-import org.jelik.parser.token.operators.GreaterOperator;
-import org.jelik.parser.token.operators.GreaterOrEqualOperator;
-import org.jelik.parser.token.operators.IncrOperator;
-import org.jelik.parser.token.operators.IsOperator;
-import org.jelik.parser.token.operators.LesserOperator;
-import org.jelik.parser.token.operators.LesserOrEqualOperator;
-import org.jelik.parser.token.operators.MulOperator;
-import org.jelik.parser.token.operators.NotEqualOperator;
-import org.jelik.parser.token.operators.NotOperator;
-import org.jelik.parser.token.operators.NullSafeCallOperator;
-import org.jelik.parser.token.operators.OrOperator;
-import org.jelik.parser.token.operators.RemOperator;
-import org.jelik.parser.token.operators.SubtractOperator;
+import org.jelik.parser.token.operators.*;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -362,29 +302,29 @@ public interface TokenVisitor<T extends ASTNode> {
     }
 
     default void visitContinueKeyword(@NotNull ContinueKeyword continueKeyword, @NotNull ParseContext parseContext) {
-        throw new SyntaxException("Unexpected token", continueKeyword, parseContext.getCurrentFilePath());
+        visitToken(continueKeyword, parseContext);
     }
 
     default void visitBreakKeyword(@NotNull BreakKeyword breakKeyword, @NotNull ParseContext parseContext) {
-        throw new SyntaxException("Unexpected token", breakKeyword, parseContext.getCurrentFilePath());
+        visitToken(breakKeyword, parseContext);
     }
 
     default void visitLamKeyword(@NotNull LamKeyword lamKeyword, @NotNull ParseContext parseContext) {
-        throw new SyntaxException("Unexpected token", lamKeyword, parseContext.getCurrentFilePath());
+        visitToken(lamKeyword, parseContext);
     }
 
     default void visitSingleApostropheToken(@NotNull SingleApostropheToken singleApostropheToken,
                                             @NotNull ParseContext parseContext) {
-        throw new SyntaxException("Unexpected token", singleApostropheToken, parseContext.getCurrentFilePath());
+        visitToken(singleApostropheToken, parseContext);
     }
 
     default void visitNotOperator(@NotNull NotOperator notOperator, @NotNull ParseContext parseContext) {
-        throw new SyntaxException("Unexpected token", notOperator, parseContext.getCurrentFilePath());
+        visitToken(notOperator, parseContext);
     }
 
     default void visitNullSafeCallOperator(@NotNull NullSafeCallOperator nullSafeCallOperator,
                                            @NotNull ParseContext parseContext) {
-        throw new SyntaxException("Unexpected token", nullSafeCallOperator, parseContext.getCurrentFilePath());
+        visitToken(nullSafeCallOperator, parseContext);
     }
 
     default void visitEqual(@NotNull EqualOperator equalOperator, @NotNull ParseContext parseContext) {
@@ -392,27 +332,27 @@ public interface TokenVisitor<T extends ASTNode> {
     }
 
     default void visitInterfaceKeyword(@NotNull InterfaceKeyword interfaceKeyword, @NotNull ParseContext parseContext) {
-        throw new SyntaxException("Unexpected token", interfaceKeyword, parseContext.getCurrentFilePath());
+        visitToken(interfaceKeyword, parseContext);
     }
 
     default void visitMetKeyword(@NotNull MetKeyword metKeyword, @NotNull ParseContext parseContext) {
-        throw new SyntaxException("Unexpected token", metKeyword, parseContext.getCurrentFilePath());
+        visitToken(metKeyword, parseContext);
     }
 
     default void visitPublicKeyword(@NotNull PublicKeyword publicKeyword, @NotNull ParseContext parseContext) {
-        throw new SyntaxException("Unexpected token", publicKeyword, parseContext.getCurrentFilePath());
+        visitToken(publicKeyword, parseContext);
     }
 
     default void visitPrivateKeyword(@NotNull PrivateKeyword privateKeyword, @NotNull ParseContext parseContext) {
-        throw new SyntaxException("Unexpected token", privateKeyword, parseContext.getCurrentFilePath());
+        visitToken(privateKeyword, parseContext);
     }
 
     default void visitAbstractKeyword(@NotNull  AbstractKeyword abstractKeyword, @NotNull ParseContext parseContext) {
-        throw new SyntaxException("Unexpected token", abstractKeyword, parseContext.getCurrentFilePath());
+        visitToken(abstractKeyword, parseContext);
     }
 
     default void visitPipe(@NotNull PipeToken pipeToken, @NotNull ParseContext parseContext) {
-        throw new SyntaxException("Unexpected token", pipeToken, parseContext.getCurrentFilePath());
+        visitToken(pipeToken, parseContext);
     }
 
     default void visitWhenKeyword(@NotNull WhenKeyword whenKeyword, @NotNull ParseContext parseContext) {
@@ -430,5 +370,10 @@ public interface TokenVisitor<T extends ASTNode> {
     default void visitDefaultValueOperator(@NotNull DefaultValueOperator defaultValueOperator,
                                            @NotNull ParseContext parseContext) {
         visitToken(defaultValueOperator, parseContext);
+    }
+
+    default void visitRecordKeyword(@NotNull RecordKeyword recordKeyword,
+                                    @NotNull ParseContext parseContext) {
+        visitToken(recordKeyword, parseContext);
     }
 }

@@ -9,8 +9,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class PipeToken extends Token {
 
-    public PipeToken(int row, int col) {
-        super("|", row, col, ElementType.pipe);
+    public PipeToken(int offset) {
+        super("|", offset, ElementType.pipe);
     }
 
     @Override

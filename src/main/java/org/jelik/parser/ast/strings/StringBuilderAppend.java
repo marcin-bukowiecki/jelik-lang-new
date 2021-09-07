@@ -1,10 +1,9 @@
 package org.jelik.parser.ast.strings;
 
-import lombok.Getter;
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.ast.expression.Expression;
-import org.jelik.parser.ast.expression.ExpressionWithType;
+import org.jelik.parser.ast.expression.TypedExpression;
 import org.jelik.parser.ast.functions.FunctionCall;
 import org.jelik.parser.ast.functions.providers.TargetFunctionCallProvider;
 import org.jelik.parser.ast.resolvers.DefaultImportedTypeResolver;
@@ -21,8 +20,7 @@ import java.util.Optional;
  *
  * @author Marcin Bukowiecki
  */
-@Getter
-public class StringBuilderAppend extends ExpressionWithType implements FunctionCall {
+public class StringBuilderAppend extends TypedExpression implements FunctionCall {
 
     private Expression subject;
 
@@ -39,6 +37,15 @@ public class StringBuilderAppend extends ExpressionWithType implements FunctionC
         this.targetFunctionCall = new FunctionCallResolver()
                 .resolveCall(this, compilationContext)
                 .orElseThrow();
+    }
+
+    @NotNull
+    public TargetFunctionCallProvider<?> getTargetFunctionCall() {
+        return targetFunctionCall;
+    }
+
+    public Expression getFurtherExpression() {
+        return furtherExpression;
     }
 
     public void setFurtherExpression(@NotNull Expression furtherExpression) {
@@ -59,6 +66,10 @@ public class StringBuilderAppend extends ExpressionWithType implements FunctionC
     @Override
     public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
         astVisitor.visit(this, compilationContext);
+    }
+
+    public Expression getSubject() {
+        return subject;
     }
 
     @Override

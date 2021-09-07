@@ -1,1 +1,2 @@
-fun expr(a Int) -> Int { ret a.hashCode() }
+fun expr(a Long) -> Long { val b = 1L 
+ ret -a * b }

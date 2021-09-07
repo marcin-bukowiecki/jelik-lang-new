@@ -1,0 +1,58 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.jetbrains.kotlin.jvm' version '1.5.21'
+}
+
+repositories {
+    mavenLocal()
+    maven {
+        url = uri('https://repo.maven.apache.org/maven2/')
+    }
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.slf4j:slf4j-api:1.7.32'
+    implementation 'org.slf4j:slf4j-simple:1.7.32'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.21'
+    implementation 'org.jetbrains:annotations:22.0.0'
+    implementation 'org.ow2.asm:asm:9.2'
+    implementation 'org.ow2.asm:asm-tree:9.2'
+    implementation 'org.ow2.asm:asm-util:9.2'
+    implementation 'com.google.guava:guava:30.1.1-jre'
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+    implementation 'org.apache.commons:commons-collections4:4.4'
+    implementation 'commons-cli:commons-cli:1.4'
+    implementation 'commons-io:commons-io:2.6'
+    testImplementation 'org.antlr:ST4:4.3.1'
+    testImplementation 'org.jetbrains.kotlin:kotlin-test-junit:1.5.21'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.assertj:assertj-core:3.20.2'
+}
+
+group = 'jelik-lang-new'
+version = '1.0.0'
+description = 'jelik-lang-new'
+java.sourceCompatibility = JavaVersion.VERSION_11
+
+application {
+    mainClassName = 'org.jelik.compiler.Jlkc'
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+sourceSets.main.java.srcDirs = ['src/main/java', 'src/main/gen']
+
+distZip {
+    into(project.name + "-" + project.version + "/lib/sdk") {
+        from 'sdk/build/.'
+        include '**'
+    }
+}
+
+startScripts {
+    applicationName = 'jlkc'
+}

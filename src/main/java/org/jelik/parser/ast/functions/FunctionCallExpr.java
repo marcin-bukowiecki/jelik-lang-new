@@ -1,13 +1,13 @@
 package org.jelik.parser.ast.functions;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.ASTNode;
 import org.jelik.parser.ast.LiteralExpr;
 import org.jelik.parser.ast.ReferenceExpressionImpl;
 import org.jelik.parser.ast.arguments.Argument;
 import org.jelik.parser.ast.arguments.ArgumentList;
 import org.jelik.parser.ast.expression.Expression;
-import org.jelik.parser.ast.expression.ExpressionWithType;
+import org.jelik.parser.ast.expression.TypedExpression;
 import org.jelik.parser.ast.functions.providers.TargetFunctionCallProvider;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.types.Type;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 /**
  * @author Marcin Bukowiecki
  */
-public class FunctionCallExpr extends ExpressionWithType implements FunctionCall {
+public class FunctionCallExpr extends TypedExpression implements FunctionCall {
 
     private final LiteralExpr literalExpr;
 
@@ -54,21 +54,6 @@ public class FunctionCallExpr extends ExpressionWithType implements FunctionCall
 
     public Type getOwner() {
         return owner;
-    }
-
-    @Override
-    public int getStartCol() {
-        return literalExpr.getStartCol();
-    }
-
-    @Override
-    public int getEndCol() {
-        return argumentList.getEndCol();
-    }
-
-    @Override
-    public int getEndRow() {
-        return argumentList.getEndRow();
     }
 
     @Override
@@ -108,7 +93,12 @@ public class FunctionCallExpr extends ExpressionWithType implements FunctionCall
     }
 
     @Override
-    public int getStartRow() {
-        return literalExpr.getStartRow();
+    public int getStartOffset() {
+        return literalExpr.getStartOffset();
+    }
+
+    @Override
+    public int getEndOffset() {
+        return argumentList.getEndOffset();
     }
 }

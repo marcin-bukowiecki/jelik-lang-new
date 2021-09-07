@@ -1,7 +1,7 @@
 package org.jelik.types;
 
-import org.jelik.compiler.config.CompilationContext;
-import org.jelik.compiler.common.TypeEnum;
+import org.jelik.compiler.CompilationContext;
+import org.jelik.compiler.runtime.TypeEnum;
 import org.jelik.parser.ast.types.JelikGenericType;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,6 +22,10 @@ public class JVMArrayType extends Type {
                 Collections.singletonList(inner)
         );
         this.inner = inner;
+    }
+
+    public Type getElementType() {
+        return inner;
     }
 
     @Override

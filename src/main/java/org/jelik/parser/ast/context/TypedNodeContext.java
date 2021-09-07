@@ -1,12 +1,10 @@
 package org.jelik.parser.ast.context;
 
-import lombok.EqualsAndHashCode;
 import org.jelik.types.Type;
 
 /**
  * Context holder for nodes which hold Type i.e. {@link org.jelik.parser.ast.functions.FunctionCallExpr}
  */
-@EqualsAndHashCode(callSuper = true)
 public class TypedNodeContext extends NodeContext {
 
     /**

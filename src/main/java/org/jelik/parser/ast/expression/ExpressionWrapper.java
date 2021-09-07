@@ -38,16 +38,6 @@ public abstract class ExpressionWrapper extends ASTNodeImpl implements Expressio
     }
 
     @Override
-    public void setType(@NotNull Type type) {
-        this.expression.setType(type);
-    }
-
-    @Override
-    public void setGenericType(@NotNull Type type) {
-        this.expression.setGenericType(type);
-    }
-
-    @Override
     public Type getReturnType() {
         return this.expression.getReturnType();
     }

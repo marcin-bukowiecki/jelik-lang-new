@@ -1,1 +1,2 @@
-fun expr(a Double, b Int) -> Int {   ret a as Int / b}
+fun expr(a Int) -> Short { val b = 10 
+ ret (a bor b) as Short }

@@ -1,6 +1,6 @@
 package org.jelik.repl
 
-import org.jelik.compiler.config.CompilationContext
+import org.jelik.compiler.CompilationContext
 
 /**
  * @author Marcin Bukowiecki

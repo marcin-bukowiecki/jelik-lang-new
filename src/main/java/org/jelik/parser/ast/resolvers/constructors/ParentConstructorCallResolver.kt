@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.resolvers.constructors
 
-import org.jelik.compiler.config.CompilationContext
+import org.jelik.compiler.CompilationContext
 import org.jelik.parser.ast.ReturnExpr
 import org.jelik.parser.ast.arguments.ArgumentList
 import org.jelik.parser.ast.functions.ConstructorDeclaration
@@ -19,7 +19,7 @@ object ParentConstructorCallResolver {
         constructorDeclaration.functionBody.basicBlock.let { bb ->
             if (bb.expressions.isEmpty()) {
                 constructorDeclaration.functionBody.basicBlock.prependExpression(ReturnExpr.voidReturn())
-                val superCall = SuperCallExpr(SuperKeyword(-1, -1),
+                val superCall = SuperCallExpr(SuperKeyword(-1),
                         ArgumentList.EMPTY,
                         constructorDeclaration.owner
                         .getParentType(compilationContext).get())

@@ -14,7 +14,7 @@ import java.util.ArrayList;
 /**
  * @author Marcin Bukowiecki
  */
-public class StringParser implements TokenVisitor<StringExpression> {
+public class StringParser implements TokenVisitor<StringTypedExpression> {
 
     private final ApostropheToken apostropheToken;
 
@@ -23,7 +23,7 @@ public class StringParser implements TokenVisitor<StringExpression> {
     }
 
     @Override
-    public @NotNull StringExpression visit(@NotNull ParseContext parseContext) {
+    public @NotNull StringTypedExpression visit(@NotNull ParseContext parseContext) {
         ArrayList<Token> tokens = Lists.newArrayList();
 
         Lexer lexer = parseContext.getLexer();
@@ -36,6 +36,6 @@ public class StringParser implements TokenVisitor<StringExpression> {
             tokens.add(token);
         }
 
-        return new StringExpression(apostropheToken, tokens, ((ApostropheToken) lexer.getCurrent()));
+        return new StringTypedExpression(apostropheToken, tokens, ((ApostropheToken) lexer.getCurrent()));
     }
 }

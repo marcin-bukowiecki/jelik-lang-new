@@ -1,1 +1,2 @@
-fun expr(a Object, b Object) -> Boolean { ret a.equals(b) }
+fun expr(a Int) -> Int {  
+ ret 12 + (++a) + 10 }

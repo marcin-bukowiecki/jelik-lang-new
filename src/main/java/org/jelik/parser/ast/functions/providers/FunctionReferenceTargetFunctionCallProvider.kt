@@ -2,12 +2,11 @@ package org.jelik.parser.ast.functions.providers
 
 import org.jelik.compiler.asm.MethodVisitorAdapter
 import org.jelik.compiler.asm.visitor.ToByteCodeVisitor
-import org.jelik.compiler.config.CompilationContext
+import org.jelik.compiler.CompilationContext
 import org.jelik.compiler.data.FunctionReferenceMethodData
 import org.jelik.compiler.exceptions.CompileException
 import org.jelik.parser.ast.functions.FunctionCallExpr
 import org.jelik.parser.ast.resolvers.CastToVisitor
-import org.jelik.parser.ast.resolvers.FunctionCallResolver
 
 /**
  * @author Marcin Bukowiecki

@@ -1,1 +1,6 @@
-fun expr(a Long, b Long) -> Long { ret a shr b }
+import java.util.List
+import java.util.ArrayList
+
+fun expr(a Int, b Int) -> List<Int> {
+   ret ArrayList<Int>()
+}

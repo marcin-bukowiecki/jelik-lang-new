@@ -1,7 +1,7 @@
 package org.jelik.parser.ast.types
 
 import com.google.common.annotations.VisibleForTesting
-import org.jelik.compiler.config.CompilationContext
+import org.jelik.compiler.CompilationContext
 import org.jelik.parser.ast.ASTNodeImpl
 import org.jelik.parser.ast.visitors.AstVisitor
 import org.jelik.parser.token.CommaToken
@@ -21,10 +21,10 @@ open class TypeParameterListNode(
     @VisibleForTesting
     constructor(types: List<TypeNode>) :
             this(
-                LesserOperator(-1, -1),
+                LesserOperator(-1),
                 types,
-                types.map { CommaToken(-1, -1) },
-                GreaterOperator(-1, -1)
+                types.map { CommaToken(-1) },
+                GreaterOperator(-1)
             ) {
     }
 
@@ -40,19 +40,11 @@ open class TypeParameterListNode(
         return left.toString() + types.joinToString(separator = ",") + right.toString()
     }
 
-    override fun getEndCol(): Int {
-        return right.endCol;
+    override fun getStartOffset(): Int {
+        return left.startOffset
     }
 
-    override fun getStartCol(): Int {
-        return left.col
-    }
-
-    override fun getEndRow(): Int {
-        return right.row
-    }
-
-    override fun getStartRow(): Int {
-        return left.row
+    override fun getEndOffset(): Int {
+        return right.endOffset
     }
 }

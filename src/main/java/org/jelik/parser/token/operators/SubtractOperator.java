@@ -29,8 +29,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class SubtractOperator extends AbstractOperator {
 
-    public SubtractOperator(int lineNumber, int columnNumber) {
-        super("-", lineNumber, columnNumber, ElementType.sub);
+    public SubtractOperator(int offset) {
+        super("-", offset, ElementType.sub);
     }
 
     @Override

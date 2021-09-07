@@ -3,7 +3,6 @@ package org.jelik.parser;
 import com.google.common.collect.Lists;
 import org.assertj.core.api.Assertions;
 import org.jelik.parser.token.Token;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;
@@ -27,7 +26,6 @@ public class ScannerTest {
                 .hasSize(29);
     }
 
-    @Ignore
     @Test
     public void correctColsAndRows() {
         final String content = "fun adder\n(Int a, \n  Int b) -> Int { ret a + b }";
@@ -37,86 +35,72 @@ public class ScannerTest {
         Token next = scanner.next();
         Assertions.assertThat(next)
                 .hasFieldOrPropertyWithValue("text", "fun")
-                .hasFieldOrPropertyWithValue("row", 1)
-                .hasFieldOrPropertyWithValue("col", 1);
+                .hasFieldOrPropertyWithValue("startOffset", 0);
 
         next = scanner.next();
         Assertions.assertThat(next)
                 .hasFieldOrPropertyWithValue("text", " ")
-                .hasFieldOrPropertyWithValue("row", 1)
-                .hasFieldOrPropertyWithValue("col", 4);
+                .hasFieldOrPropertyWithValue("startOffset", 3);
 
         next = scanner.next();
         Assertions.assertThat(next)
                 .hasFieldOrPropertyWithValue("text", "adder")
-                .hasFieldOrPropertyWithValue("row", 1)
-                .hasFieldOrPropertyWithValue("col", 5);
+                .hasFieldOrPropertyWithValue("startOffset", 4);
 
         next = scanner.next();
         Assertions.assertThat(next)
                 .hasFieldOrPropertyWithValue("text", "\n")
-                .hasFieldOrPropertyWithValue("row", 2)
-                .hasFieldOrPropertyWithValue("col", 1);
+                .hasFieldOrPropertyWithValue("startOffset", 9);
 
         next = scanner.next();
         Assertions.assertThat(next)
                 .hasFieldOrPropertyWithValue("text", "(")
-                .hasFieldOrPropertyWithValue("row", 2)
-                .hasFieldOrPropertyWithValue("col", 2);
+                .hasFieldOrPropertyWithValue("startOffset", 10);
 
         next = scanner.next();
         Assertions.assertThat(next)
                 .hasFieldOrPropertyWithValue("text", "Int")
-                .hasFieldOrPropertyWithValue("row", 2)
-                .hasFieldOrPropertyWithValue("col", 3);
+                .hasFieldOrPropertyWithValue("startOffset", 11);
 
         next = scanner.next();
         Assertions.assertThat(next)
                 .hasFieldOrPropertyWithValue("text", " ")
-                .hasFieldOrPropertyWithValue("row", 2)
-                .hasFieldOrPropertyWithValue("col", 6);
+                .hasFieldOrPropertyWithValue("startOffset", 14);
 
         next = scanner.next();
         Assertions.assertThat(next)
                 .hasFieldOrPropertyWithValue("text", "a")
-                .hasFieldOrPropertyWithValue("row", 2)
-                .hasFieldOrPropertyWithValue("col", 7);
+                .hasFieldOrPropertyWithValue("startOffset", 15);
 
         next = scanner.next();
         Assertions.assertThat(next)
                 .hasFieldOrPropertyWithValue("text", ",")
-                .hasFieldOrPropertyWithValue("row", 2)
-                .hasFieldOrPropertyWithValue("col", 8);
+                .hasFieldOrPropertyWithValue("startOffset", 16);
 
 
         next = scanner.next();
         Assertions.assertThat(next)
                 .hasFieldOrPropertyWithValue("text", " ")
-                .hasFieldOrPropertyWithValue("row", 2)
-                .hasFieldOrPropertyWithValue("col", 9);
+                .hasFieldOrPropertyWithValue("startOffset", 17);
 
         next = scanner.next();
         Assertions.assertThat(next)
                 .hasFieldOrPropertyWithValue("text", "\n")
-                .hasFieldOrPropertyWithValue("row", 3)
-                .hasFieldOrPropertyWithValue("col", 1);
+                .hasFieldOrPropertyWithValue("startOffset", 18);
 
         next = scanner.next();
         Assertions.assertThat(next)
                 .hasFieldOrPropertyWithValue("text", " ")
-                .hasFieldOrPropertyWithValue("row", 3)
-                .hasFieldOrPropertyWithValue("col", 2);
+                .hasFieldOrPropertyWithValue("startOffset", 19);
 
         next = scanner.next();
         Assertions.assertThat(next)
                 .hasFieldOrPropertyWithValue("text", " ")
-                .hasFieldOrPropertyWithValue("row", 3)
-                .hasFieldOrPropertyWithValue("col", 3);
+                .hasFieldOrPropertyWithValue("startOffset", 20);
 
         next = scanner.next();
         Assertions.assertThat(next)
                 .hasFieldOrPropertyWithValue("text", "Int")
-                .hasFieldOrPropertyWithValue("row", 3)
-                .hasFieldOrPropertyWithValue("col", 4);
+                .hasFieldOrPropertyWithValue("startOffset", 21);
     }
 }

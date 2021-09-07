@@ -10,7 +10,7 @@ import org.jelik.parser.token.Token
  *
  * @author Marcin Bukowiecki
  */
-class TryKeyword(row: Int, col: Int) : Token("try", row, col, ElementType.tryKeyword) {
+class TryKeyword(offset: Int) : Token("try", offset, ElementType.tryKeyword) {
 
     override fun accept(parseVisitor: TokenVisitor<*>, parseContext: ParseContext) {
         parseVisitor.visit(this, parseContext)

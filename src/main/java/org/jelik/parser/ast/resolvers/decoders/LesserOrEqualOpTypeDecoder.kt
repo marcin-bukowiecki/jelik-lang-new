@@ -1,7 +1,7 @@
 package org.jelik.parser.ast.resolvers.decoders
 
-import org.jelik.compiler.config.CompilationContext
-import org.jelik.compiler.common.TypeEnum
+import org.jelik.compiler.CompilationContext
+import org.jelik.compiler.runtime.TypeEnum
 import org.jelik.parser.ast.expression.Expression
 import org.jelik.parser.ast.operators.JumpInstruction
 import org.jelik.parser.ast.operators.LesserOrEqualExpr
@@ -18,7 +18,14 @@ object LesserOrEqualOpTypeDecoder {
         decode(leftType, rightType, op.left, op, op.right, ctx)
     }
 
-    fun decode(leftType: Type, rightType: Type, leftCaller: Expression, op: LesserOrEqualExpr, rightCaller: Expression, ctx: CompilationContext) {
+    //TODO add support to other types
+    fun decode(leftType: Type,
+               rightType: Type,
+               leftCaller: Expression,
+               op: LesserOrEqualExpr,
+               rightCaller: Expression,
+               ctx: CompilationContext) {
+
         when(leftType.typeEnum) {
             TypeEnum.int8,
             TypeEnum.int16,

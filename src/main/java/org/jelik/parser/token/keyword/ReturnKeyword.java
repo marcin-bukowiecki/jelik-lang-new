@@ -11,10 +11,10 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ReturnKeyword extends Token {
 
-    public static final ReturnKeyword MOCK = new ReturnKeyword(-1, -1);
+    public static final ReturnKeyword MOCK = new ReturnKeyword(-1);
 
-    public ReturnKeyword(int row, int col) {
-        super("ret", row, col, ElementType.returnKeyword);
+    public ReturnKeyword(int offset) {
+        super("ret", offset, ElementType.returnKeyword);
     }
 
     @Override

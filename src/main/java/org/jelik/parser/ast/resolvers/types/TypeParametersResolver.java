@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.resolvers.types;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.classes.ClassDeclaration;
 import org.jelik.parser.ast.types.CovariantTypeNode;
 import org.jelik.parser.ast.types.JelikGenericType;

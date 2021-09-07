@@ -1,5 +1,6 @@
 package org.jelik.parser.ast.visitors
 
+import org.jelik.compiler.asm.visitor.TypeVisitor
 import org.jelik.parser.ParseContext
 import org.jelik.parser.ast.TokenVisitor
 import org.jelik.parser.ast.classes.ClassDeclaration
@@ -7,14 +8,12 @@ import org.jelik.parser.ast.classes.FieldDeclaration
 import org.jelik.parser.ast.functions.ConstructorDeclaration
 import org.jelik.parser.ast.functions.FunctionDeclaration
 import org.jelik.parser.ast.functions.MethodDeclaration
+import org.jelik.parser.ast.types.TypeNode
 import org.jelik.parser.ast.types.TypeVariableListNode
 import org.jelik.parser.ast.visitors.functions.ConstructorDeclarationVisitor
 import org.jelik.parser.ast.visitors.functions.FunctionDeclarationVisitor
 import org.jelik.parser.ast.visitors.functions.MethodDeclarationVisitor
-import org.jelik.parser.token.EofTok
-import org.jelik.parser.token.LeftCurlToken
-import org.jelik.parser.token.LiteralToken
-import org.jelik.parser.token.RightCurlToken
+import org.jelik.parser.token.*
 import org.jelik.parser.token.keyword.AbstractKeyword
 import org.jelik.parser.token.keyword.ClassKeyword
 import org.jelik.parser.token.keyword.ConstructorKeyword
@@ -38,6 +37,8 @@ class ClassDeclarationVisitor(val keyword: ClassKeyword) : TokenVisitor<ClassDec
     private var leftCurl: LeftCurlToken? = null
 
     private var rightCurl: RightCurlToken? = null
+
+    private var colon: ColonToken? = null
 
     private val functionDeclarations = ArrayList<FunctionDeclaration>()
 
@@ -84,6 +85,24 @@ class ClassDeclarationVisitor(val keyword: ClassKeyword) : TokenVisitor<ClassDec
     override fun visitLiteral(literalToken: LiteralToken, parseContext: ParseContext) {
         this.name = literalToken
         parseContext.lexer.nextToken().accept(this, parseContext)
+    }
+
+    override fun visitColon(colonToken: ColonToken, parseContext: ParseContext) {
+        this.colon = colonToken
+
+        val extendsList = mutableListOf<TypeNode>()
+        while (parseContext.lexer.hasNextToken()) {
+            val typeNodeVisitor = TypeNodeVisitor(parseContext.lexer.nextToken())
+            val extends = typeNodeVisitor.visit(parseContext)
+            extendsList.add(extends)
+            val next = parseContext.lexer.nextToken()
+            if (next is LeftCurlToken) {
+                break
+            }
+            if (next is CommaToken) {
+                continue
+            }
+        }
     }
 
     override fun visitLesser(lesserOperator: LesserOperator, parseContext: ParseContext) {

@@ -2,7 +2,7 @@ package org.jelik.compiler.functions
 
 import org.jelik.compiler.data.JelikBuiltinFunction
 import org.jelik.compiler.data.MethodData
-import org.jelik.compiler.lang.JelikAny
+import org.jelik.compiler.runtime.JelikAny
 import org.jelik.types.JVMArrayType
 import org.jelik.types.JVMIntType
 import org.jelik.types.JVMObjectType

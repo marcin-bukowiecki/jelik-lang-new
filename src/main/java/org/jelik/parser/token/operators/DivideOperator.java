@@ -29,8 +29,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class DivideOperator extends AbstractOperator {
 
-    public DivideOperator(int lineNumber, int columnNumber) {
-        super("/", lineNumber, columnNumber, ElementType.divide);
+    public DivideOperator(int offset) {
+        super("/", offset, ElementType.divide);
     }
 
     @Override

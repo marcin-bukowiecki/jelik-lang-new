@@ -1,7 +1,6 @@
 package org.jelik.parser.ast.numbers;
 
-import lombok.Getter;
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jetbrains.annotations.NotNull;
@@ -9,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Marcin Bukowiecki
  */
-@Getter
 public class CharToInt32Node extends CastToNode {
 
     public CharToInt32Node(Expression subject) {

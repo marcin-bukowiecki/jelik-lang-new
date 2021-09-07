@@ -1,6 +1,6 @@
 package org.jelik.compiler.passes
 
-import org.jelik.compiler.config.CompilationContext
+import org.jelik.compiler.CompilationContext
 import org.jelik.compiler.exceptions.SyntaxException
 import org.jelik.compiler.utils.Stateless
 import org.jelik.parser.ast.ReturnExpr

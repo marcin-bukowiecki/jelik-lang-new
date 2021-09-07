@@ -1,1 +1,4 @@
-fun expression(a Long, b Long) -> Long { ret a + b }
+import java.lang.Runnable
+fun get() -> Runnable {
+    ret Runnable()
+}

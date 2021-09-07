@@ -1,6 +1,6 @@
 package org.jelik.compiler.asm.visitor
 
-import org.jelik.compiler.config.CompilationContext
+import org.jelik.compiler.CompilationContext
 import org.jelik.compiler.asm.MethodVisitorAdapter
 import org.jelik.types.JVMBooleanType
 import org.jelik.types.JVMIntType

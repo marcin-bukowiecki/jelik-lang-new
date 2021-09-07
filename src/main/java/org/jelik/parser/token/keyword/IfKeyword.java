@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class IfKeyword extends Token {
 
-    public IfKeyword(int row, int col) {
-        super("If", row, col, ElementType.ifKeyword);
+    public IfKeyword(int offset) {
+        super("If", offset, ElementType.ifKeyword);
     }
 
     @Override

@@ -13,8 +13,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class BitAndOperator extends AbstractOperator {
 
-    public BitAndOperator(int row, int col) {
-        super("band", row, col, ElementType.bitwiseAnd);
+    public BitAndOperator(int offset) {
+        super("band", offset, ElementType.bitwiseAnd);
     }
 
     @Override

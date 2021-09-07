@@ -1,1 +1,1 @@
-fun expr(a Double, b Float) -> Float {   ret a as Float / b}
+fun expr(a Int) -> Short { ret a as Short }

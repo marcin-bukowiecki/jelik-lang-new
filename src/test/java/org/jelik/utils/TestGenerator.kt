@@ -16,7 +16,12 @@ object TestGenerator {
         
         import org.jelik.utils.GeneratedTestRunner
         import org.junit.Test
-        
+
+        /**
+         * Generated test 
+         *        
+         * @author Marcin Bukowiecki
+         */
         class <testCaseName> : GeneratedTestRunner() {
         
             <tests :{test | <test> }>         
@@ -25,10 +30,12 @@ object TestGenerator {
     """.trimIndent()
 
     private val unitTestTemplate = """
+                
         @Test
         fun <name>() {
             compileAndRunBox("<path>")
-        }        
+        }       
+         
     """.trimIndent()
 
     @Suppress("RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
@@ -41,7 +48,7 @@ object TestGenerator {
         val testCaseNames = f.listFiles()
         assert(testCaseNames != null)
         for (folderName in testCaseNames) {
-            val testCaseName = folderName.name + "Test"
+            val testCaseName = folderName.name.capitalize() + "Test"
             val contents = mutableListOf<String>()
 
             for (unitTest in folderName.listFiles()) {

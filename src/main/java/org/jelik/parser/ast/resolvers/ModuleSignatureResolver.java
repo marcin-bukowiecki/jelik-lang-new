@@ -1,7 +1,7 @@
 package org.jelik.parser.ast.resolvers;
 
 import org.apache.commons.io.FilenameUtils;
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.compiler.JelikCompiler;
 import org.jelik.parser.ast.classes.ClassDeclaration;
 import org.jelik.parser.ast.visitors.AstVisitor;

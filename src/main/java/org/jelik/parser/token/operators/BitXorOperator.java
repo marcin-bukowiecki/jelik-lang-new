@@ -13,8 +13,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class BitXorOperator extends AbstractOperator {
 
-    public BitXorOperator(int row, int col) {
-        super("xor", row, col, ElementType.bitwiseXor);
+    public BitXorOperator(int offset) {
+        super("xor", offset, ElementType.bitwiseXor);
     }
 
     @Override

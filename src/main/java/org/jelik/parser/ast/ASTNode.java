@@ -1,7 +1,6 @@
 package org.jelik.parser.ast;
 
-import org.jelik.compiler.config.CompilationContext;
-import org.jelik.parser.ast.common.DupNodeImpl;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.utils.ASTDataKey;
 import org.jelik.parser.ast.visitors.AstVisitor;
@@ -15,13 +14,9 @@ import java.util.List;
  */
 public interface ASTNode {
 
-    int getStartCol();
+    int getStartOffset();
 
-    int getStartRow();
-
-    int getEndCol();
-
-    int getEndRow();
+    int getEndOffset();
 
     @NotNull
     ASTNode getParent();

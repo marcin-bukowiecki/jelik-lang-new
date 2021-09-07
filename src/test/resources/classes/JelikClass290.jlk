@@ -1,6 +1,8 @@
+import java.util.ArrayList
+import java.util.stream.Collectors
 
-fun expr(l []Long) -> Int {
-   for e in l {
+fun expr(l ArrayList<Int>) -> Int {
+   for e in l.stream().collect(Collectors.toList()) {
        System.out.println(e)
    }
    ret 1}

@@ -1,1 +1,1 @@
-fun expr() -> Int {   ret [1,2,3,4,5,6,7,8,9,10][-1]}
+fun expr() -> []Short {   ret [1]Short}

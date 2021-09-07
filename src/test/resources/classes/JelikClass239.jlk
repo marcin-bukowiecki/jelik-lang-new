@@ -1,1 +1,4 @@
-fun expression(a Int, b Int) -> Int { ret a + b }
+abstract class Foo {}
+fun get() -> Foo {
+    ret Foo()
+}

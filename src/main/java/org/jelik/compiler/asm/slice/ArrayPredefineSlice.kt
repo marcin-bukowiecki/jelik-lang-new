@@ -1,11 +1,11 @@
 package org.jelik.compiler.asm.slice
 
-import org.jelik.compiler.config.CompilationContext
+import org.jelik.compiler.CompilationContext
 import org.jelik.compiler.asm.MethodVisitorAdapter
 import org.jelik.compiler.asm.utils.ASMUtils
 import org.jelik.compiler.asm.visitor.ToByteCodeResult
 import org.jelik.compiler.asm.visitor.ToByteCodeVisitor
-import org.jelik.compiler.common.TypeEnum
+import org.jelik.compiler.runtime.TypeEnum
 import org.jelik.types.Type
 import org.objectweb.asm.Opcodes
 
@@ -14,7 +14,7 @@ import org.objectweb.asm.Opcodes
  */
 object ArrayPredefineSlice {
 
-    val predefinedSliceFunctions = mutableMapOf<Type, Type>()
+    private val predefinedSliceFunctions = mutableMapOf<Type, Type>()
 
     var counter = 1
 
@@ -63,7 +63,7 @@ object ArrayPredefineSlice {
         val t = Type("JelikUtilsSlice$counter",
                 "jelik.lang.JelikUtilsSlice$counter",
                 TypeEnum.objectT)
-        byteCodeVisitor.addByteCodeResult(ToByteCodeResult(t, cw.bytes))
+        byteCodeVisitor.addByteCodeResult(ToByteCodeResult(t, cw.bytes, false))
         predefinedSliceFunctions[type] = t
         counter++
         return t

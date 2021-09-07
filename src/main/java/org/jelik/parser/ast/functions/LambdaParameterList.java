@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.functions;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.token.LeftParenthesisToken;
 import org.jelik.parser.token.RightParenthesisToken;
@@ -18,7 +18,7 @@ public class LambdaParameterList extends FunctionParameterList {
     public static final LambdaParameterList EMPTY = new LambdaParameterList(Collections.emptyList());
 
     public LambdaParameterList(List<FunctionParameter> functionParameters) {
-        super(new LeftParenthesisToken(-1, -1), functionParameters, new RightParenthesisToken(-1, -1));
+        super(new LeftParenthesisToken(-1), functionParameters, new RightParenthesisToken(-1));
     }
 
     @Override

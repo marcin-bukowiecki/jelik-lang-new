@@ -1,7 +1,6 @@
 package org.jelik.parser.ast.casts;
 
-import lombok.Getter;
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.ASTNodeImpl;
 import org.jelik.parser.ast.expression.EmptyExpression;
 import org.jelik.parser.ast.expression.Expression;
@@ -12,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Marcin Bukowiecki
  */
-@Getter
 public class CastObjectToObjectNode extends ASTNodeImpl implements Expression {
 
     private final Expression expression;
@@ -26,6 +24,21 @@ public class CastObjectToObjectNode extends ASTNodeImpl implements Expression {
         this.expression.setParent(this);
         this.from = from;
         this.to = to;
+    }
+
+    @NotNull
+    public Expression getExpression() {
+        return expression;
+    }
+
+    @NotNull
+    public Type getFrom() {
+        return from;
+    }
+
+    @NotNull
+    public Type getTo() {
+        return to;
     }
 
     public CastObjectToObjectNode(Type from, Type to) {

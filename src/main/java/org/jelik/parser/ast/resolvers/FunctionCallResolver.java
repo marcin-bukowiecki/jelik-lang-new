@@ -1,7 +1,7 @@
 package org.jelik.parser.ast.resolvers;
 
 import com.google.common.collect.ImmutableList;
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.compiler.data.MethodData;
 import org.jelik.compiler.functions.ExtensionFunctionRegister;
 import org.jelik.compiler.functions.JelikBuiltinFunctionsRegister;

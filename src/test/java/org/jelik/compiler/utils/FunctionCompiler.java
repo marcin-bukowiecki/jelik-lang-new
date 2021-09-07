@@ -23,7 +23,7 @@ import org.jelik.compiler.JelikCompiler;
 import org.jelik.compiler.asm.utils.ByteCodeLogger;
 import org.jelik.compiler.asm.visitor.ToByteCodeResult;
 import org.jelik.compiler.cl.JelikClassLoader;
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.compiler.exceptions.CompileException;
 import org.jelik.compiler.passes.ProblemDescriptor;
 import org.jetbrains.annotations.Nullable;

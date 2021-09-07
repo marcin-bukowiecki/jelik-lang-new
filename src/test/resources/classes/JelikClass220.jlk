@@ -1,1 +1,1 @@
-fun expr(a Long, b Long) -> Long { ret a xor b }
+fun expr(a java.lang.String, b String) -> String { ret a + b }

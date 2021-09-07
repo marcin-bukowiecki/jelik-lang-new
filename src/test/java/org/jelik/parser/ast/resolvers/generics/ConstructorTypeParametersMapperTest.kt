@@ -1,7 +1,7 @@
 package org.jelik.parser.ast.resolvers.generics
 
 import org.assertj.core.api.Assertions
-import org.jelik.compiler.config.CompilationContext
+import org.jelik.compiler.CompilationContext
 import org.jelik.parser.ast.LiteralExpr
 import org.jelik.parser.ast.arguments.ArgumentList
 import org.jelik.parser.ast.functions.ConstructorTargetFunctionCallProvider

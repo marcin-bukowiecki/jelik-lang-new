@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import org.jelik.parser.ast.functions.LambdaDeclaration;
 import org.jelik.parser.token.keyword.Modifier;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -16,6 +17,10 @@ public class ParseContext {
     public List<LambdaDeclaration> lambdaDeclarations = Lists.newArrayList();
 
     private final Lexer lexer;
+
+    public ParseContext(File file) {
+        this(new Lexer(new Scanner(new CharPointer(file))));
+    }
 
     public ParseContext(Lexer lexer) {
         this.lexer = lexer;

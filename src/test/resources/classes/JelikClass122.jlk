@@ -1,1 +1,2 @@
-fun expr(a Object, b Object) -> Boolean { ret a.equals(b) and 2 > 1 }
+fun expr(b Float) -> Boolean { val a = .5f 
+ ret b == a }

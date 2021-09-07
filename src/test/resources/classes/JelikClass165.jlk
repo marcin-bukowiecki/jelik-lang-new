@@ -1,1 +1,1 @@
-fun expr(b Float) -> Boolean { ret b > 9}
+fun expr(a Int, b Int) -> Int { ret a as Short xor b }

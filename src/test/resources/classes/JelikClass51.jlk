@@ -1,1 +1,2 @@
-fun expr() -> []Float {   ret [1]Float}
+fun a:Int
+ { let}

@@ -1,1 +1,1 @@
-fun expr() -> Double {   ret [1 as Double, 2 as Double, 3 as Double][0]}
+fun expr() -> []Int {   ret [1,2,3,4]Int}

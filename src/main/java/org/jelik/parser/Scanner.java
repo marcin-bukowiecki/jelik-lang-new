@@ -1,66 +1,9 @@
 package org.jelik.parser;
 
-import lombok.Getter;
 import org.jelik.parser.token.*;
-import org.jelik.parser.token.keyword.FalseToken;
-import org.jelik.parser.token.keyword.ObjectKeyword;
-import org.jelik.parser.token.keyword.OperatorKeyword;
-import org.jelik.parser.token.keyword.TrueToken;
-import org.jelik.parser.token.keyword.AbstractKeyword;
-import org.jelik.parser.token.keyword.BreakKeyword;
-import org.jelik.parser.token.keyword.CatchKeyword;
-import org.jelik.parser.token.keyword.ClassKeyword;
-import org.jelik.parser.token.keyword.ConstructorKeyword;
-import org.jelik.parser.token.keyword.ContinueKeyword;
-import org.jelik.parser.token.keyword.ElifKeyword;
-import org.jelik.parser.token.keyword.ElseKeyword;
-import org.jelik.parser.token.keyword.ExtKeyword;
-import org.jelik.parser.token.keyword.FinallyKeyword;
-import org.jelik.parser.token.keyword.ForKeyword;
-import org.jelik.parser.token.keyword.FunKeyword;
-import org.jelik.parser.token.keyword.IfKeyword;
-import org.jelik.parser.token.keyword.ImportKeyword;
-import org.jelik.parser.token.keyword.InKeyword;
-import org.jelik.parser.token.keyword.InterfaceKeyword;
-import org.jelik.parser.token.keyword.LamKeyword;
-import org.jelik.parser.token.keyword.MetKeyword;
-import org.jelik.parser.token.keyword.PackageKeyword;
-import org.jelik.parser.token.keyword.ReturnKeyword;
-import org.jelik.parser.token.keyword.StaticKeyword;
-import org.jelik.parser.token.keyword.SuperKeyword;
-import org.jelik.parser.token.keyword.ThrowKeyword;
-import org.jelik.parser.token.keyword.TryKeyword;
-import org.jelik.parser.token.keyword.ValKeyword;
-import org.jelik.parser.token.keyword.VarKeyword;
-import org.jelik.parser.token.keyword.WhenKeyword;
-import org.jelik.parser.token.keyword.WhileKeyword;
-import org.jelik.parser.token.operators.AddOperator;
-import org.jelik.parser.token.operators.AndOperator;
-import org.jelik.parser.token.operators.AsOperator;
-import org.jelik.parser.token.operators.AssignOperator;
-import org.jelik.parser.token.operators.BitAndOperator;
-import org.jelik.parser.token.operators.BitOrOperator;
-import org.jelik.parser.token.operators.BitSignedShiftLeftOperator;
-import org.jelik.parser.token.operators.BitSignedShiftRightOperator;
-import org.jelik.parser.token.operators.BitUnsignedShiftRightOperator;
-import org.jelik.parser.token.operators.BitXorOperator;
-import org.jelik.parser.token.operators.DecrOperator;
-import org.jelik.parser.token.operators.DefaultValueOperator;
-import org.jelik.parser.token.operators.DivideOperator;
-import org.jelik.parser.token.operators.EqualOperator;
-import org.jelik.parser.token.operators.GreaterOperator;
-import org.jelik.parser.token.operators.GreaterOrEqualOperator;
-import org.jelik.parser.token.operators.IncrOperator;
-import org.jelik.parser.token.operators.IsOperator;
-import org.jelik.parser.token.operators.LesserOperator;
-import org.jelik.parser.token.operators.LesserOrEqualOperator;
-import org.jelik.parser.token.operators.MulOperator;
-import org.jelik.parser.token.operators.NotEqualOperator;
-import org.jelik.parser.token.operators.NotOperator;
-import org.jelik.parser.token.operators.NullSafeCallOperator;
-import org.jelik.parser.token.operators.OrOperator;
-import org.jelik.parser.token.operators.RemOperator;
-import org.jelik.parser.token.operators.SubtractOperator;
+import org.jelik.parser.token.keyword.*;
+import org.jelik.parser.token.operators.*;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;
 
 import java.io.File;
@@ -73,18 +16,25 @@ import java.util.List;
 public class Scanner {
 
     /* parsed tokens */
-    @Getter
     protected List<Token> tokens = new ArrayList<>();
 
     /* current index of tokens in ArrayList */
     private int pos = 0;
 
-    @Getter
     private final CharPointer cp;
 
     public Scanner(CharPointer charPointer) {
         this.cp = charPointer;
         cp.nextChar(); //init char pointer
+    }
+
+    public List<Token> getTokens() {
+        return tokens;
+    }
+
+    @NotNull
+    public CharPointer getCp() {
+        return cp;
     }
 
     @VisibleForTesting
@@ -130,7 +80,7 @@ public class Scanner {
         pos--;
         while (pos > 0) {
             Token t = tokens.get(pos);
-            if (t.getRow() == to.getRow() && t.getCol() == to.getCol() && to.equals(t)) {
+            if (t.getStartOffset() == to.getStartOffset() && to.equals(t)) {
                 pos++;
                 return;
             } else {
@@ -140,8 +90,7 @@ public class Scanner {
     }
 
     private Token loopUntilNextToken() {
-        int row = cp.getLineNumber();
-        int col = cp.getColumnNumber();
+        int startOffset = cp.getOffset();
 
         var sb = new StringBuilder();
         char nextChar = (char) cp.current();
@@ -155,14 +104,14 @@ public class Scanner {
                         break breakable;
                     }
                     nextChar = (char) cp.nextChar();
-                    nextToken = new SingleApostropheToken(row, col);
+                    nextToken = new SingleApostropheToken(startOffset);
                     break breakable;
                 case '\"':
                     if (sb.length() > 0) {
                         break breakable;
                     }
                     nextChar = (char) cp.nextChar();
-                    nextToken = new ApostropheToken(row, col);
+                    nextToken = new ApostropheToken(startOffset);
                     break breakable;
                 case '!':
                     if (sb.length() > 0) {
@@ -171,10 +120,10 @@ public class Scanner {
                     nextChar = (char) cp.nextChar();
                     if (nextChar == '=') {
                         nextChar = (char) cp.nextChar();
-                        nextToken = new NotEqualOperator(cp.getLineNumber(), col);
+                        nextToken = new NotEqualOperator(startOffset);
                         break breakable;
                     }
-                    nextToken = new NotOperator(cp.getLineNumber(), col);
+                    nextToken = new NotOperator(startOffset);
                     break breakable;
                 case '?':
                     if (sb.length() > 0) {
@@ -183,14 +132,14 @@ public class Scanner {
                     nextChar = (char) cp.nextChar();
                     if (nextChar == '.') {
                         nextChar = (char) cp.nextChar();
-                        nextToken = new NullSafeCallOperator(cp.getLineNumber(), col);
+                        nextToken = new NullSafeCallOperator(startOffset);
                         break breakable;
                     } else if (nextChar == ':') {
                         nextChar = (char) cp.nextChar();
-                        nextToken = new DefaultValueOperator(cp.getLineNumber(), col);
+                        nextToken = new DefaultValueOperator(startOffset);
                         break breakable;
                     }
-                    nextToken = new QuestionMarkToken(cp.getLineNumber(), col);
+                    nextToken = new QuestionMarkToken(startOffset);
                     break breakable;
                 case '=':
                     if (sb.length() > 0) {
@@ -199,17 +148,17 @@ public class Scanner {
                     nextChar = (char) cp.nextChar();
                     if (nextChar == '=') {
                         nextChar = (char) cp.nextChar();
-                        nextToken = new EqualOperator(cp.getLineNumber(), col);
+                        nextToken = new EqualOperator(startOffset);
                         break breakable;
                     }
-                    nextToken = new AssignOperator(cp.getLineNumber(), col);
+                    nextToken = new AssignOperator(startOffset);
                     break breakable;
                 case ':':
                     if (sb.length() > 0) {
                         break breakable;
                     }
                     nextChar = (char) cp.nextChar();
-                    nextToken = new ColonToken(row, col);
+                    nextToken = new ColonToken(startOffset);
                     break breakable;
                 case '+':
                     if (sb.length() > 0) {
@@ -218,38 +167,38 @@ public class Scanner {
                     nextChar = (char) cp.nextChar();
                     if (nextChar == '+') {
                         nextChar = (char) cp.nextChar();
-                        nextToken = new IncrOperator(cp.getLineNumber(), col);
+                        nextToken = new IncrOperator(startOffset);
                         break breakable;
                     }
-                    nextToken = new AddOperator(cp.getLineNumber(), col);
+                    nextToken = new AddOperator(startOffset);
                     break breakable;
                 case '*':
                     if (sb.length() > 0) {
                         break breakable;
                     }
                     nextChar = (char) cp.nextChar();
-                    nextToken = new MulOperator(row, col);
+                    nextToken = new MulOperator(startOffset);
                     break breakable;
                 case '/':
                     if (sb.length() > 0) {
                         break breakable;
                     }
                     nextChar = (char) cp.nextChar();
-                    nextToken = new DivideOperator(row, col);
+                    nextToken = new DivideOperator(startOffset);
                     break breakable;
                 case '%':
                     if (sb.length() > 0) {
                         break breakable;
                     }
                     nextChar = (char) cp.nextChar();
-                    nextToken = new RemOperator(row, col);
+                    nextToken = new RemOperator(startOffset);
                     break breakable;
                 case '.':
                     if (sb.length() > 0) {
                         break breakable;
                     }
                     nextChar = (char) cp.nextChar();
-                    nextToken = new DotToken(row, col);
+                    nextToken = new DotToken(startOffset);
                     break breakable;
                 case '<':
                     if (sb.length() > 0) {
@@ -258,10 +207,10 @@ public class Scanner {
                     nextChar = (char) cp.nextChar();
                     if (nextChar == '=') {
                         nextChar = (char) cp.nextChar();
-                        nextToken = new LesserOrEqualOperator(cp.getLineNumber(), col);
+                        nextToken = new LesserOrEqualOperator(startOffset);
                         break breakable;
                     }
-                    nextToken = new LesserOperator(cp.getLineNumber(), col);
+                    nextToken = new LesserOperator(startOffset);
                     break breakable;
                 case '>':
                     if (sb.length() > 0) {
@@ -270,24 +219,24 @@ public class Scanner {
                     nextChar = (char) cp.nextChar();
                     if (nextChar == '=') {
                         nextChar = (char) cp.nextChar();
-                        nextToken = new GreaterOrEqualOperator(cp.getLineNumber(), col);
+                        nextToken = new GreaterOrEqualOperator(startOffset);
                         break breakable;
                     }
-                    nextToken = new GreaterOperator(cp.getLineNumber(), col);
+                    nextToken = new GreaterOperator(startOffset);
                     break breakable;
                 case '[':
                     if (sb.length() > 0) {
                         break breakable;
                     }
                     nextChar = (char) cp.nextChar();
-                    nextToken = new LeftBracketToken(row, col);
+                    nextToken = new LeftBracketToken(startOffset);
                     break breakable;
                 case ']':
                     if (sb.length() > 0) {
                         break breakable;
                     }
                     nextChar = (char) cp.nextChar();
-                    nextToken = new RightBracketToken(row, col);
+                    nextToken = new RightBracketToken(startOffset);
                     break breakable;
                 case '-':
                     if (sb.length() > 0) {
@@ -298,14 +247,14 @@ public class Scanner {
                         //is -> (arrow)
                         case '>':
                             nextChar = (char) cp.nextChar();
-                            nextToken = new ArrowToken(cp.getLineNumber(), col);
+                            nextToken = new ArrowToken(startOffset);
                             break breakable;
                         case '-':
                             nextChar = (char) cp.nextChar();
-                            nextToken = new DecrOperator(cp.getLineNumber(), col);
+                            nextToken = new DecrOperator(startOffset);
                             break breakable;
                         default:
-                            nextToken = new SubtractOperator(cp.getLineNumber(), col);
+                            nextToken = new SubtractOperator(startOffset);
                             break breakable;
                     }
                 case ',':
@@ -313,7 +262,7 @@ public class Scanner {
                         break breakable;
                     }
                     nextChar = (char) cp.nextChar();
-                    nextToken = new CommaToken(row, col);
+                    nextToken = new CommaToken(startOffset);
                     break breakable;
                 case '\n':
                 case '\r':
@@ -321,43 +270,42 @@ public class Scanner {
                         break breakable;
                     }
                     nextChar = (char) cp.nextChar();
-                    nextToken = new NewLineToken(row, col);
-                    cp.incrLineNumber();
+                    nextToken = new NewLineToken(startOffset);
                     break breakable;
                 case ')':
                     if (sb.length() > 0) {
                         break breakable;
                     }
                     nextChar = (char) cp.nextChar();
-                    nextToken = new RightParenthesisToken(row, col);
+                    nextToken = new RightParenthesisToken(startOffset);
                     break breakable;
                 case '(':
                     if (sb.length() > 0) {
                         break breakable;
                     }
                     nextChar = (char) cp.nextChar();
-                    nextToken = new LeftParenthesisToken(row, col);
+                    nextToken = new LeftParenthesisToken(startOffset);
                     break breakable;
                 case '}':
                     if (sb.length() > 0) {
                         break breakable;
                     }
                     nextChar = (char) cp.nextChar();
-                    nextToken = new RightCurlToken(row, col);
+                    nextToken = new RightCurlToken(startOffset);
                     break breakable;
                 case '{':
                     if (sb.length() > 0) {
                         break breakable;
                     }
                     nextChar = (char) cp.nextChar();
-                    nextToken = new LeftCurlToken(row, col);
+                    nextToken = new LeftCurlToken(startOffset);
                     break breakable;
                 case '|':
                     if (sb.length() > 0) {
                         break breakable;
                     }
                     nextChar = (char) cp.nextChar();
-                    nextToken = new PipeToken(row, col);
+                    nextToken = new PipeToken(startOffset);
                     break breakable;
                 case '\u0020':
                 case '\u0009':
@@ -366,13 +314,13 @@ public class Scanner {
                         break breakable;
                     }
                     nextChar = (char) cp.nextChar();
-                    nextToken = new WhitespaceToken(row, col);
+                    nextToken = new WhitespaceToken(startOffset);
                     break breakable;
                 case '\uFFFF':
                     if (sb.length() > 0) {
                         break breakable;
                     }
-                    return new EofTok(row, col);
+                    return new EofTok(startOffset);
                 default:
                     sb.append(nextChar);
             }
@@ -384,102 +332,98 @@ public class Scanner {
             return nextToken;
         }
 
-        return resolveBuiltInToken(sb.toString(), row, col);
+        return resolveBuiltInToken(sb.toString(), startOffset);
     }
 
-    private Token resolveBuiltInToken(String content, int row, int col) {
+    private Token resolveBuiltInToken(String content, int offset) {
         if ("fun".equals(content)) {
-            return new FunKeyword(row, col);
+            return new FunKeyword(offset);
         } else if ("met".equals(content)) {
-            return new MetKeyword(row, col);
+            return new MetKeyword(offset);
         } else if ("abstract".equals(content)) {
-            return new AbstractKeyword(row, col);
+            return new AbstractKeyword(offset);
         } else if ("interface".equals(content)) {
-            return new InterfaceKeyword(row, col);
+            return new InterfaceKeyword(offset);
         } else if ("ret".equals(content)) {
-            return new ReturnKeyword(row, col);
+            return new ReturnKeyword(offset);
         } else if ("import".equals(content)) {
-            return new ImportKeyword(row, col);
+            return new ImportKeyword(offset);
         } else if ("val".equals(content)) {
-            return new ValKeyword(row, col);
+            return new ValKeyword(offset);
         } else if ("var".equals(content)) {
-            return new VarKeyword(row, col);
+            return new VarKeyword(offset);
         } else if ("if".equals(content)) {
-            return new IfKeyword(row, col);
+            return new IfKeyword(offset);
         } else if ("else".equals(content)) {
-            return new ElseKeyword(row, col);
+            return new ElseKeyword(offset);
         } else if ("elif".equals(content)) {
-            return new ElifKeyword(row, col);
+            return new ElifKeyword(offset);
         } else if ("true".equals(content)) {
-            return new TrueToken(row, col);
+            return new TrueToken(offset);
         } else if ("false".equals(content)) {
-            return new FalseToken(row, col);
+            return new FalseToken(offset);
         } else if ("Null".equals(content)) {
-            return new NullToken(row, col);
+            return new NullToken(offset);
         } else if ("or".equals(content)) {
-            return new OrOperator(row, col);
+            return new OrOperator(offset);
         } else if ("and".equals(content)) {
-            return new AndOperator(row, col);
+            return new AndOperator(offset);
         } else if ("throw".equals(content)) {
-            return new ThrowKeyword(row, col);
+            return new ThrowKeyword(offset);
         } else if ("finally".equals(content)) {
-            return new FinallyKeyword(row, col);
+            return new FinallyKeyword(offset);
         } else if ("catch".equals(content)) {
-            return new CatchKeyword(row, col);
+            return new CatchKeyword(offset);
         } else if ("try".equals(content)) {
-            return new TryKeyword(row, col);
+            return new TryKeyword(offset);
         } else if ("as".equals(content)) {
-            return new AsOperator(row, col);
+            return new AsOperator(offset);
         } else if ("band".equals(content)) {
-            return new BitAndOperator(row, col);
+            return new BitAndOperator(offset);
         } else if ("bor".equals(content)) {
-            return new BitOrOperator(row, col);
+            return new BitOrOperator(offset);
         } else if ("xor".equals(content)) {
-            return new BitXorOperator(row, col);
+            return new BitXorOperator(offset);
         } else if ("is".equals(content)) {
-            return new IsOperator(row, col);
+            return new IsOperator(offset);
         } else if ("class".equals(content)) {
-            return new ClassKeyword(row, col);
+            return new ClassKeyword(offset);
         } else if ("static".equals(content)) {
-            return new StaticKeyword(row, col);
+            return new StaticKeyword(offset);
         } else if ("constructor".equals(content)) {
-            return new ConstructorKeyword(row, col);
+            return new ConstructorKeyword(offset);
         } else if ("super".equals(content)) {
-            return new SuperKeyword(row, col);
+            return new SuperKeyword(offset);
         } else if ("ushr".equals(content)) {
-            return new BitUnsignedShiftRightOperator(row, col);
+            return new BitUnsignedShiftRightOperator(offset);
         } else if ("shr".equals(content)) {
-            return new BitSignedShiftRightOperator(row, col);
+            return new BitSignedShiftRightOperator(offset);
         } else if ("shl".equals(content)) {
-            return new BitSignedShiftLeftOperator(row, col);
+            return new BitSignedShiftLeftOperator(offset);
         } else if ("ext".equals(content)) {
-            return new ExtKeyword(row, col);
+            return new ExtKeyword(offset);
         } else if ("for".equals(content)) {
-            return new ForKeyword(row, col);
+            return new ForKeyword(offset);
         } else if ("while".equals(content)) {
-            return new WhileKeyword(row, col);
+            return new WhileKeyword(offset);
         } else if ("in".equals(content)) {
-            return new InKeyword(row, col);
+            return new InKeyword(offset);
         } else if ("break".equals(content)) {
-            return new BreakKeyword(row, col);
+            return new BreakKeyword(offset);
         } else if ("continue".equals(content)) {
-            return new ContinueKeyword(row, col);
+            return new ContinueKeyword(offset);
         } else if ("package".equals(content)) {
-            return new PackageKeyword(row, col);
+            return new PackageKeyword(offset);
         } else if ("lam".equals(content)) {
-            return new LamKeyword(row, col);
+            return new LamKeyword(offset);
         } else if ("object".equals(content)) {
-            return new ObjectKeyword(row, col);
+            return new ObjectKeyword(offset);
         } else if ("when".equals(content)) {
-            return new WhenKeyword(row, col);
+            return new WhenKeyword(offset);
         } else if ("operator".equals(content)) {
-            return new OperatorKeyword(row, col);
+            return new OperatorKeyword(offset);
         }
 
-        return new LiteralToken(row, col, content);
-    }
-
-    public void incrLineNumber() {
-        cp.incrLineNumber();
+        return new LiteralToken(offset, content);
     }
 }

@@ -25,10 +25,10 @@ import org.jetbrains.annotations.NotNull;
  */
 public class LeftCurlToken extends Token {
 
-    public static final LeftCurlToken DUMMY = new LeftCurlToken(-1, -1);
+    public static final LeftCurlToken DUMMY = new LeftCurlToken(-1);
 
-    public LeftCurlToken(int row, int col) {
-        super("{", row, col, ElementType.leftCurl);
+    public LeftCurlToken(int offset) {
+        super("{", offset, ElementType.leftCurl);
     }
 
     @Override

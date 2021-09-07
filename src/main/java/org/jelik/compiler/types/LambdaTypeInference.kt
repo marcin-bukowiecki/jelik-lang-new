@@ -1,12 +1,11 @@
 package org.jelik.compiler.types
 
-import org.jelik.compiler.config.CompilationContext
+import org.jelik.compiler.CompilationContext
 import org.jelik.parser.ast.functions.FunctionCallExpr
 import org.jelik.parser.ast.functions.LambdaDeclarationExpression
 import org.jelik.parser.ast.functions.providers.LambdaTargetFunctionCallProvider
 import org.jelik.parser.ast.resolvers.types.TypeResolver
 import org.jelik.parser.ast.types.InferredTypeNode
-import org.jelik.parser.ast.types.TypeNode
 import org.jelik.parser.ast.utils.ASTDataKey
 import org.jelik.parser.ast.visitors.AstVisitor
 

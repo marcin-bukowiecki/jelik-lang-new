@@ -2,7 +2,6 @@ package org.jelik.parser.ast.operators;
 
 import org.objectweb.asm.Opcodes;
 
-import java.util.Collections;
 import java.util.List;
 
 /**

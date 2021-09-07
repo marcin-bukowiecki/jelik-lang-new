@@ -1,6 +1,1 @@
-
-            fun expr(a Int) -> Int {
-                   val l = lam b -> { ret b }
-                   ret a + l(a)
-                }
-            
+fun expr(a Object, b Object) -> Boolean { ret a.equals(b) or b.equals(a) }

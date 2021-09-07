@@ -1,6 +1,6 @@
 package org.jelik.types
 
-import org.jelik.compiler.config.CompilationContext
+import org.jelik.compiler.CompilationContext
 import org.jelik.compiler.data.ClassData
 import org.jelik.compiler.data.MethodData
 

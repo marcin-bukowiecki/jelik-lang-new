@@ -1,10 +1,9 @@
 package org.jelik.parser.ast.arguments;
 
-import lombok.Getter;
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.ASTNodeImpl;
-import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.ast.expression.Expression;
+import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.types.Type;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,12 +12,15 @@ import org.jetbrains.annotations.NotNull;
  */
 public class Argument extends ASTNodeImpl {
 
-    @Getter
     private Expression expression;
 
     public Argument(@NotNull Expression expression) {
         this.expression = expression;
         expression.setParent(this);
+    }
+
+    public Expression getExpression() {
+        return expression;
     }
 
     @Override

@@ -8,8 +8,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class ImportKeyword extends Token {
 
-    public ImportKeyword(int row, int col) {
-        super("import", row, col, ElementType.importKeyword);
+    public ImportKeyword(int offset) {
+        super("import", offset, ElementType.importKeyword);
     }
 
     @Override

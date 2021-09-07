@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.resolvers;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.compiler.locals.LocalVariable;
 import org.jelik.compiler.model.CompilationUnit;
 import org.jelik.parser.ast.blocks.BasicBlock;

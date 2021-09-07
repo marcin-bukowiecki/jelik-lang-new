@@ -1,8 +1,8 @@
 package org.jelik.parser.ast.locals;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.compiler.locals.LocalVariable;
-import org.jelik.parser.ast.expression.ExpressionWithType;
+import org.jelik.parser.ast.expression.TypedExpression;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.token.LiteralToken;
 import org.jelik.types.Type;
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Marcin Bukowiecki
  */
-public class GetLocalNode extends ExpressionWithType {
+public class GetLocalNode extends TypedExpression {
 
     private final LiteralToken literalToken;
 
@@ -55,22 +55,12 @@ public class GetLocalNode extends ExpressionWithType {
     }
 
     @Override
-    public int getStartCol() {
-        return literalToken.getCol();
+    public int getStartOffset() {
+        return literalToken.getStartOffset();
     }
 
     @Override
-    public int getStartRow() {
-        return literalToken.getRow();
-    }
-
-    @Override
-    public int getEndCol() {
-        return literalToken.getCol() + literalToken.getText().length();
-    }
-
-    @Override
-    public int getEndRow() {
-        return literalToken.getRow();
+    public int getEndOffset() {
+        return literalToken.getEndOffset();
     }
 }

@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.types
 
-import org.jelik.compiler.config.CompilationContext
+import org.jelik.compiler.CompilationContext
 import org.jelik.parser.ast.visitors.AstVisitor
 import org.jelik.parser.token.QuestionMarkToken
 import org.jelik.types.MaybeType
@@ -27,20 +27,12 @@ class MaybeTypeNode(private val inner: TypeNode, private val questionMarkToken: 
         return inner.genericType
     }
 
-    override fun getStartCol(): Int {
-        return inner.startCol
+    override fun getStartOffset(): Int {
+        return inner.startOffset
     }
 
-    override fun getStartRow(): Int {
-        return inner.startRow
-    }
-
-    override fun getEndRow(): Int {
-        return questionMarkToken.endRow
-    }
-
-    override fun getEndCol(): Int {
-        return questionMarkToken.endCol
+    override fun getEndOffset(): Int {
+        return questionMarkToken.endOffset
     }
 
     override fun getSymbol(): String {

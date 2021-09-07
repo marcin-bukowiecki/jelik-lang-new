@@ -29,8 +29,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class MulOperator extends AbstractOperator {
 
-    public MulOperator(int lineNumber, int columnNumber) {
-        super("*", lineNumber, columnNumber, ElementType.mul);
+    public MulOperator(int offset) {
+        super("*", offset, ElementType.mul);
     }
 
     @Override

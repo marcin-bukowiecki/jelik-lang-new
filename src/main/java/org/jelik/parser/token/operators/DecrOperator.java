@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class DecrOperator extends Token {
 
-    public DecrOperator(int row, int col) {
-        super("--", row, col, ElementType.decrOperator);
+    public DecrOperator(int offset) {
+        super("--", offset, ElementType.decrOperator);
     }
 
     @Override

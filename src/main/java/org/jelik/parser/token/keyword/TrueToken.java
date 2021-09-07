@@ -13,12 +13,12 @@ import org.jetbrains.annotations.NotNull;
  */
 public class TrueToken extends Token {
 
-    public TrueToken(int row, int col) {
-        super("True", row, col, ElementType.trueLiteral);
+    public TrueToken(int offset) {
+        super("True", offset, ElementType.trueLiteral);
     }
 
     public TrueToken() {
-        this(-1, -1);
+        this(-1);
     }
 
     @Override

@@ -4,19 +4,17 @@ import org.jelik.compiler.utils.TokenUtils;
 import org.jelik.parser.Lexer;
 import org.jelik.parser.ParseContext;
 import org.jelik.parser.ast.*;
-import org.jelik.parser.ast.arguments.Argument;
-import org.jelik.parser.ast.arguments.ArgumentList;
 import org.jelik.parser.ast.branching.BreakExprImpl;
 import org.jelik.parser.ast.branching.ContinueExprImpl;
-import org.jelik.parser.ast.branching.WhileConditionExpressionImpl;
+import org.jelik.parser.ast.branching.WhileConditionExpressionWrapperImpl;
 import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.arguments.ArgumentListVisitor;
 import org.jelik.parser.ast.arrays.ArrayCreateExpr;
 import org.jelik.parser.ast.arrays.ArrayOrMapGetExpr;
 import org.jelik.parser.ast.arrays.TypedArrayCreateExpr;
-import org.jelik.parser.ast.arrays.TypedArrayCreateWithSizeExpr;
+import org.jelik.parser.ast.arrays.TypedArrayCreateWithSizeExprTyped;
 import org.jelik.parser.ast.expression.EmptyExpression;
-import org.jelik.parser.ast.expression.ParenthesisExpression;
+import org.jelik.parser.ast.expression.ParenthesisExpressionWrapper;
 import org.jelik.parser.ast.functions.FunctionCallExpr;
 import org.jelik.parser.ast.functions.LambdaDeclarationExpression;
 import org.jelik.parser.ast.loops.ForEachLoop;
@@ -29,13 +27,12 @@ import org.jelik.parser.ast.operators.InExpr;
 import org.jelik.parser.ast.operators.NegExpr;
 import org.jelik.parser.ast.operators.NotExpr;
 import org.jelik.parser.ast.operators.SliceExpr;
-import org.jelik.parser.ast.strings.CharExpression;
+import org.jelik.parser.ast.strings.CharTypedExpression;
 import org.jelik.parser.ast.strings.StringParser;
 import org.jelik.parser.ast.types.TypeVariableListNode;
 import org.jelik.parser.ast.utils.ASTUtils;
 import org.jelik.compiler.exceptions.SyntaxException;
 import org.jelik.parser.ast.visitors.blocks.BlockVisitor;
-import org.jelik.parser.ast.visitors.blocks.LambdaBlockVisitor;
 import org.jelik.parser.ast.visitors.functions.LambdaDeclarationVisitor;
 import org.jelik.parser.token.*;
 import org.jelik.parser.token.keyword.BreakKeyword;
@@ -46,33 +43,7 @@ import org.jelik.parser.token.keyword.ForKeyword;
 import org.jelik.parser.token.keyword.InKeyword;
 import org.jelik.parser.token.keyword.LamKeyword;
 import org.jelik.parser.token.keyword.WhileKeyword;
-import org.jelik.parser.token.operators.AbstractOperator;
-import org.jelik.parser.token.operators.AddOperator;
-import org.jelik.parser.token.operators.AndOperator;
-import org.jelik.parser.token.operators.AsOperator;
-import org.jelik.parser.token.operators.AssignOperator;
-import org.jelik.parser.token.operators.BitAndOperator;
-import org.jelik.parser.token.operators.BitOrOperator;
-import org.jelik.parser.token.operators.BitSignedShiftLeftOperator;
-import org.jelik.parser.token.operators.BitSignedShiftRightOperator;
-import org.jelik.parser.token.operators.BitUnsignedShiftRightOperator;
-import org.jelik.parser.token.operators.BitXorOperator;
-import org.jelik.parser.token.operators.DecrOperator;
-import org.jelik.parser.token.operators.DivideOperator;
-import org.jelik.parser.token.operators.EqualOperator;
-import org.jelik.parser.token.operators.GreaterOperator;
-import org.jelik.parser.token.operators.GreaterOrEqualOperator;
-import org.jelik.parser.token.operators.IncrOperator;
-import org.jelik.parser.token.operators.IsOperator;
-import org.jelik.parser.token.operators.LesserOperator;
-import org.jelik.parser.token.operators.LesserOrEqualOperator;
-import org.jelik.parser.token.operators.MulOperator;
-import org.jelik.parser.token.operators.NotEqualOperator;
-import org.jelik.parser.token.operators.NotOperator;
-import org.jelik.parser.token.operators.NullSafeCallOperator;
-import org.jelik.parser.token.operators.OrOperator;
-import org.jelik.parser.token.operators.RemOperator;
-import org.jelik.parser.token.operators.SubtractOperator;
+import org.jelik.parser.token.operators.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -116,7 +87,7 @@ public class ExpressionVisitor implements TokenVisitor<Expression> {
                 break;
             }
         }
-        this.expression = new CharExpression(singleApostropheToken, tokens, ((SingleApostropheToken) lexer.getCurrent()));
+        this.expression = new CharTypedExpression(singleApostropheToken, tokens, ((SingleApostropheToken) lexer.getCurrent()));
         goFurther(parseContext);
     }
 
@@ -128,8 +99,35 @@ public class ExpressionVisitor implements TokenVisitor<Expression> {
 
     @Override
     public void visitLeftCurl(@NotNull LeftCurlToken leftCurlToken, @NotNull ParseContext parseContext) {
-        var lexer = parseContext.getLexer();
-        if (this.expression instanceof LiteralExpr && ((LiteralExpr) this.expression).getText().equals("map")) {
+
+    }
+
+    @Override
+    public void visit(@NotNull ApostropheToken apostropheToken, @NotNull ParseContext parseContext) {
+        this.expression = new StringParser(apostropheToken).visit(parseContext);
+        goFurther(parseContext);
+    }
+
+    @Override
+    public void visitLeftParenthesis(@NotNull LeftParenthesisToken leftParenthesisToken,
+                                     @NotNull ParseContext parseContext) {
+        var expr = new ArgumentListVisitor(leftParenthesisToken).visit(parseContext);
+        if (this.expression instanceof LiteralExpr) {
+            LiteralExpr literalExpr = ((LiteralExpr) this.expression);
+            this.expression = new FunctionCallExpr(literalExpr, expr);
+        } else {
+            this.expression = new ParenthesisExpressionWrapper(expr.getLeftParenthesisToken(),
+                    expr.getArguments().get(0).getExpression(),
+                    expr.getRightParenthesisToken());
+        }
+        goFurther(parseContext);
+    }
+
+    @Override
+    public void visitLiteral(@NotNull LiteralToken literalToken, @NotNull ParseContext parseContext) {
+        final Lexer lexer = parseContext.getLexer();
+        if (literalToken.getText().equals("mapOf") && lexer.peekNext() instanceof LeftCurlToken) {
+            var leftCurlToken = ((LeftCurlToken) lexer.nextToken());
             var expressions = new ArrayList<KeyValueExpr>();
             if (!(lexer.peekNext() instanceof RightCurlToken)) {
                 while (lexer.hasNextToken()) {
@@ -149,35 +147,9 @@ public class ExpressionVisitor implements TokenVisitor<Expression> {
                     leftCurlToken,
                     expressions,
                     ((RightCurlToken) lexer.getCurrent()));
-            goFurther(parseContext);
-        }
-    }
-
-    @Override
-    public void visit(@NotNull ApostropheToken apostropheToken, @NotNull ParseContext parseContext) {
-        this.expression = new StringParser(apostropheToken).visit(parseContext);
-        goFurther(parseContext);
-    }
-
-    @Override
-    public void visitLeftParenthesis(@NotNull LeftParenthesisToken leftParenthesisToken,
-                                     @NotNull ParseContext parseContext) {
-        var expr = new ArgumentListVisitor(leftParenthesisToken).visit(parseContext);
-        if (this.expression instanceof LiteralExpr) {
-            LiteralExpr literalExpr = ((LiteralExpr) this.expression);
-            this.expression = new FunctionCallExpr(literalExpr, expr);
-            goFurther(parseContext);
         } else {
-            this.expression = new ParenthesisExpression(expr.getLeftParenthesisToken(),
-                    expr.getArguments().get(0).getExpression(),
-                    expr.getRightParenthesisToken());
-            goFurther(parseContext);
+            this.expression =  new LiteralExpr(literalToken);
         }
-    }
-
-    @Override
-    public void visitLiteral(@NotNull LiteralToken literalToken, @NotNull ParseContext parseContext) {
-        this.expression =  new LiteralExpr(literalToken);
         goFurther(parseContext);
     }
 
@@ -254,6 +226,12 @@ public class ExpressionVisitor implements TokenVisitor<Expression> {
     @Override
     public void visitAdd(@NotNull AddOperator addOperator, @NotNull  ParseContext parseContext) {
         this.expression = new OpExpressionVisitor(this.expression, addOperator).visit(parseContext);
+    }
+
+    @Override
+    public void visitDefaultValueOperator(@NotNull DefaultValueOperator defaultValueOperator,
+                                          @NotNull ParseContext parseContext) {
+        this.expression = new OpExpressionVisitor(this.expression, defaultValueOperator).visit(parseContext);
     }
 
     @Override
@@ -389,7 +367,7 @@ public class ExpressionVisitor implements TokenVisitor<Expression> {
         var right = (RightBracketToken) lexer.getCurrent();
         var peeked = lexer.peekNext();
 
-        if (TokenUtils.isNewLine(right, peeked) || !peeked.canBeType()) {
+        if (TokenUtils.isNewLine(parseContext, right.getEndOffset(), peeked.getStartOffset()) || !peeked.canBeType()) {
             this.expression = new ArrayCreateExpr(leftBracketToken, args, right);
             goFurther(parseContext);
             return;
@@ -413,7 +391,7 @@ public class ExpressionVisitor implements TokenVisitor<Expression> {
                 goFurther(parseContext, false);
             } else  if (lexer.getCurrent() instanceof LeftParenthesisToken) {
                 var sizeExpr = new ExpressionVisitor(lexer.nextToken()).visit(parseContext);
-                this.expression = new TypedArrayCreateWithSizeExpr(leftBracketToken,
+                this.expression = new TypedArrayCreateWithSizeExprTyped(leftBracketToken,
                         right,
                         typeNodeVisitor.getTypeNode(),
                         sizeExpr);
@@ -450,7 +428,7 @@ public class ExpressionVisitor implements TokenVisitor<Expression> {
             var varExpr = inExpr.getLeft();
             var inKeyword = inExpr.getInKeyword();
             var iterExpr = inExpr.getRight();
-            var left = parseContext.getLexer().getCurrent();
+            var left = parseContext.getLexer().nextToken();
             var codeBlock = new BlockVisitor(left).visit(parseContext);
             this.expression = new ForEachLoop(forKeyword,
                     new LoopVar(((LiteralExpr) varExpr)),
@@ -467,7 +445,7 @@ public class ExpressionVisitor implements TokenVisitor<Expression> {
     @Override
     public void visitWhileKeyword(@NotNull WhileKeyword whileKeyword, @NotNull ParseContext parseContext) {
         var expr = new ExpressionVisitor(parseContext.getLexer().nextToken()).visit(parseContext);
-        var left = parseContext.getLexer().getCurrent();
+        var left = parseContext.getLexer().nextToken();
         if (left.getTokenType() != ElementType.leftCurl) {
             TokenUtils.checkExpectedToken(ElementType.leftCurl, left, "{", parseContext);
         }
@@ -478,11 +456,16 @@ public class ExpressionVisitor implements TokenVisitor<Expression> {
         }
         this.expression = new WhileLoopImpl(
                 whileKeyword,
-                new WhileConditionExpressionImpl(expr),
+                new WhileConditionExpressionWrapperImpl(expr),
                 left,
                 codeBlock,
                 right
         );
+    }
+
+    @Override
+    public void visitArrowToken(@NotNull ArrowToken arrowToken, @NotNull ParseContext parseContext) {
+
     }
 
     @Override
@@ -550,14 +533,15 @@ public class ExpressionVisitor implements TokenVisitor<Expression> {
             case breakKeyword:
             case continueKeyword:
             case ifKeyword:
-                ASTUtils.checkNewLine(this.expression, peekedNext, parseContext);
+                ASTUtils.checkNewLine(parseContext, this.expression, peekedNext);
+            case leftCurl:
             case rightCurl:
             case elseKeyword:
             case elifKeyword:
                 return;
         }
 
-        if (peekedNext.getRow() != this.expression.getEndRow()) {
+        if (TokenUtils.isNewLine(parseContext, this.expression.getEndOffset(), peekedNext.getStartOffset())) {
             return;
         }
 

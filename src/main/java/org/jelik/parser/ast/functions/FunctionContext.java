@@ -3,7 +3,6 @@ package org.jelik.parser.ast.functions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import lombok.Data;
 import org.apache.commons.collections4.iterators.ReverseListIterator;
 import org.jelik.compiler.locals.LocalVariable;
 import org.jelik.compiler.mir.MIRFunction;
@@ -20,7 +19,6 @@ import java.util.stream.Collectors;
 /**
  * @author Marcin Bukowiecki
  */
-@Data
 public class FunctionContext {
 
     private Map<String, LocalVariable> localVariableNamesMap = Maps.newHashMap();
@@ -45,6 +43,42 @@ public class FunctionContext {
 
     public FunctionContext(FunctionDeclaration functionDeclaration) {
         this.functionDeclaration = functionDeclaration;
+    }
+
+    public Map<String, LocalVariable> getLocalVariableNamesMap() {
+        return localVariableNamesMap;
+    }
+
+    public List<LocalVariable> getLocalVariableList() {
+        return localVariableList;
+    }
+
+    public Map<String, TypeNode> getTypeParametersMap() {
+        return typeParametersMap;
+    }
+
+    public Map<String, TypeNode> getGenericTypeParametersMap() {
+        return genericTypeParametersMap;
+    }
+
+    public int getLocalCounter() {
+        return localCounter;
+    }
+
+    public int getLabelCounter() {
+        return labelCounter;
+    }
+
+    public LinkedList<CodeEvent> getCodeEvents() {
+        return codeEvents;
+    }
+
+    public MIRFunction getMirFunction() {
+        return mirFunction;
+    }
+
+    public FunctionDeclaration getFunctionDeclaration() {
+        return functionDeclaration;
     }
 
     public void addLocalVariable(LocalVariable localVariable) {

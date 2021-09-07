@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.expression
 
-import org.jelik.compiler.config.CompilationContext
+import org.jelik.compiler.CompilationContext
 import org.jelik.parser.ast.ASTNode
 import org.jelik.parser.ast.ASTNodeImpl
 import org.jelik.parser.ast.blocks.BasicBlockImpl
@@ -55,7 +55,11 @@ class TryExpressionImpl(private val tryKeyword: TryKeyword,
         return block.genericReturnType
     }
 
-    override fun getStartRow(): Int {
-        return tryKeyword.row
+    override fun getStartOffset(): Int {
+        return tryKeyword.startOffset
+    }
+
+    override fun getEndOffset(): Int {
+        return block.endOffset
     }
 }

@@ -1,15 +1,15 @@
 package org.jelik.types;
 
 import com.google.common.collect.Sets;
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.compiler.JelikCompiler;
 import org.jelik.compiler.asm.visitor.TypeVisitor;
-import org.jelik.compiler.common.TypeEnum;
+import org.jelik.compiler.runtime.TypeEnum;
 import org.jelik.compiler.data.ClassData;
 import org.jelik.compiler.helper.CompilerHelper;
 import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.numbers.Float32ToInt32Node;
-import org.jelik.parser.ast.numbers.IntegerWrapperToInt32Node;
+import org.jelik.parser.ast.numbers.IntegerToInt32NodeWrapper;
 import org.jelik.parser.ast.numbers.ObjectToInt32Node;
 import org.jelik.parser.ast.types.JelikGenericType;
 import org.jelik.types.jvm.IntegerWrapperType;
@@ -116,7 +116,7 @@ public class JVMIntType extends NumberType {
 
     @Override
     public void castFrom(Expression expression, IntegerWrapperType type, CompilationContext compilationContext) {
-        expression.getParent().replaceWith(expression, new IntegerWrapperToInt32Node(expression));
+        expression.getParent().replaceWith(expression, new IntegerToInt32NodeWrapper(expression));
     }
 
     @Override

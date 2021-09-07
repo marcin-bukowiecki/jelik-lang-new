@@ -1,16 +1,1 @@
-
-            fun expr(a Int) -> Int {
-                var b = 123
-                if a > 10 and a < 100 {
-                    b = 1
-                } elif a > 100 {
-                    b = 2
-                }    
-                if a > 200 {
-                    b = 3
-                } else { 
-                    b = 4
-                }    
-                ret b
-            }
-        
+fun expr(a Float) -> Boolean { ret a < 0 and a < 123 }

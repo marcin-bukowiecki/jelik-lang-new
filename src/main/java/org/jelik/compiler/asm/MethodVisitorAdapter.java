@@ -3,7 +3,7 @@ package org.jelik.compiler.asm;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.jelik.compiler.asm.utils.ByteCodeLogger;
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.compiler.locals.LocalVariable;
 import org.jelik.parser.ast.expression.CatchExpression;
 import org.jelik.parser.ast.expression.TryExpression;

@@ -1,8 +1,7 @@
 package org.jelik.compiler.data;
 
 import com.google.common.collect.ImmutableList;
-import lombok.Getter;
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.compiler.asm.utils.ASMUtils;
 import org.jelik.types.FunctionType;
 import org.jelik.types.Type;
@@ -17,7 +16,6 @@ import java.util.stream.Collectors;
 /**
  * @author Marcin Bukowiecki
  */
-@Getter
 public class ClassDataImpl implements ClassData {
 
     protected final String canonicalName;
@@ -93,6 +91,16 @@ public class ClassDataImpl implements ClassData {
     }
 
     @Override
+    public Type getType() {
+        return type;
+    }
+
+    @Override
+    public Collection<? extends MethodData> getConstructorScope() {
+        return constructorScope;
+    }
+
+    @Override
     public boolean isInterface() {
         return interfacee;
     }
@@ -100,5 +108,41 @@ public class ClassDataImpl implements ClassData {
     @Override
     public boolean isAbstract() {
         return abstractt;
+    }
+
+    public String getCanonicalName() {
+        return canonicalName;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getModifiers() {
+        return modifiers;
+    }
+
+    public boolean isFunctionalInterface() {
+        return functionalInterface;
+    }
+
+    public boolean isInterfacee() {
+        return interfacee;
+    }
+
+    public boolean isAbstractt() {
+        return abstractt;
+    }
+
+    public List<FieldDataImpl> getFieldScope() {
+        return fieldScope;
+    }
+
+    public List<ClassData> getInterfaceScope() {
+        return interfaceScope;
+    }
+
+    public ClassData getParentScope() {
+        return parentScope;
     }
 }

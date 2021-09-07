@@ -1,1 +1,1 @@
-fun expr() -> []Double {   ret [1,2,3,4]Double}
+fun

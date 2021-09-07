@@ -1,1 +1,2 @@
-fun expr(a Long) -> Float { ret a as Float }
+import java.util.Collection
+fun expr() -> Collection<Int> {   ret mapOf{}.values()}

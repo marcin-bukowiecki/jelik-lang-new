@@ -1,7 +1,6 @@
 package org.jelik.parser.ast.branching;
 
-import lombok.Getter;
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.ASTNodeImpl;
 import org.jelik.parser.ast.blocks.BasicBlockImpl;
 import org.jelik.parser.ast.expression.Expression;
@@ -23,19 +22,14 @@ import java.util.Optional;
  */
 public class IfExpressionImpl extends ASTNodeImpl implements StackConsumer, IfExpression {
 
-    @Getter
     private final IfKeyword ifKeyword;
 
-    @Getter
-    private IfConditionExpressionImpl conditionExpression;
+    private IfConditionExpressionWrapperImpl conditionExpression;
 
-    @Getter
     private final Token leftCurlToken;
 
-    @Getter
     private BasicBlockImpl basicBlock;
 
-    @Getter
     private final Token rightCurlToken;
 
     private ElseExpression elseExpression;
@@ -43,7 +37,7 @@ public class IfExpressionImpl extends ASTNodeImpl implements StackConsumer, IfEx
     private final IfNodeContext nodeContext;
 
     public IfExpressionImpl(@NotNull IfKeyword ifKeyword,
-                            @NotNull IfConditionExpressionImpl condition,
+                            @NotNull IfConditionExpressionWrapperImpl condition,
                             @NotNull LeftCurlToken leftCurlToken,
                             @NotNull BasicBlockImpl block,
                             @Nullable RightCurlToken rightCurlToken) {
@@ -64,7 +58,7 @@ public class IfExpressionImpl extends ASTNodeImpl implements StackConsumer, IfEx
     }
 
     public @NotNull IfNodeContext getContext() {
-        return ((IfNodeContext) nodeContext);
+        return nodeContext;
     }
 
     public @Nullable ElseExpression getElseExpression() {
@@ -84,8 +78,8 @@ public class IfExpressionImpl extends ASTNodeImpl implements StackConsumer, IfEx
     }
 
     @Override
-    public int getStartRow() {
-        return ifKeyword.getRow();
+    public int getStartOffset() {
+        return ifKeyword.getStartOffset();
     }
 
     @Override
@@ -111,7 +105,7 @@ public class IfExpressionImpl extends ASTNodeImpl implements StackConsumer, IfEx
     @Override
     public void replaceWith(@NotNull Expression oldNode, @NotNull Expression newNode) {
         if (oldNode == this.conditionExpression) {
-            this.conditionExpression = ((IfConditionExpressionImpl) newNode);
+            this.conditionExpression = ((IfConditionExpressionWrapperImpl) newNode);
             newNode.setParent(this);
         } else if (oldNode == this.basicBlock) {
             this.basicBlock = ((BasicBlockImpl) newNode);
@@ -134,5 +128,29 @@ public class IfExpressionImpl extends ASTNodeImpl implements StackConsumer, IfEx
     @Override
     public boolean isLast() {
         return elseExpression == null;
+    }
+
+    public IfKeyword getIfKeyword() {
+        return ifKeyword;
+    }
+
+    public IfConditionExpressionWrapperImpl getConditionExpression() {
+        return conditionExpression;
+    }
+
+    public Token getLeftCurlToken() {
+        return leftCurlToken;
+    }
+
+    public BasicBlockImpl getBasicBlock() {
+        return basicBlock;
+    }
+
+    public Token getRightCurlToken() {
+        return rightCurlToken;
+    }
+
+    public IfNodeContext getNodeContext() {
+        return nodeContext;
     }
 }

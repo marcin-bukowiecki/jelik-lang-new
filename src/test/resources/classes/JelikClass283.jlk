@@ -1,5 +1,7 @@
+import java.util.ArrayList
 
-fun expr(l []Object) -> Int {
+fun expr(l ArrayList<Int>) -> Int {
    for e in l {
+       System.out.println(e)
    }
    ret 1}

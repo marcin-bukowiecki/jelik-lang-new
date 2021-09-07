@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class AbstractKeyword extends Token implements Modifier {
 
-    public AbstractKeyword(int row, int col) {
-        super("abstract", row, col, ElementType.abstractKeyword);
+    public AbstractKeyword(int offset) {
+        super("abstract", offset, ElementType.abstractKeyword);
     }
 
     @Override

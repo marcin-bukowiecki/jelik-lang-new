@@ -1,1 +1,1 @@
-fun expr() -> String { ret Null }
+fun expr() { print() }

@@ -1,7 +1,6 @@
 package org.jelik.parser.ast;
 
-import lombok.Getter;
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.token.Token;
@@ -13,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Marcin Bukowiecki
  */
-@Getter
 public class ReferenceExpressionImpl extends ASTNodeImpl implements ReferenceExpression {
 
     private Expression reference;
@@ -42,23 +40,13 @@ public class ReferenceExpressionImpl extends ASTNodeImpl implements ReferenceExp
     }
 
     @Override
-    public int getStartRow() {
-        return reference.getStartRow();
+    public int getStartOffset() {
+        return reference.getStartOffset();
     }
 
     @Override
-    public int getStartCol() {
-        return reference.getStartRow();
-    }
-
-    @Override
-    public int getEndCol() {
-        return getFurtherExpression().getEndCol();
-    }
-
-    @Override
-    public int getEndRow() {
-        return getFurtherExpression().getEndRow();
+    public int getEndOffset() {
+        return furtherExpression.getEndOffset();
     }
 
     @Override
@@ -94,6 +82,10 @@ public class ReferenceExpressionImpl extends ASTNodeImpl implements ReferenceExp
     @Override
     public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
         astVisitor.visitReferenceExpression(this, compilationContext);
+    }
+
+    public String getText() {
+        return reference.toString() + "." + furtherExpression.toString();
     }
 
     @Override

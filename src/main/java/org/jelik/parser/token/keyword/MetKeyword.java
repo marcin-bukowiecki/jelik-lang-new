@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class MetKeyword extends Token {
 
-    public MetKeyword(int row, int col) {
-        super("met", row, col, ElementType.metKeyword);
+    public MetKeyword(int offset) {
+        super("met", offset, ElementType.metKeyword);
     }
 
     @Override

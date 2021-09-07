@@ -1,7 +1,7 @@
 package org.jelik.parser.ast.classes;
 
-import org.jelik.compiler.config.CompilationContext;
-import org.jelik.compiler.common.TypeEnum;
+import org.jelik.compiler.runtime.TypeEnum;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.compiler.data.ClassData;
 import org.jelik.compiler.data.FieldData;
 import org.jelik.compiler.data.MethodData;
@@ -31,11 +31,7 @@ import org.jelik.types.JVMObjectType;
 import org.jelik.types.Type;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -93,8 +89,16 @@ public class ClassDeclaration extends ASTNodeImpl implements CompilationUnit, Cl
         this.dataHolder.putData(ASTDataKey.IS_ABSTRACT, modifiers.stream().anyMatch(m -> m instanceof AbstractKeyword));
     }
 
+    public List<Modifier> getModifiers() {
+        return modifiers;
+    }
+
+    public String getSuperInternalName() {
+        return "java/lang/Object";
+    }
+
     public boolean isAbstract() {
-        return this.dataHolder.getData(ASTDataKey.IS_ABSTRACT);
+        return Boolean.TRUE.equals(this.dataHolder.getData(ASTDataKey.IS_ABSTRACT));
     }
 
     public TypeVariableListNode getTypeParameterListNode() {
@@ -115,6 +119,10 @@ public class ClassDeclaration extends ASTNodeImpl implements CompilationUnit, Cl
 
     public List<FunctionDeclaration> getFunctionDeclarations() {
         return Collections.unmodifiableList(functionDeclarations);
+    }
+
+    public List<MethodDeclaration> getMethodDeclarations() {
+        return Collections.unmodifiableList(methodDeclarations);
     }
 
     @Override
@@ -253,5 +261,9 @@ public class ClassDeclaration extends ASTNodeImpl implements CompilationUnit, Cl
                 this.constructorDeclarations.stream()
                 .map(ConstructorDeclaration::toString)
                 .collect(Collectors.joining()) + "\n}";
+    }
+
+    public boolean hasMain() {
+        return functionDeclarations.stream().anyMatch(FunctionDeclaration::isMain);
     }
 }

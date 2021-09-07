@@ -2,11 +2,13 @@ package org.jelik.parser.ast.visitors;
 
 import org.jelik.parser.Lexer;
 import org.jelik.parser.ParseContext;
-import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.TokenVisitor;
-import org.jelik.parser.ast.types.TypeNode;
+import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.locals.ValueDeclaration;
+import org.jelik.parser.ast.types.TypeNode;
 import org.jelik.parser.ast.types.UndefinedTypeNode;
+import org.jelik.parser.ast.visitors.blocks.BlockVisitor;
+import org.jelik.parser.token.LeftCurlToken;
 import org.jelik.parser.token.LiteralToken;
 import org.jelik.parser.token.Token;
 import org.jelik.parser.token.keyword.ValKeyword;
@@ -51,5 +53,10 @@ public class ValueVisitor implements TokenVisitor<ValueDeclaration> {
         Lexer lexer = parseContext.getLexer();
         Token nextToken = lexer.nextToken();
         this.expression = new ExpressionVisitor(nextToken).visit(parseContext);
+    }
+
+    @Override
+    public void visitLeftCurl(@NotNull LeftCurlToken leftCurlToken, @NotNull ParseContext parseContext) {
+        this.expression = new BlockVisitor(leftCurlToken).visit(parseContext);
     }
 }

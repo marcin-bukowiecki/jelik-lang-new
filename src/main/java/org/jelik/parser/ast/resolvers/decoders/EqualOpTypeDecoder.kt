@@ -1,13 +1,14 @@
 package org.jelik.parser.ast.resolvers.decoders
 
-import org.jelik.compiler.config.CompilationContext
-import org.jelik.compiler.common.TypeEnum
+import org.jelik.compiler.CompilationContext
+import org.jelik.compiler.runtime.TypeEnum
 import org.jelik.parser.ast.expression.Expression
 import org.jelik.parser.ast.NullExpr
 import org.jelik.parser.ast.operators.EqualExpr
 import org.jelik.parser.ast.operators.JumpInstruction
 import org.jelik.parser.ast.resolvers.CastToVisitor
 import org.jelik.types.Type
+import org.jelik.types.jvm.JVMDoubleType
 
 /**
  * @author Marcin Bukowiecki
@@ -61,6 +62,12 @@ object EqualOpTypeDecoder {
             }
             TypeEnum.float64 -> {
                 when(rightType.typeEnum) {
+                    TypeEnum.int8,
+                    TypeEnum.int16,
+                    TypeEnum.int32 -> {
+                        rightType.accept(CastToVisitor(rightCaller, JVMDoubleType.INSTANCE), ctx)
+                        op.instructionToCall = JumpInstruction.dcmpl
+                    }
                     TypeEnum.float64 -> {
                         op.instructionToCall = JumpInstruction.dcmpl
                     }

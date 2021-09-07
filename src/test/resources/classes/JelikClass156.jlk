@@ -1,1 +1,1 @@
-fun expr(a Float, b Float) -> Float { ret a * 4 }
+fun expr(a Int, b Int) -> Boolean { ret a < b and a < b }

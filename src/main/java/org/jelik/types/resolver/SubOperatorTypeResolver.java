@@ -1,6 +1,6 @@
 package org.jelik.types.resolver;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.operators.SubExpr;
 import org.jelik.types.Type;
 

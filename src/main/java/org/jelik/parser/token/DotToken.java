@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class DotToken extends Token {
 
-    public DotToken(int row, int col) {
-        super(".", row, col, ElementType.dot);
+    public DotToken(int offset) {
+        super(".", offset, ElementType.dot);
     }
 
     @Override

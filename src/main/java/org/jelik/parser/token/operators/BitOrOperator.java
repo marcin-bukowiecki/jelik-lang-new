@@ -13,8 +13,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class BitOrOperator extends AbstractOperator {
 
-    public BitOrOperator(int row, int col) {
-        super("bor", row, col, ElementType.bitwiseOr);
+    public BitOrOperator(int offset) {
+        super("bor", offset, ElementType.bitwiseOr);
     }
 
     @Override

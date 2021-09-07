@@ -1,6 +1,4 @@
-import java.util.ArrayList
-
-fun expr(l ArrayList<Int>) -> Int {
-   for in l {
-       System.out.println(1)   }
-   ret 1}
+fun toCall(a Integer) -> Int { ret 123 + a }
+fun expr(a Int) -> Int {
+   val b = toCall
+   ret b(678) + a}

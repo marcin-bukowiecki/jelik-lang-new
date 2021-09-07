@@ -1,2 +1,1 @@
-fun expr(a Float, b Float) -> Float { val c = a
- ret c - b }
+fun expr(a Int, b Int) -> Boolean { ret a > b and a > b }

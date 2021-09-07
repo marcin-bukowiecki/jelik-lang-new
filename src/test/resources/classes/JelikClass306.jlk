@@ -1,2 +1,1 @@
-import java.util.List
-fun expr(a Long) -> Boolean { ret a in [1,2,3,4,5]Long }
+fun expr() -> Int { ret 10 + 12 }

@@ -15,8 +15,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class GreaterOperator extends AbstractOperator {
 
-    public GreaterOperator(int row, int col) {
-        super(">", row, col, ElementType.greaterOperator);
+    public GreaterOperator(int offset) {
+        super(">", offset, ElementType.greaterOperator);
     }
 
     @Override

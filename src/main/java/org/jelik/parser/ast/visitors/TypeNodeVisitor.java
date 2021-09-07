@@ -127,7 +127,7 @@ public class TypeNodeVisitor implements TokenVisitor<TypeNode> {
         }
 
         if (peeked.getTokenType() == ElementType.returnKeyword) {
-            if (peeked.getEndRow() == this.typeNode.getEndRow()) {
+            if (TokenUtils.isNewLine(parseContext, peeked.getEndOffset(), this.typeNode.getStartOffset())) {
                 throw new SyntaxException("Unexpected token", peeked, parseContext.getCurrentFilePath());
             } else {
                 return;

@@ -13,8 +13,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class PackageKeyword extends Token {
 
-    public PackageKeyword(int row, int col) {
-        super("package", row, col, ElementType.packageKeyword);
+    public PackageKeyword(int offset) {
+        super("package", offset, ElementType.packageKeyword);
     }
 
     @Override

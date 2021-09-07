@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.types;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.token.LiteralToken;
 import org.jelik.types.Type;
@@ -22,23 +22,13 @@ public class SingleTypeNode extends TypeNode {
     }
 
     @Override
-    public int getStartRow() {
-        return token.getRow();
+    public int getStartOffset() {
+        return token.getStartOffset();
     }
 
     @Override
-    public int getStartCol() {
-        return token.getCol();
-    }
-
-    @Override
-    public int getEndRow() {
-        return token.getEndRow();
-    }
-
-    @Override
-    public int getEndCol() {
-        return token.getEndCol();
+    public int getEndOffset() {
+        return token.getEndOffset();
     }
 
     public String getText() {

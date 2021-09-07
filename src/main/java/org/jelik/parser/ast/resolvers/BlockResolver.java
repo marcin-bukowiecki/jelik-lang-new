@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.resolvers;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.ast.functions.FunctionBody;
 import org.jetbrains.annotations.NotNull;

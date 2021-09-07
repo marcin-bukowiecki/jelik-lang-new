@@ -1,2 +1,2 @@
-fun expr(a Int) -> Short { val b = 10 
- ret (a band b) as Short }
+fun expr(a Long) -> Long { val b = 10 
+ ret a / b }

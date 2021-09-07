@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.types;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.token.operators.MulOperator;
 import org.jelik.types.Type;
@@ -18,27 +18,17 @@ public class WildCardTypeNode extends TypeNode {
     }
 
     public WildCardTypeNode() {
-        this.token = new MulOperator(-1, -1);
+        this.token = new MulOperator(-1);
     }
 
     @Override
-    public int getStartRow() {
-        return token.getRow();
+    public int getStartOffset() {
+        return token.getStartOffset();
     }
 
     @Override
-    public int getStartCol() {
-        return token.getCol();
-    }
-
-    @Override
-    public int getEndRow() {
-        return token.getEndRow();
-    }
-
-    @Override
-    public int getEndCol() {
-        return token.getEndCol();
+    public int getEndOffset() {
+        return token.getEndOffset();
     }
 
     public String getText() {

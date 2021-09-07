@@ -26,6 +26,7 @@ import org.jelik.parser.token.keyword.InterfaceKeyword;
 import org.jelik.parser.token.keyword.PackageKeyword;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -49,6 +50,10 @@ public class ModuleParser implements TokenVisitor<ModuleDeclaration> {
 
     public ModuleParser(String absoluteFilePath) {
         this.absoluteFilePath = absoluteFilePath;
+    }
+
+    public ModuleParser(File file) {
+        this.absoluteFilePath = file.getAbsolutePath();
     }
 
     public @NotNull ModuleDeclaration visit(final @NotNull ParseContext parseContext) {

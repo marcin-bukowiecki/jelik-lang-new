@@ -1,0 +1,12 @@
+fun compute1() -> []Int {
+    val a = [1,2,3,4,5]
+    ret a
+}
+
+fun box() -> Boolean {
+    val b = compute1()[3]
+    if b != 4 {
+        ret false
+    }
+    ret true
+}

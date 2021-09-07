@@ -1,5 +1,1 @@
-fun expr() -> String {
-   val a = ["a","b","c"]
-   a[2] = "foo"
-   ret a[2]
-}
+fun expr() -> Int {   ret [1,2,3,4,5,6,7,8,9,10][-5]}

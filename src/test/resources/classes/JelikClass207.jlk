@@ -1,1 +1,2 @@
-fun expr(a Int) -> Double { ret a as Double }
+import java.util.Map
+fun expr() -> Int {   ret mapOf{"foo": 11, "bar": 12}["foo"]}

@@ -1,1 +1,1 @@
-fun expr() -> []String { ret ["foo", "bar"][0:1] }
+fun expr() -> []String {   ret ["foo","bar"]}

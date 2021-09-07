@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class VarKeyword extends Token implements Modifier {
 
-    public VarKeyword(int row, int col) {
-        super("var", row, col, ElementType.varKeyword);
+    public VarKeyword(int offset) {
+        super("var", offset, ElementType.varKeyword);
     }
 
     @Override

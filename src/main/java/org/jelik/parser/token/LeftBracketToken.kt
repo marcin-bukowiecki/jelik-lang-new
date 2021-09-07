@@ -8,7 +8,7 @@ import org.jelik.parser.ast.TokenVisitor
  *
  * @author Marcin Bukowiecki
  */
-class LeftBracketToken(row: Int, col: Int) : Token("[", row, col, ElementType.leftBracket) {
+class LeftBracketToken(offset: Int) : Token("[", offset, ElementType.leftBracket) {
 
     override fun accept(parseVisitor: TokenVisitor<*>, parseContext: ParseContext) {
         parseVisitor.visit(this, parseContext)

@@ -1,1 +1,2 @@
-fun expr(a Long, b Int) -> Long { ret a bor b }
+import java.util.Collection
+fun expr() -> Collection<Int> {   ret mapOf{"foo": 11, "bar": 12}.values()}

@@ -1,2 +1,3 @@
-import java.util.ArrayList
-fun expr() -> []ArrayList<Int> {   ret [ArrayList<Int>()]ArrayList<Int>)}
+import java.util.Iterator
+import java.util.List
+fun expr(a Iterator<Int>, b List<Int>) -> Boolean { ret a.hasNext() and b.size() > 1}

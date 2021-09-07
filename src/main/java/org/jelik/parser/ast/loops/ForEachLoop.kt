@@ -16,12 +16,12 @@
 
 package org.jelik.parser.ast.loops
 
-import org.jelik.compiler.config.CompilationContext
+import org.jelik.compiler.CompilationContext
 import org.jelik.compiler.locals.LocalVariable
 import org.jelik.parser.ast.blocks.BasicBlockImpl
 import org.jelik.parser.ast.expression.EmptyExpression
 import org.jelik.parser.ast.expression.Expression
-import org.jelik.parser.ast.expression.ExpressionWithType
+import org.jelik.parser.ast.expression.TypedExpression
 import org.jelik.parser.ast.labels.LabelNode
 import org.jelik.parser.ast.types.InferredTypeRef
 import org.jelik.parser.ast.types.InnerInferredTypeRef
@@ -47,7 +47,7 @@ class ForEachLoop(
     private val left: Token,
     private val block: BasicBlockImpl,
     private val right: Token
-) : ExpressionWithType() {
+) : TypedExpression() {
 
     lateinit var loopStart: LabelNode
 
@@ -83,20 +83,12 @@ class ForEachLoop(
         iterExpression.parent = this
     }
 
-    override fun getStartRow(): Int {
-        return forKeyword.row
+    override fun getStartOffset(): Int {
+        return forKeyword.startOffset
     }
 
-    override fun getStartCol(): Int {
-        return forKeyword.col
-    }
-
-    override fun getEndCol(): Int {
-        return right.endCol
-    }
-
-    override fun getEndRow(): Int {
-        return right.endRow
+    override fun getEndOffset(): Int {
+        return right.endOffset
     }
 
     override fun toString(): String {

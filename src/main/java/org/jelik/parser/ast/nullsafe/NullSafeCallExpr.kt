@@ -3,6 +3,7 @@ package org.jelik.parser.ast.nullsafe
 import org.jelik.parser.ast.ReferenceExpression
 import org.jelik.parser.ast.expression.Expression
 import org.jelik.parser.ast.labels.LabelNode
+import org.jelik.types.Type
 
 /**
  * Wraps expression with safe call ?.
@@ -25,5 +26,9 @@ interface NullSafeCallExpr : ReferenceExpression {
 
     fun isLast(): Boolean {
         return parent !is NullSafeCallExpr
+    }
+
+    fun referenceGenericType(): Type? {
+        return extractNullSubject()?.genericReturnType
     }
 }

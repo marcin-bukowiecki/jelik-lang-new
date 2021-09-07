@@ -1,10 +1,10 @@
 package org.jelik.parser.ast.functions;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.arguments.Argument;
 import org.jelik.parser.ast.arguments.ArgumentList;
-import org.jelik.parser.ast.expression.ExpressionWithType;
+import org.jelik.parser.ast.expression.TypedExpression;
 import org.jelik.parser.ast.functions.providers.TargetFunctionCallProvider;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.token.keyword.SuperKeyword;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 /**
  * @author Marcin Bukowiecki
  */
-public class SuperCallExpr extends ExpressionWithType implements FunctionCall {
+public class SuperCallExpr extends TypedExpression implements FunctionCall {
 
     private final SuperKeyword superKeyword;
 
@@ -50,23 +50,13 @@ public class SuperCallExpr extends ExpressionWithType implements FunctionCall {
     }
 
     @Override
-    public int getStartRow() {
-        return superKeyword.getRow();
+    public int getStartOffset() {
+        return superKeyword.getStartOffset();
     }
 
     @Override
-    public int getStartCol() {
-        return superKeyword.getCol();
-    }
-
-    @Override
-    public int getEndCol() {
-        return argumentList.getEndCol();
-    }
-
-    @Override
-    public int getEndRow() {
-        return argumentList.getEndRow();
+    public int getEndOffset() {
+        return argumentList.getEndOffset();
     }
 
     @Override

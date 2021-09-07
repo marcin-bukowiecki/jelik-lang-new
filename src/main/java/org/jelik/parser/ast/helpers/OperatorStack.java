@@ -82,9 +82,12 @@ public final class OperatorStack {
                 .put(ElementType.maybeExpr, 160)
                 .put(ElementType.mapCreate, 160)
 
-                .put(ElementType.inOperator, 2)
-                .put(ElementType.range, 2)
-                .put(ElementType.nullSafeCall, 2)
+                .put(ElementType.inOperator, 5)
+                .put(ElementType.range, 5)
+                .put(ElementType.nullSafeCall, 5)
+
+                .put(ElementType.defaultValue, 4)
+
 
                 .put(ElementType.assign, 1)
 

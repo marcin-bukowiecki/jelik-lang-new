@@ -1,2 +1,1 @@
-import java.util.List
-fun expr() -> Boolean { ret 123 in [1,2,3,4,5]Double }
+fun expr(a Int) -> Int { ret a + 12 }

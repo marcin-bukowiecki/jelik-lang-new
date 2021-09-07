@@ -1,7 +1,7 @@
 package org.jelik.types.resolver
 
-import org.jelik.compiler.config.CompilationContext
-import org.jelik.compiler.common.TypeEnum
+import org.jelik.compiler.CompilationContext
+import org.jelik.compiler.runtime.TypeEnum
 import org.jelik.parser.ast.numbers.Int64ToInt32Node
 import org.jelik.parser.ast.operators.AbstractOpExpr
 import org.jelik.types.Type

@@ -1,6 +1,6 @@
 package org.jelik.parser.ast;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.types.TypeVariableListNode;
 import org.jelik.parser.ast.visitors.AstVisitor;
@@ -30,18 +30,13 @@ public class LiteralExpr extends ASTNodeImpl implements Expression {
     }
 
     @Override
-    public int getStartCol() {
-        return literalToken.getCol();
+    public int getStartOffset() {
+        return literalToken.getStartOffset();
     }
 
     @Override
-    public int getEndCol() {
-        return literalToken.getCol() + literalToken.getText().length();
-    }
-
-    @Override
-    public int getEndRow() {
-        return literalToken.getRow();
+    public int getEndOffset() {
+        return literalToken.getEndOffset();
     }
 
     public LiteralToken getLiteralToken() {
@@ -51,16 +46,6 @@ public class LiteralExpr extends ASTNodeImpl implements Expression {
     @Override
     public void accept(@NotNull AstVisitor astVisitor, @NotNull CompilationContext compilationContext) {
         astVisitor.visit(this, compilationContext);
-    }
-
-    @Override
-    public void setType(@NotNull Type type) {
-        throw new UnsupportedOperationException("Literal was not resolved");
-    }
-
-    @Override
-    public void setGenericType(@NotNull Type type) {
-        throw new UnsupportedOperationException("Literal was not resolved");
     }
 
     @Override
@@ -83,10 +68,6 @@ public class LiteralExpr extends ASTNodeImpl implements Expression {
         throw new UnsupportedOperationException("Literal was not resolved");
     }
 
-    @Override
-    public int getStartRow() {
-        return literalToken.getRow();
-    }
 
     public String getText() {
         return literalToken.getText();

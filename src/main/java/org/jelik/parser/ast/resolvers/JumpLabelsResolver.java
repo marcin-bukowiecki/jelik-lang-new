@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.resolvers;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.compiler.asm.visitor.FalseLabelExtractor;
 import org.jelik.parser.ast.branching.BreakExpr;
 import org.jelik.parser.ast.branching.ContinueExpr;
@@ -12,16 +12,7 @@ import org.jelik.parser.ast.labels.LabelNode;
 import org.jelik.parser.ast.loops.ForEachLoop;
 import org.jelik.parser.ast.loops.WhileLoop;
 import org.jelik.parser.ast.nullsafe.NullSafeCallExpr;
-import org.jelik.parser.ast.operators.AbstractLogicalOpExpr;
-import org.jelik.parser.ast.operators.AndExpr;
-import org.jelik.parser.ast.operators.EqualExpr;
-import org.jelik.parser.ast.operators.GreaterExpr;
-import org.jelik.parser.ast.operators.GreaterOrEqualExpr;
-import org.jelik.parser.ast.operators.LesserExpr;
-import org.jelik.parser.ast.operators.LesserOrEqualExpr;
-import org.jelik.parser.ast.operators.NotEqualExpr;
-import org.jelik.parser.ast.operators.NotExpr;
-import org.jelik.parser.ast.operators.OrExpr;
+import org.jelik.parser.ast.operators.*;
 import org.jelik.parser.ast.resolvers.decoders.AndOpLabelDecoder;
 import org.jelik.parser.ast.resolvers.decoders.BooleanExprWrapperChecker;
 import org.jelik.parser.ast.resolvers.decoders.OpLabelDecoder;
@@ -198,5 +189,14 @@ public class JumpLabelsResolver extends AstVisitor {
         BooleanExprWrapperChecker.INSTANCE.checkForWrapping(andExpr);
         AndOpLabelDecoder.INSTANCE.decode(andExpr, compilationContext);
         super.visit(andExpr, compilationContext);
+    }
+
+    @Override
+    public void visitDefaultValueExpr(@NotNull DefaultValueExpr defaultValueExpr,
+                                      @NotNull CompilationContext compilationContext) {
+        super.visitDefaultValueExpr(defaultValueExpr, compilationContext);
+        final NullSafeCallExpr left = (NullSafeCallExpr) defaultValueExpr.getLeft();
+        defaultValueExpr.setNullLabel(left.getEndLabel());
+        defaultValueExpr.setNotNullLabel(left.getFinishLabel());
     }
 }

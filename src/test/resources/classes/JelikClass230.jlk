@@ -1,1 +1,5 @@
-fun expr(a Long, b Long) -> Long { ret a shl b }
+import java.util.List
+
+fun expr(a List<Int>) -> Int {
+   ret a.get(1)
+}

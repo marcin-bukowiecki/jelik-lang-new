@@ -1,2 +1,1 @@
-import java.util.ArrayList
-fun expr() -> Int {   ret len([]ArrayList<Int>) + 2}
+fun expr(a Long, b Long) -> Boolean { ret a == b or a == b }

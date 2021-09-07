@@ -13,7 +13,7 @@ public class FunctionMapTest {
     @Test
     public void createMap_1() {
         var expr = "import java.util.Map\nfun expr() -> Map<String, Int> {" +
-                "   ret map{\"foo\": 11, \"bar\": 12}" +
+                "   ret mapOf{\"foo\": 11, \"bar\": 12}" +
                 "}";
         FunctionCompiler.getInstance()
                 .compile(expr)
@@ -24,7 +24,7 @@ public class FunctionMapTest {
     @Test
     public void createMap_2() {
         var expr = "import java.util.Map\nfun expr() -> Int {" +
-                "   ret map{\"foo\": 11, \"bar\": 12}[\"foo\"]" +
+                "   ret mapOf{\"foo\": 11, \"bar\": 12}[\"foo\"]" +
                 "}";
         FunctionCompiler.getInstance()
                 .compile(expr)
@@ -35,7 +35,7 @@ public class FunctionMapTest {
     @Test
     public void createMap_3() {
         var expr = "import java.util.Map\nfun expr() -> Int {" +
-                "   ret map{\"foo\": 11, \"bar\": 12}[\"foo\"] - 1" +
+                "   ret mapOf{\"foo\": 11, \"bar\": 12}[\"foo\"] - 1" +
                 "}";
         FunctionCompiler.getInstance()
                 .compile(expr)
@@ -46,7 +46,7 @@ public class FunctionMapTest {
     @Test
     public void createMap_4() {
         var expr = "import java.util.Map\nfun expr() -> Int {" +
-                "   ret map{\"foo\": 11, \"bar\": 12}.size()" +
+                "   ret mapOf{\"foo\": 11, \"bar\": 12}.size()" +
                 "}";
         FunctionCompiler.getInstance()
                 .compile(expr)
@@ -57,7 +57,7 @@ public class FunctionMapTest {
     @Test
     public void createMap_5() {
         var expr = "import java.util.Set\nfun expr() -> Set<String> {" +
-                "   ret map{\"foo\": 11, \"bar\": 12}.keySet()" +
+                "   ret mapOf{\"foo\": 11, \"bar\": 12}.keySet()" +
                 "}";
         FunctionCompiler.getInstance()
                 .compile(expr)
@@ -68,7 +68,7 @@ public class FunctionMapTest {
     @Test
     public void createMap_6() {
         var expr = "import java.util.Collection\nfun expr() -> Collection<Int> {" +
-                "   ret map{\"foo\": 11, \"bar\": 12}.values()" +
+                "   ret mapOf{\"foo\": 11, \"bar\": 12}.values()" +
                 "}";
         FunctionCompiler.getInstance()
                 .compile(expr)
@@ -80,7 +80,7 @@ public class FunctionMapTest {
     @Test
     public void createEmptyMap_1() {
         var expr = "import java.util.Collection\nfun expr() -> Collection<Int> {" +
-                "   ret map{}.values()" +
+                "   ret mapOf{}.values()" +
                 "}";
         FunctionCompiler.getInstance()
                 .compile(expr)
@@ -94,7 +94,7 @@ public class FunctionMapTest {
         var expr = "import java.util.Collection\n" +
                 "import java.util.Map\n" +
                 "fun expr() -> Map<String, Int> {\n" +
-                "   val map = map{\"test1\": 123}\n" +
+                "   val map = mapOf{\"test1\": 123}\n" +
                 "   map[\"test\"] = 100\n" +
                 "   ret map" +
                 "}";
@@ -109,7 +109,7 @@ public class FunctionMapTest {
         var expr = "import java.util.Collection\n" +
                 "import java.util.Map\n" +
                 "fun expr() -> Map<String, Int> {\n" +
-                "   val map = map{1: 123}\n" +
+                "   val map = mapOf{1: 123}\n" +
                 "   map[2] = 100\n" +
                 "   ret map" +
                 "}";
@@ -124,7 +124,7 @@ public class FunctionMapTest {
         var expr = "import java.util.Collection\n" +
                 "import java.util.Map\n" +
                 "fun expr() -> Collection<Int> {\n" +
-                "   val map = map{1: 123}\n" +
+                "   val map = mapOf{1: 123}\n" +
                 "   map[2] = 100\n" +
                 "   ret map.values()" +
                 "}";
@@ -140,7 +140,7 @@ public class FunctionMapTest {
         var expr = "import java.util.Collection\n" +
                 "import java.util.Map\n" +
                 "fun expr() -> Map<Int, Int> {\n" +
-                "   val map Map<Int, Int> = map{}\n" +
+                "   val map Map<Int, Int> = mapOf{}\n" +
                 "   map[2] = 100\n" +
                 "   ret map" +
                 "}";
@@ -155,7 +155,7 @@ public class FunctionMapTest {
         var expr = "import java.util.Collection\n" +
                 "import java.util.Map\n" +
                 "fun expr() -> Map<Int, Int> {\n" +
-                "   val map Map<Int, Int> = map{}\n" +
+                "   val map Map<Int, Int> = mapOf{}\n" +
                 "   ret map" +
                 "}";
         FunctionCompiler.getInstance()
@@ -169,7 +169,7 @@ public class FunctionMapTest {
         var expr = "import java.util.Collection\n" +
                 "import java.util.Map\n" +
                 "fun expr() -> Map<Int, Int> {\n" +
-                "   val map Map<Int, Int> = map{}\n" +
+                "   val map Map<Int, Int> = mapOf{}\n" +
                 "   map[2] = 100\n" +
                 "   map[3] = 100\n" +
                 "   ret map" +
@@ -185,7 +185,7 @@ public class FunctionMapTest {
         var expr = "import java.util.Collection\n" +
                 "import java.util.Map\n" +
                 "fun expr() -> Map<Int, Any> {\n" +
-                "   val map Map<Int, Any> = map{}\n" +
+                "   val map Map<Int, Any> = mapOf{}\n" +
                 "   map[2] = 100\n" +
                 "   map[3] = \"100\"\n" +
                 "   ret map" +
@@ -201,7 +201,7 @@ public class FunctionMapTest {
         var expr = "import java.util.Collection\n" +
                 "import java.util.Map\n" +
                 "fun expr() -> Int {\n" +
-                "   val map Map<Int, Any> = map{}\n" +
+                "   val map Map<Int, Any> = mapOf{}\n" +
                 "   map[2] = 100\n" +
                 "   map[3] = \"100\"\n" +
                 "   ret len(map)" +
@@ -217,7 +217,7 @@ public class FunctionMapTest {
         var expr = "import java.util.Collection\n" +
                 "import java.util.Map\n" +
                 "fun expr() -> Int {\n" +
-                "   val map Map<Int, Any> = map{}\n" +
+                "   val map Map<Int, Any> = mapOf{}\n" +
                 "   ret len(map)" +
                 "}";
         FunctionCompiler.getInstance()

@@ -14,11 +14,11 @@ import org.jetbrains.annotations.NotNull;
 public class FalseToken extends Token {
 
     public FalseToken() {
-        super("False", -1, -1, ElementType.falseLiteral);
+        super("False", -1, ElementType.falseLiteral);
     }
 
-    public FalseToken(int row, int col) {
-        super("False", row, col, ElementType.falseLiteral);
+    public FalseToken(int offset) {
+        super("False", offset, ElementType.falseLiteral);
     }
 
     @Override

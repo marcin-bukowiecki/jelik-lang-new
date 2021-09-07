@@ -1,10 +1,10 @@
 package org.jelik.parser.ast.arrays;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.compiler.asm.slice.ArrayGetSliceProvider;
 import org.jelik.parser.ast.ASTNode;
 import org.jelik.parser.ast.expression.Expression;
-import org.jelik.parser.ast.expression.ExpressionWithType;
+import org.jelik.parser.ast.expression.TypedExpression;
 import org.jelik.parser.ast.operators.SliceExpr;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.token.LeftBracketToken;
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Marcin Bukowiecki
  */
-public class ArrayOrMapGetExpr extends ExpressionWithType {
+public class ArrayOrMapGetExpr extends TypedExpression {
 
     private Expression leftExpr;
 
@@ -65,23 +65,13 @@ public class ArrayOrMapGetExpr extends ExpressionWithType {
     }
 
     @Override
-    public int getStartCol() {
-        return leftBracketToken.getCol();
+    public int getStartOffset() {
+        return leftExpr.getStartOffset();
     }
 
     @Override
-    public int getEndCol() {
-        return rightBracketToken.getCol();
-    }
-
-    @Override
-    public int getStartRow() {
-        return leftBracketToken.getRow();
-    }
-
-    @Override
-    public int getEndRow() {
-        return rightBracketToken.getRow();
+    public int getEndOffset() {
+        return rightBracketToken.getEndOffset();
     }
 
     public ArrayGetElementProvider getNextElementProvider() {

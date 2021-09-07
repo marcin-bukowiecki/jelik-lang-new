@@ -1,1 +1,11 @@
-fun expr() -> Boolean { ret ["foo", "bar"][1] is String }
+
+            fun expr(a Int) -> Int {
+                if a > 10 and a < 100 {
+                    ret 1
+                } elif a > 100 {
+                    ret 2
+                } else {
+                    ret 0
+                }    
+            }
+        

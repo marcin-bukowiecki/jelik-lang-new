@@ -1,6 +1,6 @@
 package org.jelik.repl
 
-import org.jelik.compiler.config.CompilationContext
+import org.jelik.compiler.CompilationContext
 import org.jelik.compiler.JelikCompiler
 import org.jelik.compiler.utils.CompilationWrapper
 import org.jelik.parser.ast.JelikASTFactory

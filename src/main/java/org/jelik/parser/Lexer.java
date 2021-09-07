@@ -1,18 +1,21 @@
 package org.jelik.parser;
 
 import com.google.common.annotations.VisibleForTesting;
-import lombok.Getter;
-import org.jelik.parser.token.ElementType;
+import org.jelik.parser.token.NewLineToken;
 import org.jelik.parser.token.Token;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Marcin Bukowiecki
  */
 public class Lexer {
 
-    @Getter
+    private final List<Integer> newLineOffSets = new ArrayList<>();
+
     private final Scanner scanner;
 
     private Token peeked = null;
@@ -52,6 +55,7 @@ public class Lexer {
         }
         Token next = scanner.next();
         while (next.isWhiteSpace() && scanner.hasNext()) {
+            if (next instanceof NewLineToken) registerNewLine(((NewLineToken) next));
             next = scanner.next();
         }
         current = next;
@@ -86,10 +90,15 @@ public class Lexer {
         }
         Token next = scanner.next();
         while (next.isWhiteSpace()) {
+            if (next instanceof NewLineToken) registerNewLine(((NewLineToken) next));
             next = scanner.next();
         }
         peeked = next;
         return peeked;
+    }
+
+    private void registerNewLine(NewLineToken nl) {
+        this.newLineOffSets.add(nl.getStartOffset());
     }
 
     /**
@@ -102,6 +111,14 @@ public class Lexer {
         peeked = null;
         peekNext();
         current = to;
+    }
+
+    public Scanner getScanner() {
+        return scanner;
+    }
+
+    public List<Integer> getNewLineOffSets() {
+        return Collections.unmodifiableList(newLineOffSets);
     }
 
     public Token getCurrent() {

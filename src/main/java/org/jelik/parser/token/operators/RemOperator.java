@@ -13,8 +13,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class RemOperator extends AbstractOperator {
 
-    public RemOperator(int row, int col) {
-        super("%", row, col, ElementType.rem);
+    public RemOperator(int offset) {
+        super("%", offset, ElementType.rem);
     }
 
     @Override

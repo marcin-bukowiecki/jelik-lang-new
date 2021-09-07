@@ -25,10 +25,10 @@ import org.jetbrains.annotations.NotNull;
  */
 public class RightCurlToken extends Token {
 
-    public static final RightCurlToken DUMMY = new RightCurlToken(-1, -1);
+    public static final RightCurlToken DUMMY = new RightCurlToken(-1);
 
-    public RightCurlToken(int row, int col) {
-        super("}", row, col, ElementType.rightCurl);
+    public RightCurlToken(int offset) {
+        super("}", offset, ElementType.rightCurl);
     }
 
     @Override

@@ -16,23 +16,13 @@ public class BooleanExprWrapper extends EqualExpr implements ConsumingExpression
     }
 
     @Override
-    public int getStartCol() {
-        return left.getStartCol();
+    public int getStartOffset() {
+        return left.getStartOffset();
     }
 
     @Override
-    public int getStartRow() {
-        return left.getStartRow();
-    }
-
-    @Override
-    public int getEndCol() {
-        return right.getEndCol();
-    }
-
-    @Override
-    public int getEndRow() {
-        return right.getEndRow();
+    public int getEndOffset() {
+        return left.getEndOffset();
     }
 
     @Override

@@ -1,2 +1,5 @@
-import java.util.List
-fun expr(list List<Int>, b Int) -> Int { ret 10 + list.size() + b }
+
+fun expr(l []Long) -> Int {
+   for e in l {
+   }
+   ret 1}

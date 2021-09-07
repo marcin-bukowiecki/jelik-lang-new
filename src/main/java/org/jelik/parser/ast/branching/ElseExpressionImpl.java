@@ -1,7 +1,6 @@
 package org.jelik.parser.ast.branching;
 
-import lombok.Getter;
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.ASTNodeImpl;
 import org.jelik.parser.ast.blocks.BasicBlockImpl;
 import org.jelik.parser.ast.labels.LabelNode;
@@ -19,13 +18,10 @@ public class ElseExpressionImpl
         extends ASTNodeImpl
         implements ElseExpression, ConditionExpression<ElseNodeContext> {
 
-    @Getter
     private final ElseKeyword elseKeyword;
 
-    @Getter
     private final BasicBlockImpl basicBlock;
 
-    @Getter
     private final Token rightCurlToken;
 
     private final ElseNodeContext nodeContext;
@@ -36,6 +32,26 @@ public class ElseExpressionImpl
         this.basicBlock = block;
         this.basicBlock.setParent(this);
         this.rightCurlToken = rightCurlToken;
+    }
+
+    @NotNull
+    public ElseKeyword getElseKeyword() {
+        return elseKeyword;
+    }
+
+    @NotNull
+    public BasicBlockImpl getBasicBlock() {
+        return basicBlock;
+    }
+
+    @NotNull
+    public Token getRightCurlToken() {
+        return rightCurlToken;
+    }
+
+    @NotNull
+    public ElseNodeContext getNodeContext() {
+        return nodeContext;
     }
 
     @Override
@@ -83,5 +99,10 @@ public class ElseExpressionImpl
     @Override
     public Type getGenericType() {
         return basicBlock.getGenericType();
+    }
+
+    @Override
+    public String toString() {
+        return elseKeyword.toString() + " { " + basicBlock.toString() + " }";
     }
 }

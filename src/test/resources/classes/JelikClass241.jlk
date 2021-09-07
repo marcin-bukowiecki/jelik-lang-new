@@ -1,2 +1,1 @@
-fun expr() -> Int { System.out.println("Hello world")
- ret 0 }
+fun expr() -> []Int {   ret []Int(5)}

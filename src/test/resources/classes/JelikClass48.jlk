@@ -1,1 +1,2 @@
-fun expr() -> []Short {   ret [1]Short}
+import java.util.ArrayList
+fun expr() -> Int {   ret len([ArrayList<Int>()]ArrayList<Int>))}

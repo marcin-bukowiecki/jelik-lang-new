@@ -12,11 +12,11 @@ import org.jetbrains.annotations.NotNull;
 public class NullToken extends Token {
 
     public NullToken() {
-        super("Null", -1, -1, ElementType.nullLiteral);
+        super("Null", -1, ElementType.nullLiteral);
     }
 
-    public NullToken(int row, int col) {
-        super("Null", row, col, ElementType.nullLiteral);
+    public NullToken(int offset) {
+        super("Null", offset, ElementType.nullLiteral);
     }
 
     @Override

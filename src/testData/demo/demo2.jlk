@@ -1,0 +1,9 @@
+package test
+
+fun test(a Double) -> Boolean {
+    ret a == 1.0
+}
+
+fun box() -> Boolean {
+    ret test(1.0)
+}

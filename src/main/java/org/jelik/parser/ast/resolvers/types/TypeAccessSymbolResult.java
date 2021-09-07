@@ -1,12 +1,12 @@
 package org.jelik.parser.ast.resolvers.types;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.compiler.data.MethodData;
 import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.LiteralExpr;
 import org.jelik.parser.ast.functions.FunctionCall;
 import org.jelik.parser.ast.resolvers.FindSymbolResult;
-import org.jelik.parser.ast.types.TypeAccessNode;
+import org.jelik.parser.ast.types.TypeAccessNodeTyped;
 import org.jelik.types.Type;
 
 import java.util.List;
@@ -24,7 +24,7 @@ public class TypeAccessSymbolResult implements FindSymbolResult {
 
     @Override
     public Expression replaceNode(LiteralExpr literalExpr) {
-        TypeAccessNode typeAccessNode = new TypeAccessNode(literalExpr.getLiteralToken(), type, type.deepGenericCopy());
+        TypeAccessNodeTyped typeAccessNode = new TypeAccessNodeTyped(literalExpr.getLiteralToken(), type, type.deepGenericCopy());
         literalExpr.getParent().replaceWith(literalExpr, typeAccessNode);
         return typeAccessNode;
     }

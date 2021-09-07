@@ -1,1 +1,6 @@
-fun expr(a Long) -> Int { ret (++a) as Int }
+import java.util.Collection
+import java.util.Map
+fun expr() -> Map<String, Int> {
+   val map = mapOf{"test1": 123}
+   map["test"] = 100
+   ret map}

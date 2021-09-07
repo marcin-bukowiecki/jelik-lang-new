@@ -4,7 +4,7 @@ import org.jelik.compiler.helper.CompilerHelper;
 import org.jelik.compiler.utils.TokenUtils;
 import org.jelik.parser.ParseContext;
 import org.jelik.parser.ast.TokenVisitor;
-import org.jelik.parser.ast.branching.IfConditionExpressionImpl;
+import org.jelik.parser.ast.branching.IfConditionExpressionWrapperImpl;
 import org.jelik.parser.ast.visitors.ExpressionVisitor;
 import org.jelik.parser.token.LeftCurlToken;
 import org.jelik.parser.token.Token;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Marcin Bukowiecki
  */
-public class IfConditionVisitor implements TokenVisitor<IfConditionExpressionImpl> {
+public class IfConditionVisitor implements TokenVisitor<IfConditionExpressionWrapperImpl> {
 
     private final Token current;
 
@@ -24,8 +24,9 @@ public class IfConditionVisitor implements TokenVisitor<IfConditionExpressionImp
     }
 
     @Override
-    public @NotNull IfConditionExpressionImpl visit(@NotNull ParseContext parseContext) {
-        var condition = new IfConditionExpressionImpl(new ExpressionVisitor(current).visit(parseContext));
+    public @NotNull IfConditionExpressionWrapperImpl visit(@NotNull ParseContext parseContext) {
+        var condition = new IfConditionExpressionWrapperImpl(new ExpressionVisitor(current).visit(parseContext));
+        parseContext.getLexer().nextToken();
         if (TokenUtils.currentNotMatching(parseContext, LeftCurlToken.class)) {
             parseContext.getLexer().nextToken();
             CompilerHelper.INSTANCE.raiseSyntaxError("leftCurl.expected", parseContext);

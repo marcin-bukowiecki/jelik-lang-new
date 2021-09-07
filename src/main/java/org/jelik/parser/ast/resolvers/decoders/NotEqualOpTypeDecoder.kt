@@ -1,7 +1,7 @@
 package org.jelik.parser.ast.resolvers.decoders
 
-import org.jelik.compiler.config.CompilationContext
-import org.jelik.compiler.common.TypeEnum
+import org.jelik.compiler.CompilationContext
+import org.jelik.compiler.runtime.TypeEnum
 import org.jelik.compiler.exceptions.CompileException
 import org.jelik.parser.ast.expression.Expression
 import org.jelik.parser.ast.NullExpr
@@ -10,6 +10,9 @@ import org.jelik.parser.ast.operators.NotEqualExpr
 import org.jelik.parser.ast.resolvers.CastToVisitor
 import org.jelik.types.Type
 
+/**
+ * @author Marcin Bukowiecki
+ */
 object NotEqualOpTypeDecoder {
 
     fun decode(op: NotEqualExpr, ctx: CompilationContext) {

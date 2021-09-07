@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class BreakKeyword extends Token {
 
-    public BreakKeyword(int row, int col) {
-        super("break", row, col, ElementType.breakKeyword);
+    public BreakKeyword(int offset) {
+        super("break", offset, ElementType.breakKeyword);
     }
 
     @Override

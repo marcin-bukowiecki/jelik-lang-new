@@ -1,1 +1,1 @@
-fun expr() { println("test") }
+fun expr(a Int) -> Boolean { ret a < 0 }

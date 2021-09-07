@@ -1,2 +1,1 @@
-import java.util.Collection
-fun expr() -> Collection<Int> {   ret map{}.values()}
+fun expr() { println("test") }

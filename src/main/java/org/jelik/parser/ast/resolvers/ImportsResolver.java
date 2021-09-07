@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.resolvers;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.compiler.JelikCompiler;
 import org.jelik.parser.ast.classes.ModuleDeclaration;
 import org.jelik.parser.ast.visitors.AstVisitor;

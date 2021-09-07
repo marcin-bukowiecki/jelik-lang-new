@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.types;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.types.Type;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +32,7 @@ public class TypeVariableNode extends TypeNode {
     }
 
     @Override
-    public int getEndRow() {
-        return typeNode.getEndRow();
+    public int getEndOffset() {
+        return typeNode.getEndOffset();
     }
 }

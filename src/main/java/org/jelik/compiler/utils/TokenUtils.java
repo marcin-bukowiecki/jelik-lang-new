@@ -5,7 +5,6 @@ import org.jelik.compiler.helper.CompilerHelper;
 import org.jelik.parser.ParseContext;
 import org.jelik.parser.token.ElementType;
 import org.jelik.parser.token.Token;
-import org.jelik.parser.token.keyword.FunKeyword;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,8 +15,15 @@ import java.util.Arrays;
  */
 public class TokenUtils {
 
-    public static boolean isNewLine(@NotNull Token left, @NotNull Token right) {
-        return left.getRow() != right.getRow();
+    public static boolean isNewLine(@NotNull ParseContext parseContext,
+                                    int leftEndOffset,
+                                    int rightStartOffset) {
+        for (Integer newLineOffSet : parseContext.getLexer().getNewLineOffSets()) {
+            if (leftEndOffset <= newLineOffSet && newLineOffSet <= rightStartOffset) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static void checkExpectedToken(@NotNull ElementType expected,
@@ -81,6 +87,12 @@ public class TokenUtils {
                                     @NotNull ParseContext parseContext,
                                     @NotNull Class<?> clazz) {
         if (!clazz.isInstance(parseContext.getLexer().getCurrent())) {
+            CompilerHelper.INSTANCE.raiseSyntaxError(messageKey, parseContext);
+        }
+    }
+
+    public static void check(Token token, String messageKey, ParseContext parseContext, Class<?> clazz) {
+        if (!clazz.isInstance(token)) {
             CompilerHelper.INSTANCE.raiseSyntaxError(messageKey, parseContext);
         }
     }

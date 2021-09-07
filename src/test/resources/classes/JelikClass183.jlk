@@ -1,1 +1,2 @@
-fun expr(a Int) -> Short { ret a as Short }
+fun expr(a Long) -> Long { val b = 10 
+ ret -a * b }

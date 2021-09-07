@@ -35,7 +35,7 @@ public abstract class TypeNode extends ASTNodeImpl {
 
     public abstract String getSymbol();
 
-    public abstract int getEndRow();
+    public abstract int getEndOffset();
 
     public boolean isMaybe() {
         return false;

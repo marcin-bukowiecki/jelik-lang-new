@@ -10,7 +10,7 @@ import org.jelik.parser.ast.branching.ContinueExprImpl;
 import org.jelik.parser.ast.branching.IfExpressionImpl;
 import org.jelik.parser.ast.expression.CatchExpressionImpl;
 import org.jelik.parser.ast.expression.Expression;
-import org.jelik.parser.ast.expression.ThrowExpression;
+import org.jelik.parser.ast.expression.ThrowExpressionWrapper;
 import org.jelik.parser.ast.expression.TryExpressionImpl;
 import org.jelik.parser.ast.functions.FunctionParameterList;
 import org.jelik.parser.ast.functions.LambdaDeclarationExpression;
@@ -146,7 +146,7 @@ public class BlockVisitor implements TokenVisitor<BasicBlockImpl> {
 
     @Override
     public void visit(@NotNull ThrowKeyword throwKeyword, @NotNull ParseContext parseContext) {
-        expressionList.add(new ThrowExpression(throwKeyword, new ExpressionVisitor(parseContext.getLexer().nextToken()).visit(parseContext)));
+        expressionList.add(new ThrowExpressionWrapper(throwKeyword, new ExpressionVisitor(parseContext.getLexer().nextToken()).visit(parseContext)));
     }
 
     @Override

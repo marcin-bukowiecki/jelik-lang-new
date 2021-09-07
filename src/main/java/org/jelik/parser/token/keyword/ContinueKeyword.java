@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ContinueKeyword extends Token {
 
-    public ContinueKeyword(int row, int col) {
-        super("continue", row, col, ElementType.continueKeyword);
+    public ContinueKeyword(int offset) {
+        super("continue", offset, ElementType.continueKeyword);
     }
 
     @Override

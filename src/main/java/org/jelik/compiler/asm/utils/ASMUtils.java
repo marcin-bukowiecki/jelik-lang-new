@@ -17,7 +17,7 @@
 package org.jelik.compiler.asm.utils;
 
 import org.apache.commons.lang3.mutable.MutableInt;
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.compiler.asm.ClassWriterAdapter;
 import org.jelik.compiler.asm.MethodVisitorAdapter;
 import org.jelik.parser.ast.classes.ClassDeclaration;

@@ -1,3 +1,4 @@
-fun expr(a Integer) -> Int {
-    ret a.toString().hashCode()
+fun expr()->Boolean {
+    var a =!true
+    ret a
 }

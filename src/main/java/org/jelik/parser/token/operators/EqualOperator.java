@@ -14,15 +14,15 @@ import org.jetbrains.annotations.NotNull;
 public class EqualOperator extends AbstractOperator {
 
     public EqualOperator() {
-        super("==", -1, -1, ElementType.equalOperator);
+        super("==", -1, ElementType.equalOperator);
     }
 
-    public EqualOperator(int row, int col) {
-        super("==", row, col, ElementType.equalOperator);
+    public EqualOperator(int offset) {
+        super("==", offset, ElementType.equalOperator);
     }
 
     public static EqualOperator create() {
-        return new EqualOperator(-1, -1);
+        return new EqualOperator(-1);
     }
 
     @Override

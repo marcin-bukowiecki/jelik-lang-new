@@ -25,10 +25,10 @@ import org.jetbrains.annotations.NotNull;
  */
 public class RightParenthesisToken extends Token {
 
-    public static final RightParenthesisToken DUMMY = new RightParenthesisToken(-1, -1);
+    public static final RightParenthesisToken DUMMY = new RightParenthesisToken(-1);
 
-    public RightParenthesisToken(int lineNumber, int columnNumber) {
-        super(")", lineNumber, columnNumber, ElementType.rightParenthesis);
+    public RightParenthesisToken(int offset) {
+        super(")", offset, ElementType.rightParenthesis);
     }
 
     @Override

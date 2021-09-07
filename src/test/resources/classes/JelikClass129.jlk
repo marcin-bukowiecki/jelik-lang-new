@@ -1,5 +1,2 @@
-fun expr(a Object, b Object) -> Boolean { 
- if a.equals(b) { 
-   ret true 
-} else {   ret false
-}}
+fun expr(a Int) -> Int { ++a 
+ ret a }

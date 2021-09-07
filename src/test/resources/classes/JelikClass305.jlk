@@ -1,2 +1,8 @@
 import java.util.List
-fun expr() -> Boolean { ret 123 in [1,2,3,4,5] }
+
+fun expr(l List<Int>) -> Int {
+   val it = l.iterator()
+   while it.hasNext() and l.size() > 1 {
+       System.out.println(it.next())
+       continue   }
+   ret 1}

@@ -1,1 +1,1 @@
-fun expr(a String) -> Boolean { ret Null != a }
+fun expr(a Int, b Int) -> Int { ret a shl b }

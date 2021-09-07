@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.branching;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.ASTNodeImpl;
 import org.jelik.parser.ast.blocks.BasicBlockImpl;
 import org.jelik.parser.ast.expression.StackConsumer;
@@ -21,7 +21,7 @@ public class ElifExpression extends ASTNodeImpl implements StackConsumer, IfExpr
 
     private final ElifKeyword elifKeyword;
 
-    private final IfConditionExpressionImpl conditionExpression;
+    private final IfConditionExpressionWrapperImpl conditionExpression;
 
     private final Token leftCurl;
 
@@ -34,7 +34,7 @@ public class ElifExpression extends ASTNodeImpl implements StackConsumer, IfExpr
     private final IfNodeContext nodeContext;
 
     public ElifExpression(@NotNull ElifKeyword elifKeyword,
-                          @NotNull IfConditionExpressionImpl ifConditionExpression,
+                          @NotNull IfConditionExpressionWrapperImpl ifConditionExpression,
                           @NotNull Token leftCurl,
                           @NotNull BasicBlockImpl block,
                           @Nullable Token rightCurl) {
@@ -57,7 +57,7 @@ public class ElifExpression extends ASTNodeImpl implements StackConsumer, IfExpr
         return elifKeyword;
     }
 
-    public IfConditionExpressionImpl getConditionExpression() {
+    public IfConditionExpressionWrapperImpl getConditionExpression() {
         return conditionExpression;
     }
 

@@ -1,6 +1,6 @@
 package org.jelik.compiler.asm.collections
 
-import org.jelik.compiler.config.CompilationContext
+import org.jelik.compiler.CompilationContext
 import org.jelik.compiler.asm.helpers.ArrayToStreamVisitor
 import org.jelik.compiler.asm.visitor.ToByteCodeVisitor
 import org.jelik.parser.ast.operators.InExpr

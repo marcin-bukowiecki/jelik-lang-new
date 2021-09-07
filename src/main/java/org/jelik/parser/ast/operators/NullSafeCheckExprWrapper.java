@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.operators;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.ASTNode;
 import org.jelik.parser.ast.ConsumingExpression;
 import org.jelik.parser.ast.NullExpr;
@@ -40,23 +40,13 @@ public class NullSafeCheckExprWrapper extends EqualExpr implements ConsumingExpr
     }
 
     @Override
-    public int getStartCol() {
-        return left.getStartCol();
+    public int getStartOffset() {
+        return left.getStartOffset();
     }
 
     @Override
-    public int getStartRow() {
-        return left.getStartRow();
-    }
-
-    @Override
-    public int getEndCol() {
-        return right.getEndCol();
-    }
-
-    @Override
-    public int getEndRow() {
-        return right.getEndRow();
+    public int getEndOffset() {
+        return left.getEndOffset();
     }
 
     @Override

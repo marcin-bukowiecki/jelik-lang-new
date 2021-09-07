@@ -13,8 +13,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class AssignOperator extends AbstractOperator {
 
-    public AssignOperator(int row, int col) {
-        super("=", row, col, ElementType.assign);
+    public AssignOperator(int offset) {
+        super("=", offset, ElementType.assign);
     }
 
     @Override

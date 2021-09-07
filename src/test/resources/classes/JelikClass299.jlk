@@ -1,1 +1,6 @@
-fun expr(a Int, b Int) -> Int { ret a + b }
+
+fun expr(l []Long) -> Int {
+   for e in l {
+       System.out.println(e)
+   }
+   ret 1}

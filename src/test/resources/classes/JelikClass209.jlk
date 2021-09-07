@@ -1,1 +1,2 @@
-fun expr(a Int) -> Long { ret a as Long }
+import java.util.Map
+fun expr() -> Int {   ret mapOf{"foo": 11, "bar": 12}.size()}

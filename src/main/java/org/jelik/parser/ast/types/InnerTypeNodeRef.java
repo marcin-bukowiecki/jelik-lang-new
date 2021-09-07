@@ -1,13 +1,11 @@
 package org.jelik.parser.ast.types;
 
-import lombok.Getter;
 import org.jelik.types.Type;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Marcin Bukowiecki
  */
-@Getter
 public class InnerTypeNodeRef extends AbstractTypeRef {
 
     private final TypeNode typeNode;

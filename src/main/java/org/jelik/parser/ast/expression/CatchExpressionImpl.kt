@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.expression
 
-import org.jelik.compiler.config.CompilationContext
+import org.jelik.compiler.CompilationContext
 import org.jelik.parser.ast.ASTNode
 import org.jelik.parser.ast.ASTNodeImpl
 import org.jelik.parser.ast.blocks.BasicBlockImpl

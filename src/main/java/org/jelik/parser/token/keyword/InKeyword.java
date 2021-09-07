@@ -14,8 +14,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class InKeyword extends AbstractOperator {
 
-    public InKeyword(int row, int col) {
-        super("in", row, col, ElementType.inKeyword);
+    public InKeyword(int offset) {
+        super("in", offset, ElementType.inKeyword);
     }
 
     @Override

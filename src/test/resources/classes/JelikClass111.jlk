@@ -1,1 +1,3 @@
-fun expr(a String) -> Boolean { ret a == Null }
+fun expr(a Double, b Float) -> Double {
+   val c = 11 as Double
+   ret a / b + (-c)}

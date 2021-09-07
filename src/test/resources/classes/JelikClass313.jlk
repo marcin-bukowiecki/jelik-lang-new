@@ -1,4 +1,7 @@
-fun expr()->Boolean {
-    var a =!!!true
-    ret a
+import java.util.List
+fun expr(a List<Int>) -> Boolean { 
+if 123 in a {
+   ret true
+}
+ret false
 }

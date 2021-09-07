@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.functions;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.ASTNodeImpl;
 import org.jelik.parser.ast.blocks.BasicBlockImpl;
 import org.jelik.parser.ast.labels.LabelNode;
@@ -72,7 +72,12 @@ public class FunctionBodyBlock extends ASTNodeImpl implements FunctionBody {
     }
 
     @Override
-    public int getEndRow() {
-        return rightCurlToken.getEndRow();
+    public int getStartOffset() {
+        return leftCurlToken.getStartOffset();
+    }
+
+    @Override
+    public int getEndOffset() {
+        return rightCurlToken.getEndOffset();
     }
 }

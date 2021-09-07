@@ -1,2 +1,6 @@
-fun expr(a Long) -> Long { val b = 10 as Long 
- ret a - b }
+import java.util.stream.Stream
+import java.util.stream.Collectors
+
+fun ints(stream Stream<Int>) -> Int {
+   ret stream.collect(Collectors.toList()).get(0)
+}

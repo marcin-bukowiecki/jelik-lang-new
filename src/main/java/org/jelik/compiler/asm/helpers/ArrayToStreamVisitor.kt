@@ -1,6 +1,6 @@
 package org.jelik.compiler.asm.helpers
 
-import org.jelik.compiler.config.CompilationContext
+import org.jelik.compiler.CompilationContext
 import org.jelik.compiler.asm.MethodVisitorAdapter
 import org.jelik.compiler.asm.visitor.TypeVisitor
 import org.jelik.parser.ast.expression.Expression

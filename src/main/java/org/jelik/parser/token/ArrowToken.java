@@ -25,8 +25,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ArrowToken extends Token {
 
-    public ArrowToken(int lineNumber, int columnNumber) {
-        super("->", lineNumber, columnNumber, ElementType.arrow);
+    public ArrowToken(int offset) {
+        super("->", offset, ElementType.arrow);
     }
 
     @Override

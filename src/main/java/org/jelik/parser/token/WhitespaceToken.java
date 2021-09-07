@@ -25,8 +25,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class WhitespaceToken extends Token {
 
-    public WhitespaceToken(int row, int col) {
-        super(" ", row, col, ElementType.whitespace);
+    public WhitespaceToken(int offset) {
+        super(" ", offset, ElementType.whitespace);
     }
 
     @Override

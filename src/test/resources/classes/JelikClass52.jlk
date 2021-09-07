@@ -1,1 +1,2 @@
-fun expr() -> []Float {   ret []Float}
+fun test(Int )
+ { }

@@ -1,7 +1,3 @@
-import java.util.Collection
-import java.util.Map
-fun expr() -> Int {
-   val map Map<Int, Any> = map{}
-   map[2] = 100
-   map[3] = "100"
-   ret len(map)}
+fun expr() -> []Int {   val a = []Int(5)
+   a[2] = 123
+   ret a}

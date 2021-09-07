@@ -16,7 +16,7 @@
 
 package org.jelik.parser.ast.loops
 
-import org.jelik.compiler.config.CompilationContext
+import org.jelik.compiler.CompilationContext
 import org.jelik.compiler.asm.MethodVisitorAdapter
 import org.jelik.compiler.asm.visitor.ByteCodeArrayGetVisitor
 import org.jelik.compiler.asm.visitor.StoreLocalByteCodeVisitor
@@ -39,7 +39,7 @@ class ArrayForEachASMProvider(forEachLoop: ForEachLoop) : CollectionForEachASMPr
         mv.aload(forEachLoop.locals[2].index)
         mv.intLoad(forEachLoop.locals[0].index)
         forEachLoop.elementType().accept(ByteCodeArrayGetVisitor(mv), mv.compilationContext)
-        forEachLoop.elementType().accept(StoreLocalByteCodeVisitor({ forEachLoop.locals[1] },mv), mv.compilationContext)
+        forEachLoop.elementType().accept(StoreLocalByteCodeVisitor(forEachLoop.locals[1],mv), mv.compilationContext)
         mv.incr(forEachLoop.locals[0].index, 1)
     }
 

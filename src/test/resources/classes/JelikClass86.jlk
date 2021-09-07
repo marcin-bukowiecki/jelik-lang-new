@@ -1,1 +1,5 @@
-fun adder Int
+fun expr(a Object, b Object) -> Boolean { 
+ if a == b and a == "foo" { 
+   ret true 
+} else {   ret false
+}}

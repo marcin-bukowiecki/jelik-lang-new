@@ -1,7 +1,1 @@
-fun expr(a Int) -> Int {
-   try {
-       a = a / 0 
-   } catch (e Throwable) { 
-   }
-   ret 123
-}
+fun expr() {

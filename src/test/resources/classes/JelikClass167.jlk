@@ -1,2 +1,1 @@
-fun expr(a Int) -> Int {  
- ret 12 + (++a) + 10 }
+fun expr(a Int) -> Char { ret a as Char }

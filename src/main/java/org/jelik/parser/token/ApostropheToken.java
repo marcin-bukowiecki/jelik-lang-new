@@ -9,8 +9,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ApostropheToken extends Token {
 
-    public ApostropheToken(int row, int col) {
-        super("\"", row, col, ElementType.apostrophe);
+    public ApostropheToken(int offset) {
+        super("\"", offset, ElementType.apostrophe);
     }
 
     @Override

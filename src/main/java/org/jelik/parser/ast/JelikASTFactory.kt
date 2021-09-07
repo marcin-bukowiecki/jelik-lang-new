@@ -1,6 +1,6 @@
 package org.jelik.parser.ast
 
-import org.jelik.compiler.config.CompilationContext
+import org.jelik.compiler.CompilationContext
 import org.jelik.parser.Lexer
 import org.jelik.parser.ParseContext
 import org.jelik.parser.token.keyword.FunKeyword

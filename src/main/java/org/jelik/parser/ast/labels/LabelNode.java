@@ -1,7 +1,6 @@
 package org.jelik.parser.ast.labels;
 
-import lombok.Getter;
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.ASTNodeImpl;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jetbrains.annotations.NotNull;
@@ -12,18 +11,27 @@ import org.objectweb.asm.Label;
  */
 public class LabelNode extends ASTNodeImpl {
 
-    @Getter
     private final int id;
 
-    @Getter
     private final String name;
 
-    @Getter
     private final Label label = new Label();
 
     public LabelNode(int id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Label getLabel() {
+        return label;
     }
 
     @Override

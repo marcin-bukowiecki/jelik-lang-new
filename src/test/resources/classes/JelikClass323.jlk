@@ -1,5 +1,5 @@
-import java.util.List
-
-fun expr(a List<Int>) -> Int {
-   ret a.get(1)
+fun expr()->Boolean {
+    var a =!(12 > 5
+     )
+    ret a
 }

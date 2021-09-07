@@ -1,1 +1,2 @@
-fun expr() -> []String {   ret ["foo","bar"]String)}
+import java.util.List
+fun expr(a List<Int>) -> Boolean { ret a.size() > 1 }

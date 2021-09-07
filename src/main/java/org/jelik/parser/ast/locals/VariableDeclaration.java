@@ -1,13 +1,10 @@
 package org.jelik.parser.ast.locals;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.compiler.locals.LocalVariable;
-import org.jelik.parser.ast.ConsumingExpression;
+import org.jelik.parser.ast.Statement;
 import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.expression.ExpressionWrapper;
-import org.jelik.parser.ast.expression.StackConsumer;
 import org.jelik.parser.ast.types.TypeNode;
 import org.jelik.parser.ast.types.UndefinedTypeNode;
 import org.jelik.parser.ast.visitors.AstVisitor;
@@ -25,8 +22,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Marcin Bukowiecki
  */
-@Getter
-public class VariableDeclaration extends ExpressionWrapper implements WithLocalVariableDeclaration, ConsumingExpression, StackConsumer {
+public class VariableDeclaration extends ExpressionWrapper implements Statement, ValueOrVariableDeclaration {
 
     private final VarKeyword varKeyword;
 
@@ -36,7 +32,6 @@ public class VariableDeclaration extends ExpressionWrapper implements WithLocalV
 
     private final AssignOperator assignOperator;
 
-    @Setter
     private LocalVariable localVariable;
 
     public VariableDeclaration(@NotNull VarKeyword varKeyword,
@@ -52,13 +47,45 @@ public class VariableDeclaration extends ExpressionWrapper implements WithLocalV
     }
 
     @Override
-    public int getStartCol() {
-        return varKeyword.getCol();
+    public void setLocalVariable(LocalVariable localVariable) {
+        this.localVariable = localVariable;
+    }
+
+    @NotNull
+    public VarKeyword getVarKeyword() {
+        return varKeyword;
+    }
+
+    @NotNull
+    @Override
+    public LiteralToken getLiteralToken() {
+        return literalToken;
+    }
+
+    @NotNull
+    @Override
+    public TypeNode getTypeNode() {
+        return typeNode;
+    }
+
+    @NotNull
+    public AssignOperator getAssignOperator() {
+        return assignOperator;
     }
 
     @Override
-    public int getStartRow() {
-        return varKeyword.getRow();
+    public LocalVariable getLocalVariable() {
+        return localVariable;
+    }
+
+    @Override
+    public int getStartOffset() {
+        return varKeyword.getStartOffset();
+    }
+
+    @Override
+    public int getEndOffset() {
+        return getExpression().getEndOffset();
     }
 
     @Override

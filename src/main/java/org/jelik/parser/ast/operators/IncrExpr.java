@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.operators;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.expression.StackConsumer;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.ast.expression.Expression;
@@ -17,13 +17,8 @@ public class IncrExpr extends AbstractOpExpr implements StackConsumer {
     }
 
     @Override
-    public int getStartCol() {
-        return op.getCol();
-    }
-
-    @Override
-    public int getStartRow() {
-        return op.getRow();
+    public int getStartOffset() {
+        return op.getStartOffset();
     }
 
     @Override

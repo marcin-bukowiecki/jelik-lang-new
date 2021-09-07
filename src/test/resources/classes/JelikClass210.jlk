@@ -1,1 +1,2 @@
-fun expr(a Long, b Long) -> Long { ret a bor b }
+import java.util.Set
+fun expr() -> Set<String> {   ret mapOf{"foo": 11, "bar": 12}.keySet()}

@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.expression;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.ASTNodeImpl;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.types.JVMVoidType;
@@ -13,16 +13,6 @@ import org.jetbrains.annotations.NotNull;
 public class EmptyExpression extends ASTNodeImpl implements Expression {
 
     public static final EmptyExpression INSTANCE = new EmptyExpression();
-
-    @Override
-    public void setType(@NotNull Type type) {
-
-    }
-
-    @Override
-    public void setGenericType(@NotNull Type type) {
-
-    }
 
     @Override
     public Type getReturnType() {

@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class PublicKeyword extends Token implements Modifier {
 
-    public PublicKeyword(int row, int col) {
-        super("pub", row, col, ElementType.publicKeyword);
+    public PublicKeyword(int offset) {
+        super("pub", offset, ElementType.publicKeyword);
     }
 
     @Override

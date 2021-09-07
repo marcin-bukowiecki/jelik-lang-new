@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class PrivateKeyword extends Token implements Modifier {
 
-    public PrivateKeyword(int row, int col) {
-        super("private", row, col, ElementType.privateKeyword);
+    public PrivateKeyword(int offset) {
+        super("private", offset, ElementType.privateKeyword);
     }
 
     @Override

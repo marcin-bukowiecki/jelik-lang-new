@@ -18,6 +18,9 @@ package org.jelik.compiler;
 
 import org.jelik.compiler.cl.JelikClassLoader;
 
+import java.io.File;
+import java.net.URISyntaxException;
+
 /**
  * @author Marcin Bukowiecki
  */
@@ -27,19 +30,24 @@ public class JelikCompileSession {
 
     private final JelikCompiler jelikCompiler;
 
-    //private final DefaultImportScope defaultImportScope;
-
     public JelikCompileSession(JelikCompileConfig config) {
         this.config = config;
         this.jelikCompiler = JelikCompiler.INSTANCE;
-    //    this.defaultImportScope = new DefaultImportScope();
-  //      this.defaultImportScope.loadDefaultImports(this);
     }
-/*
-    public DefaultImportScope getDefaultImportScope() {
-        return defaultImportScope;
+
+    public JelikCompileConfig getConfig() {
+        return config;
     }
-*/
+
+    public File getLibPath() {
+        try {
+            return new File(Jlkc.class.getProtectionDomain().getCodeSource().getLocation().toURI())
+                    .getParentFile();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public JelikCompiler getJelikCompiler() {
         return jelikCompiler;
     }
@@ -65,7 +73,7 @@ public class JelikCompileSession {
     }
 
     public static JelikCompileSession defaultSession() {
-        return defaultSession(new JelikClassLoader(""));
+        return defaultSession(new JelikClassLoader());
     }
 
     public static JelikCompileSession defaultSession(JelikClassLoader classLoader) {
@@ -87,10 +95,6 @@ public class JelikCompileSession {
         return config.getInputDirectory();
     }
 
-    String getJelikHome() {
-        return config.getJelikHome();
-    }
-
     public JelikClassLoader getJelikClassLoader() {
         return config.getJelikClassLoader();
     }
@@ -105,5 +109,9 @@ public class JelikCompileSession {
 
     public boolean isLoadClasses() {
         return config.isLoadClasses();
+    }
+
+    public boolean isReplMode() {
+        return false;
     }
 }

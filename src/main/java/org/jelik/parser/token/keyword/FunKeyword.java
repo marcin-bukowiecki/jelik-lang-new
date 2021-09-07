@@ -11,10 +11,10 @@ import org.jetbrains.annotations.NotNull;
  */
 public class FunKeyword extends Token {
 
-    public static final FunKeyword DUMMY = new FunKeyword(-1, -1);
+    public static final FunKeyword DUMMY = new FunKeyword(-1);
 
-    public FunKeyword(int row, int col) {
-        super("fun", row, col, ElementType.funKeyword);
+    public FunKeyword(int offset) {
+        super("fun", offset, ElementType.funKeyword);
     }
 
     @Override

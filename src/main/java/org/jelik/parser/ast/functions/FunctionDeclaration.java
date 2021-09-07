@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.functions;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.compiler.data.MethodData;
 import org.jelik.compiler.helper.LocalVariableFinder;
 import org.jelik.compiler.locals.LocalVariable;
@@ -18,7 +18,6 @@ import org.jelik.parser.token.Token;
 import org.jelik.types.JVMVoidType;
 import org.jelik.types.Type;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
@@ -60,6 +59,10 @@ public class FunctionDeclaration extends ASTNodeImpl implements CompilationUnit,
         this.functionReturn = functionReturn;
         this.functionBody = functionBody;
         functionBody.setParent(this);
+    }
+
+    public boolean isMain() {
+        return name.getText().equals("main") && isStatic();
     }
 
     public @NotNull FunctionContext getFunctionContext() {

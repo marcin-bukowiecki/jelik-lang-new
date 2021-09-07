@@ -1,9 +1,8 @@
 package org.jelik.parser.ast.arrays;
 
-import lombok.Getter;
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.expression.Expression;
-import org.jelik.parser.ast.expression.ExpressionWithType;
+import org.jelik.parser.ast.expression.TypedExpression;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.token.LeftBracketToken;
 import org.jelik.parser.token.RightBracketToken;
@@ -15,8 +14,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Marcin Bukowiecki
  */
-@Getter
-public class ArrayOrMapSetExpr extends ExpressionWithType {
+public class ArrayOrMapSetExpr extends TypedExpression {
 
     private Expression ref;
 
@@ -51,6 +49,34 @@ public class ArrayOrMapSetExpr extends ExpressionWithType {
         this.nodeContext.setGenericType(JVMVoidType.INSTANCE);
     }
 
+    public Expression getRef() {
+        return ref;
+    }
+
+    public LeftBracketToken getLeftBracketToken() {
+        return leftBracketToken;
+    }
+
+    public Expression getIndex() {
+        return index;
+    }
+
+    public RightBracketToken getRightBracketToken() {
+        return rightBracketToken;
+    }
+
+    public AssignOperator getAssignOperator() {
+        return assignOperator;
+    }
+
+    public Expression getRightExpression() {
+        return rightExpression;
+    }
+
+    public boolean isArraySet() {
+        return arraySet;
+    }
+
     @Override
     public void replaceWith(@NotNull Expression oldNode, @NotNull Expression newNode) {
         if (ref == oldNode) {
@@ -76,23 +102,13 @@ public class ArrayOrMapSetExpr extends ExpressionWithType {
     }
 
     @Override
-    public int getStartRow() {
-        return ref.getStartRow();
+    public int getStartOffset() {
+        return ref.getStartOffset();
     }
 
     @Override
-    public int getStartCol() {
-        return ref.getStartCol();
-    }
-
-    @Override
-    public int getEndRow() {
-        return rightExpression.getEndRow();
-    }
-
-    @Override
-    public int getEndCol() {
-        return rightExpression.getEndCol();
+    public int getEndOffset() {
+        return rightBracketToken.getEndOffset();
     }
 
     @Override

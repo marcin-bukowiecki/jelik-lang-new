@@ -16,31 +16,22 @@
 
 package org.jelik.parser;
 
-import lombok.Getter;
 import org.jelik.compiler.exceptions.SyntaxException;
 import org.jelik.parser.token.LiteralToken;
 
-import java.io.BufferedReader;
-import java.io.CharArrayReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * @author Marcin Bukowiecki
  */
 public class CharPointer {
 
-    private int lineNumber = 1;
-
-    private int columnNumber = 0;
+    private int offset = -1;
 
     private BufferedReader br;
 
     private int current;
 
-    @Getter
     private final String fileAbsolutePath;
 
     public CharPointer(File file) {
@@ -57,15 +48,19 @@ public class CharPointer {
         this.fileAbsolutePath = "DUMMY_FILE";
     }
 
+    public String getFileAbsolutePath() {
+        return fileAbsolutePath;
+    }
+
     public int nextChar() {
         try {
             current = br.read();
         } catch (IOException e) {
             throw new SyntaxException("Unexpected token",
-                    new LiteralToken(lineNumber, columnNumber - 3, "eof"),
+                    new LiteralToken(offset, "eof"),
                     fileAbsolutePath);
         }
-        columnNumber++;
+        offset++;
         return current;
     }
 
@@ -73,17 +68,8 @@ public class CharPointer {
         return current;
     }
 
-    public void incrLineNumber() {
-        this.columnNumber = 1;
-        this.lineNumber++;
-    }
-
-    public int getLineNumber() {
-        return lineNumber;
-    }
-
-    public int getColumnNumber() {
-        return columnNumber;
+    public int getOffset() {
+        return offset;
     }
 
     public void finish() {

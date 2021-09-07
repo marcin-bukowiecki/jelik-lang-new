@@ -1,7 +1,6 @@
 package org.jelik.compiler.asm.helpers
 
 import org.jelik.compiler.asm.MethodVisitorAdapter
-import org.jelik.compiler.data.FunctionReferenceMethodData
 import org.jelik.compiler.data.MethodData
 import org.jelik.types.JVMObjectType
 import org.objectweb.asm.Handle
@@ -31,37 +30,30 @@ object InvokeDynamicHelper {
                 false)
 
         //parameters
-
-        //parameters
         val interfaceArgs = arrayOfNulls<Type>(targetFunction.parameterTypes.size)
         for (i in targetFunction.parameterTypes.indices) {
             interfaceArgs[i] = Type.getType(Any::class.java)
         }
 
         //handle kind
-
-        //handle kind
         val targetFunctionArgs = arrayOfNulls<Type>(targetFunction.parameterTypes.size)
-        var i = 0
-        for (type in targetFunction.parameterTypes) {
+        for ((i, type) in targetFunction.parameterTypes.withIndex()) {
             targetFunctionArgs[i] = Type.getType(type.wrapperType.descriptor)
-            i++
         }
 
         val resultType: Type = Type.getType(targetFunction.returnType.wrapperType.descriptor)
 
         val methodSignature = "()" + targetFunction.functionType.descriptor
 
-        mv
-                .visitInvokeDynamicInsn(
-                        functionalMethodName,
-                        methodSignature,  //method signature
-                        lambdaMetaFactoryHandler,
-                        Type.getMethodType(Type.getType(JVMObjectType.INSTANCE.descriptor), *interfaceArgs),
-                        targetFunctionHandler,
-                        Type.getMethodType(resultType, *targetFunctionArgs),  //(II)I won't work must be objects
-                        targetFunction.parameterTypes.size,
-                        targetFunction.returnType
-                )
+        mv.visitInvokeDynamicInsn(
+                functionalMethodName,
+                methodSignature,  //method signature
+                lambdaMetaFactoryHandler,
+                Type.getMethodType(Type.getType(JVMObjectType.INSTANCE.descriptor), *interfaceArgs),
+                targetFunctionHandler,
+                Type.getMethodType(resultType, *targetFunctionArgs),  //(II)I won't work must be objects
+                targetFunction.parameterTypes.size,
+                targetFunction.returnType
+        )
     }
 }

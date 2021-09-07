@@ -1,9 +1,9 @@
 package org.jelik.parser.ast.strings;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.visitors.AstVisitor;
-import org.jelik.parser.ast.expression.ExpressionWithType;
+import org.jelik.parser.ast.expression.TypedExpression;
 import org.jelik.parser.ast.resolvers.DefaultImportedTypeResolver;
 import org.jelik.types.JVMStringType;
 import org.jelik.types.Type;
@@ -16,7 +16,7 @@ import java.util.Optional;
  *
  * @author Marcin Bukowiecki
  */
-public class StringBuilderInit extends ExpressionWithType {
+public class StringBuilderInit extends TypedExpression {
 
     private Expression furtherExpression;
 

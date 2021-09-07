@@ -32,7 +32,11 @@ class LambdaDeclaration(
         return getFunctionType(parameterTypes.size, returnType)
     }
 
-    override fun getEndRow(): Int {
-        return functionBody.endRow
+    override fun getStartOffset(): Int {
+        return keyword.startOffset
+    }
+
+    override fun getEndOffset(): Int {
+        return functionBody.endOffset
     }
 }

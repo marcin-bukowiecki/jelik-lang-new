@@ -1,1 +1,1 @@
-fun
+fun expr(a Object, b Object) -> Boolean { ret a.equals(b) }

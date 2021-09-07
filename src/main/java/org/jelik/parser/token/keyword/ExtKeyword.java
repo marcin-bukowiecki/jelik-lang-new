@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ExtKeyword extends Token {
 
-    public ExtKeyword(int row, int col) {
-        super("ext", row, col, ElementType.extKeyword);
+    public ExtKeyword(int offset) {
+        super("ext", offset, ElementType.extKeyword);
     }
 
     @Override

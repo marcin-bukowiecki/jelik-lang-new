@@ -18,10 +18,10 @@ class TypeVariableListNode(
     @VisibleForTesting
     constructor(types: List<TypeNode>) :
             this(
-                LesserOperator(-1, -1),
+                LesserOperator(-1),
                 types,
-                types.map { CommaToken(-1, -1) },
-                GreaterOperator(-1, -1)
+                types.map { CommaToken(-1) },
+                GreaterOperator(-1)
             ) {
     }
 

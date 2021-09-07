@@ -21,6 +21,10 @@ public class ASTDataKey<T> {
 
     public static final ASTDataKey<LabelNode> LABEL_NODE = new ASTDataKey<>(null);
 
+    public static final ASTDataKey<LabelNode> NULL_LABEL = new ASTDataKey<>(null);
+
+    public static final ASTDataKey<LabelNode> NOT_NULL_LABEL = new ASTDataKey<>(null);
+
     public static final ASTDataKey<List<Type>> PROVIDED_ARGUMENT_TYPES = new ASTDataKey<>(Collections.emptyList());
 
     public static final ASTDataKey<MutableInt> LAMBDA_ID_COUNTER = new ASTDataKey<>(null);

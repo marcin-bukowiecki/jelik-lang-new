@@ -1,2 +1,6 @@
-fun expr(a Long) -> Long { val b = 10 
- ret a - b }
+import java.util.List
+import java.util.ArrayList
+
+fun expr() -> List<Int> {
+   ret ArrayList<Int>()
+}

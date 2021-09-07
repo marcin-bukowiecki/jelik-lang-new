@@ -1,18 +1,16 @@
 package org.jelik.parser.ast.numbers;
 
-import lombok.Getter;
-import org.jelik.compiler.config.CompilationContext;
-import org.jelik.parser.ast.visitors.AstVisitor;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.expression.Expression;
-import org.jelik.parser.ast.expression.ExpressionWithType;
+import org.jelik.parser.ast.expression.TypedExpression;
+import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.types.JVMIntType;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Marcin Bukowiecki
  */
-@Getter
-public class ObjectToInt32Node extends ExpressionWithType {
+public class ObjectToInt32Node extends TypedExpression {
 
     private final Expression subject;
 
@@ -21,6 +19,11 @@ public class ObjectToInt32Node extends ExpressionWithType {
         this.subject = subject;
         this.nodeContext.setType(JVMIntType.INSTANCE);
         this.nodeContext.setGenericType(JVMIntType.INSTANCE);
+    }
+
+    @NotNull
+    public Expression getSubject() {
+        return subject;
     }
 
     @Override

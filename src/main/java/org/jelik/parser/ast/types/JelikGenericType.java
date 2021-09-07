@@ -16,8 +16,8 @@
 
 package org.jelik.parser.ast.types;
 
-import org.jelik.compiler.config.CompilationContext;
-import org.jelik.compiler.common.TypeEnum;
+import org.jelik.compiler.CompilationContext;
+import org.jelik.compiler.runtime.TypeEnum;
 import org.jelik.compiler.data.ClassData;
 import org.jelik.types.JVMObjectType;
 import org.jelik.types.Type;

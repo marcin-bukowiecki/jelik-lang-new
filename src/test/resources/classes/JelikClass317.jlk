@@ -1,3 +1,2 @@
-fun expr(a Integer?) -> Int? {
-    ret a?.toString()?.hashCode()
-}
+import java.util.List
+fun expr() -> Boolean { ret "foo" in ["foo", "bar"] }

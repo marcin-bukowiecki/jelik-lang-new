@@ -1,2 +1,1 @@
-import java.util.Map
-fun expr() -> Map<String, Int> {   ret map{"foo": 11, "bar": 12}}
+fun expr() -> []Object { ret ["foo", "bar"]Object[0:1] }

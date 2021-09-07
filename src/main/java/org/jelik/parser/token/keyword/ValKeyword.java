@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ValKeyword extends Token implements Modifier {
 
-    public ValKeyword(int row, int col) {
-        super("val", row, col, ElementType.valKeyword);
+    public ValKeyword(int offset) {
+        super("val", offset, ElementType.valKeyword);
     }
 
     @Override

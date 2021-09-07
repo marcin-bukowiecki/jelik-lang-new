@@ -1,1 +1,7 @@
-fun expr(a Int) -> Boolean { ret a is Int }
+ext fun Int getString() -> String {
+    ret "foo"
+}
+
+fun expr() -> String {
+    ret 123.getString()
+}

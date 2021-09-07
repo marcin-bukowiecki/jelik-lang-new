@@ -1,7 +1,4 @@
-import java.util.stream.Stream
-import java.util.List
-import java.util.stream.Collectors
-
-fun ints(stream Stream<Int>) -> List<Int> {
-   ret stream.collect(Collectors.toList())
+import java.io.Serializable
+fun c<T : Serializable>(arg T) -> T {
+   ret arg as T
 }

@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.branching
 
-import org.jelik.compiler.config.CompilationContext
+import org.jelik.compiler.CompilationContext
 import org.jelik.parser.ast.ASTNodeImpl
 import org.jelik.parser.ast.labels.LabelNode
 import org.jelik.parser.ast.utils.ASTDataKey
@@ -18,20 +18,12 @@ class ContinueExprImpl(private val keyword: ContinueKeyword) : ASTNodeImpl(), Co
         astVisitor.visitContinueExpression(this, compilationContext)
     }
 
-    override fun getStartCol(): Int {
-        return keyword.col
+    override fun getStartOffset(): Int {
+        return keyword.startOffset
     }
 
-    override fun getStartRow(): Int {
-        return keyword.row
-    }
-
-    override fun getEndCol(): Int {
-        return keyword.endCol
-    }
-
-    override fun getEndRow(): Int {
-        return keyword.endRow
+    override fun getEndOffset(): Int {
+        return keyword.endOffset
     }
 
     override fun getReturnType(): Type {

@@ -1,1 +1,2 @@
-fun expr(a Int) -> Char { ret a as Char }
+import java.util.Map
+fun expr() -> Int {   ret mapOf{"foo": 11, "bar": 12}["foo"] - 1}

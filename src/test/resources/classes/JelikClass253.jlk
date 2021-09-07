@@ -1,2 +1,4 @@
-import java.util.Collection
-fun expr() -> Collection<Int> {   ret map{"foo": 11, "bar": 12}.values()}
+fun expr() -> []Byte { 
+var foo = [1,2,3,4,5]Byte
+ret foo[1:3] 
+}

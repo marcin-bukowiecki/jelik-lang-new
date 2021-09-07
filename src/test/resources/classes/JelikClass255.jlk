@@ -1,6 +1,1 @@
-import java.util.Collection
-import java.util.Map
-fun expr() -> Map<String, Int> {
-   val map = map{"test1": 123}
-   map["test"] = 100
-   ret map}
+fun expr() { println() }

@@ -1,143 +1,31 @@
 package org.jelik.parser.ast.visitors;
 
-import org.jelik.compiler.config.CompilationContext;
-import org.jelik.parser.ast.ASTNode;
-import org.jelik.parser.ast.arguments.ArgumentList;
-import org.jelik.parser.ast.blocks.BasicBlock;
-import org.jelik.parser.ast.GetFieldNode;
-import org.jelik.parser.ast.ImportDeclaration;
-import org.jelik.parser.ast.KeyValueExpr;
-import org.jelik.parser.ast.LiteralExpr;
-import org.jelik.parser.ast.MapCreateExpr;
-import org.jelik.parser.ast.NullExpr;
-import org.jelik.parser.ast.ReferenceExpressionImpl;
-import org.jelik.parser.ast.ReturnExpr;
+import org.jelik.compiler.CompilationContext;
+import org.jelik.parser.ast.*;
 import org.jelik.parser.ast.arguments.Argument;
-import org.jelik.parser.ast.arrays.ArrayCreateExpr;
-import org.jelik.parser.ast.arrays.ArrayOrMapGetExpr;
-import org.jelik.parser.ast.arrays.ArrayOrMapSetExpr;
-import org.jelik.parser.ast.arrays.TypedArrayCreateExpr;
-import org.jelik.parser.ast.arrays.TypedArrayCreateWithSizeExpr;
-import org.jelik.parser.ast.branching.BreakExpr;
-import org.jelik.parser.ast.branching.ContinueExpr;
-import org.jelik.parser.ast.branching.ElifExpression;
-import org.jelik.parser.ast.branching.ElseExpressionImpl;
-import org.jelik.parser.ast.branching.IfConditionExpressionImpl;
-import org.jelik.parser.ast.branching.IfExpressionImpl;
+import org.jelik.parser.ast.arguments.ArgumentList;
+import org.jelik.parser.ast.arrays.*;
+import org.jelik.parser.ast.blocks.BasicBlock;
+import org.jelik.parser.ast.branching.*;
 import org.jelik.parser.ast.casts.CastObjectToObjectNode;
 import org.jelik.parser.ast.classes.ClassDeclaration;
 import org.jelik.parser.ast.classes.FieldDeclaration;
 import org.jelik.parser.ast.classes.InterfaceDeclaration;
 import org.jelik.parser.ast.classes.ModuleDeclaration;
 import org.jelik.parser.ast.common.DupNodeImpl;
-import org.jelik.parser.ast.expression.CatchExpression;
-import org.jelik.parser.ast.expression.Expression;
-import org.jelik.parser.ast.expression.ParenthesisExpression;
-import org.jelik.parser.ast.expression.ThrowExpression;
-import org.jelik.parser.ast.expression.TryExpression;
-import org.jelik.parser.ast.functions.ConstructorDeclaration;
-import org.jelik.parser.ast.functions.DefaultConstructorDeclaration;
-import org.jelik.parser.ast.functions.ExtensionFunctionDeclarationImpl;
-import org.jelik.parser.ast.functions.FunctionBody;
-import org.jelik.parser.ast.functions.FunctionBodyBlock;
-import org.jelik.parser.ast.functions.FunctionCallExpr;
-import org.jelik.parser.ast.functions.FunctionDeclaration;
-import org.jelik.parser.ast.functions.FunctionParameter;
-import org.jelik.parser.ast.functions.FunctionParameterList;
-import org.jelik.parser.ast.functions.FunctionReferenceNode;
-import org.jelik.parser.ast.functions.FunctionReturn;
-import org.jelik.parser.ast.functions.InferredLambdaParameter;
-import org.jelik.parser.ast.functions.LambdaDeclaration;
-import org.jelik.parser.ast.functions.LambdaDeclarationExpression;
-import org.jelik.parser.ast.functions.LambdaParameterList;
-import org.jelik.parser.ast.functions.SuperCallExpr;
+import org.jelik.parser.ast.expression.*;
+import org.jelik.parser.ast.functions.*;
 import org.jelik.parser.ast.labels.LabelNode;
-import org.jelik.parser.ast.locals.GetLocalNode;
-import org.jelik.parser.ast.locals.StoreLocalNode;
-import org.jelik.parser.ast.locals.ValueDeclaration;
-import org.jelik.parser.ast.locals.VariableDeclaration;
-import org.jelik.parser.ast.locals.WithLocalVariableDeclaration;
+import org.jelik.parser.ast.locals.*;
 import org.jelik.parser.ast.loops.ForEachLoop;
 import org.jelik.parser.ast.loops.LoopVar;
 import org.jelik.parser.ast.loops.WhileLoop;
 import org.jelik.parser.ast.nullsafe.NullSafeCallExpr;
-import org.jelik.parser.ast.numbers.CastToNode;
-import org.jelik.parser.ast.numbers.CharToInt32Node;
-import org.jelik.parser.ast.numbers.CharToInt64Node;
-import org.jelik.parser.ast.numbers.FalseNode;
-import org.jelik.parser.ast.numbers.Float32Node;
-import org.jelik.parser.ast.numbers.Float32ToFloat64Node;
-import org.jelik.parser.ast.numbers.Float32ToInt32Node;
-import org.jelik.parser.ast.numbers.Float32ToInt64Node;
-import org.jelik.parser.ast.numbers.Float32ToWrapperNode;
-import org.jelik.parser.ast.numbers.Float64ToFloat32;
-import org.jelik.parser.ast.numbers.Float64ToInt32Node;
-import org.jelik.parser.ast.numbers.Float64ToInt64Node;
-import org.jelik.parser.ast.numbers.Float64ToWrapperNode;
-import org.jelik.parser.ast.numbers.Int32Node;
-import org.jelik.parser.ast.numbers.Int32ToCharNode;
-import org.jelik.parser.ast.numbers.Int32ToFloat32Node;
-import org.jelik.parser.ast.numbers.Int32ToFloat64Node;
-import org.jelik.parser.ast.numbers.Int32ToInt16Node;
-import org.jelik.parser.ast.numbers.Int32ToInt64Node;
-import org.jelik.parser.ast.numbers.Int32ToInt8Node;
-import org.jelik.parser.ast.numbers.Int32ToWrapperNode;
-import org.jelik.parser.ast.numbers.Int64Node;
-import org.jelik.parser.ast.numbers.Int64ToFloat32Node;
-import org.jelik.parser.ast.numbers.Int64ToFloat64Node;
-import org.jelik.parser.ast.numbers.Int64ToInt32Node;
-import org.jelik.parser.ast.numbers.Int64ToWrapperNode;
-import org.jelik.parser.ast.numbers.IntegerWrapperToInt32Node;
-import org.jelik.parser.ast.numbers.ObjectToInt32Node;
-import org.jelik.parser.ast.numbers.TrueNode;
-import org.jelik.parser.ast.numbers.WrapperToPrimitiveNode;
-import org.jelik.parser.ast.operators.AbstractLogicalOpExpr;
-import org.jelik.parser.ast.operators.AddExpr;
-import org.jelik.parser.ast.operators.AndExpr;
-import org.jelik.parser.ast.operators.AsExpr;
-import org.jelik.parser.ast.operators.AssignExpr;
-import org.jelik.parser.ast.operators.BitAndExpr;
-import org.jelik.parser.ast.operators.BitOrExpr;
-import org.jelik.parser.ast.operators.BitShlExpr;
-import org.jelik.parser.ast.operators.BitShrExpr;
-import org.jelik.parser.ast.operators.BitUshrExpr;
-import org.jelik.parser.ast.operators.DecrExpr;
-import org.jelik.parser.ast.operators.DivExpr;
-import org.jelik.parser.ast.operators.ElvisExpr;
-import org.jelik.parser.ast.operators.EqualExpr;
-import org.jelik.parser.ast.operators.GreaterExpr;
-import org.jelik.parser.ast.operators.GreaterOrEqualExpr;
-import org.jelik.parser.ast.operators.InExpr;
-import org.jelik.parser.ast.operators.IncrExpr;
-import org.jelik.parser.ast.operators.IsExpr;
-import org.jelik.parser.ast.operators.LesserExpr;
-import org.jelik.parser.ast.operators.LesserOrEqualExpr;
-import org.jelik.parser.ast.operators.MulExpr;
-import org.jelik.parser.ast.operators.NegExpr;
-import org.jelik.parser.ast.operators.NotEqualExpr;
-import org.jelik.parser.ast.operators.NotExpr;
-import org.jelik.parser.ast.operators.NullSafeCheckExprWrapper;
-import org.jelik.parser.ast.operators.OrExpr;
-import org.jelik.parser.ast.operators.RemExpr;
-import org.jelik.parser.ast.operators.SliceExpr;
-import org.jelik.parser.ast.operators.SubExpr;
-import org.jelik.parser.ast.operators.XorExpr;
-import org.jelik.parser.ast.strings.CharExpression;
-import org.jelik.parser.ast.strings.StringBuilderAppend;
-import org.jelik.parser.ast.strings.StringBuilderInit;
-import org.jelik.parser.ast.strings.StringBuilderToStringNode;
-import org.jelik.parser.ast.strings.StringExpression;
-import org.jelik.parser.ast.types.ArrayTypeNode;
-import org.jelik.parser.ast.types.CompositeTypeNode;
-import org.jelik.parser.ast.types.CovariantTypeNode;
-import org.jelik.parser.ast.types.FunctionTypeNode;
-import org.jelik.parser.ast.types.GenericTypeNode;
-import org.jelik.parser.ast.types.InferredTypeNode;
-import org.jelik.parser.ast.types.SingleTypeNode;
-import org.jelik.parser.ast.types.TypeAccessNode;
-import org.jelik.parser.ast.types.TypeParameterListNode;
-import org.jelik.parser.ast.types.TypeVariableNode;
-import org.jelik.parser.ast.types.WildCardTypeNode;
+import org.jelik.parser.ast.numbers.*;
+import org.jelik.parser.ast.operators.*;
+import org.jelik.parser.ast.strings.*;
+import org.jelik.parser.ast.types.*;
+import org.jelik.parser.token.LiteralToken;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -235,6 +123,16 @@ public abstract class AstVisitor {
                                          @NotNull CompilationContext compilationContext) {
         referenceExpression.getReference().accept(this, compilationContext);
         referenceExpression.getFurtherExpression().accept(this, compilationContext);
+        if (referenceExpression.getReference() instanceof Int32Node &&
+            referenceExpression.getFurtherExpression() instanceof Int32Node) {
+
+            var text = referenceExpression.getText();
+            var float64 = new Float64Node(
+                    new LiteralToken(referenceExpression.getStartOffset(), text),
+                    Double.parseDouble(text)
+            );
+            referenceExpression.replace(float64);
+        }
     }
 
     public void visit(@NotNull GenericTypeNode genericTypeNode, @NotNull CompilationContext compilationContext) {
@@ -253,7 +151,7 @@ public abstract class AstVisitor {
         argument.getExpression().accept(this, compilationContext);
     }
 
-    public void visit(@NotNull TypeAccessNode typeAccessNode, @NotNull CompilationContext compilationContext) {
+    public void visit(@NotNull TypeAccessNodeTyped typeAccessNode, @NotNull CompilationContext compilationContext) {
 
     }
 
@@ -261,7 +159,7 @@ public abstract class AstVisitor {
 
     }
 
-    public void visitWithLocalVariable(@NotNull WithLocalVariableDeclaration withLocalVariable,
+    public void visitWithLocalVariable(@NotNull ValueOrVariableDeclaration valueOrVariableDeclaration,
                                        @NotNull CompilationContext compilationContext) {
 
     }
@@ -294,7 +192,6 @@ public abstract class AstVisitor {
 
     public void visitValueDeclaration(@NotNull ValueDeclaration valueDeclaration,
                                       @NotNull CompilationContext compilationContext) {
-
         valueDeclaration.getExpression().accept(this, compilationContext);
     }
 
@@ -313,7 +210,7 @@ public abstract class AstVisitor {
         greaterExpr.getRight().accept(this, compilationContext);
     }
 
-    public void visit(@NotNull ParenthesisExpression parenthesisExpression,
+    public void visit(@NotNull ParenthesisExpressionWrapper parenthesisExpression,
                       @NotNull CompilationContext compilationContext) {
 
         parenthesisExpression.getExpression().accept(this, compilationContext);
@@ -329,7 +226,7 @@ public abstract class AstVisitor {
         greaterOrEqualExpr.getRight().accept(this, compilationContext);
     }
 
-    public void visit(@NotNull StringExpression stringExpression, @NotNull CompilationContext compilationContext) {
+    public void visit(@NotNull StringTypedExpression stringExpression, @NotNull CompilationContext compilationContext) {
 
     }
 
@@ -365,7 +262,7 @@ public abstract class AstVisitor {
         equalExpr.getRight().accept(this, compilationContext);
     }
 
-    public void visit(@NotNull IfConditionExpressionImpl ifConditionExpression,
+    public void visit(@NotNull IfConditionExpressionWrapperImpl ifConditionExpression,
                       @NotNull CompilationContext compilationContext) {
         ifConditionExpression.getExpression().accept(this, compilationContext);
     }
@@ -383,12 +280,12 @@ public abstract class AstVisitor {
         notEqualExpr.getRight().accept(this, compilationContext);
     }
 
-    public void visit(@NotNull IntegerWrapperToInt32Node integerWrapperToInt32Node,
+    public void visit(@NotNull IntegerToInt32NodeWrapper integerWrapperToInt32Node,
                       @NotNull CompilationContext compilationContext) {
         integerWrapperToInt32Node.getExpression().accept(this, compilationContext);
     }
 
-    public void visit(@NotNull WrapperToPrimitiveNode wrapperToPrimitiveNode,
+    public void visit(@NotNull ToPrimitiveNodeWrapper wrapperToPrimitiveNode,
                       @NotNull CompilationContext compilationContext) {
 
     }
@@ -445,7 +342,7 @@ public abstract class AstVisitor {
         andExpr.getRight().accept(this, compilationContext);
     }
 
-    public void visit(@NotNull ThrowExpression throwExpression, @NotNull CompilationContext compilationContext) {
+    public void visit(@NotNull ThrowExpressionWrapper throwExpression, @NotNull CompilationContext compilationContext) {
         throwExpression.getExpression().accept(this, compilationContext);
     }
 
@@ -555,6 +452,10 @@ public abstract class AstVisitor {
 
     }
 
+    public void visit(@NotNull Float64Node float64Node, @NotNull CompilationContext compilationContext) {
+
+    }
+
     public void visit(@NotNull Int64Node int64Node, @NotNull CompilationContext compilationContext) {
 
     }
@@ -599,6 +500,7 @@ public abstract class AstVisitor {
         compilationContext.pushCompilationUnit(moduleDeclaration);
         moduleDeclaration.getImports().forEach(i -> i.accept(this, compilationContext));
         moduleDeclaration.getClasses().forEach(c -> c.accept(this, compilationContext));
+        moduleDeclaration.getInterfaces().forEach(i -> i.accept(this, compilationContext));
         moduleDeclaration.getFunctionDeclarations().forEach(f -> f.accept(this, compilationContext));
         moduleDeclaration.getConstructorDeclarations().forEach(c -> c.accept(this, compilationContext));
         compilationContext.popCompilationUnit();
@@ -709,7 +611,7 @@ public abstract class AstVisitor {
         sliceExpr.getRight().accept(this, compilationContext);
     }
 
-    public void visitTypedArrayCreateWithSizeExpr(@NotNull TypedArrayCreateWithSizeExpr typedArrayCreateWithSizeExpr,
+    public void visitTypedArrayCreateWithSizeExpr(@NotNull TypedArrayCreateWithSizeExprTyped typedArrayCreateWithSizeExpr,
                                                   @NotNull CompilationContext compilationContext) {
         typedArrayCreateWithSizeExpr.getExpression().accept(this, compilationContext);
     }
@@ -734,7 +636,7 @@ public abstract class AstVisitor {
 
     }
 
-    public void visitCharExpression(@NotNull CharExpression charExpression,
+    public void visitCharExpression(@NotNull CharTypedExpression charExpression,
                                     @NotNull CompilationContext compilationContext) {
 
     }
@@ -817,6 +719,16 @@ public abstract class AstVisitor {
     public void visitNullSafeBooleanExprWrapper(@NotNull NullSafeCheckExprWrapper nullSafeBooleanExprWrapper,
                                                 @NotNull CompilationContext compilationContext) {
         nullSafeBooleanExprWrapper.getChildren().forEach(ch -> ch.accept(this, compilationContext));
+    }
+
+    public void visitDefaultValueExpr(@NotNull DefaultValueExpr defaultValueExpr,
+                                      @NotNull CompilationContext compilationContext) {
+        defaultValueExpr.getChildren().forEach(ch -> ch.accept(this, compilationContext));
+    }
+
+    public void visitInterfaceMethodDeclaration(@NotNull InterfaceMethodDeclaration interfaceMethodDeclaration,
+                                                @NotNull CompilationContext compilationContext) {
+        visitFunctionDeclaration(interfaceMethodDeclaration, compilationContext);
     }
 }
 

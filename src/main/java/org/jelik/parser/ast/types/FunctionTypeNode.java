@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.types;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.token.PipeToken;
 import org.jelik.parser.token.Token;
@@ -53,23 +53,13 @@ public class FunctionTypeNode extends TypeNode {
     }
 
     @Override
-    public int getStartCol() {
-        return this.left.getCol();
+    public int getStartOffset() {
+        return left.getStartOffset();
     }
 
     @Override
-    public int getStartRow() {
-        return this.left.getRow();
-    }
-
-    @Override
-    public int getEndRow() {
-        return this.returnType.getEndRow();
-    }
-
-    @Override
-    public int getEndCol() {
-        return this.returnType.getEndCol();
+    public int getEndOffset() {
+        return returnType.getEndOffset();
     }
 
     @Override

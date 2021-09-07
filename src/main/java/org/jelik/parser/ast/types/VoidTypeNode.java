@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.types;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.types.JVMVoidType;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +33,7 @@ public class VoidTypeNode extends TypeNode {
     }
 
     @Override
-    public int getEndRow() {
+    public int getEndOffset() {
         throw new UnsupportedOperationException();
     }
 }

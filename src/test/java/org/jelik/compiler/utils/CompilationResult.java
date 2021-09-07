@@ -1,7 +1,7 @@
 package org.jelik.compiler.utils;
 
 import org.assertj.core.api.Assertions;
-import org.jelik.compiler.exceptions.CompileException;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -38,6 +38,10 @@ public class CompilationResult {
         }
     }
 
+    public boolean isInterface() {
+        return compiledClass.isInterface();
+    }
+
     public void invokeAndExpectError(String expr, Class<?> exceptionType, Object... args) {
         try {
             invoke(expr, args);
@@ -52,5 +56,9 @@ public class CompilationResult {
         } catch (Throwable ex) {
             Assertions.assertThat(ex.getMessage()).isEqualTo(message);
         }
+    }
+
+    public boolean hasMethod(@NotNull String name) {
+        return Arrays.stream(compiledClass.getDeclaredMethods()).anyMatch(m -> m.getName().equals(name));
     }
 }

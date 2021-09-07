@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.types;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.token.ColonToken;
 import org.jelik.types.Type;
@@ -36,23 +36,13 @@ public class CovariantTypeNode extends TypeNode {
     }
 
     @Override
-    public int getStartRow() {
-        return typeNode.getStartRow();
+    public int getStartOffset() {
+        return typeNode.getStartOffset();
     }
 
     @Override
-    public int getStartCol() {
-        return typeNode.getStartCol();
-    }
-
-    @Override
-    public int getEndRow() {
-        return parentTypeNode.getEndRow();
-    }
-
-    @Override
-    public int getEndCol() {
-        return parentTypeNode.getEndCol();
+    public int getEndOffset() {
+        return parentTypeNode.getEndOffset();
     }
 
     public String getText() {

@@ -1,1 +1,2 @@
-fun expr() -> []String {   ret ["foo",]String)}
+import java.util.Iterator
+fun expr(a Iterator<Int>) -> Boolean { ret a.hasNext() }

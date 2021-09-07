@@ -1,2 +1,4 @@
-import java.util.Map
-fun expr() -> Int {   ret map{"foo": 11, "bar": 12}["foo"] - 1}
+fun expr() -> []Char { 
+var foo = ['a','b','c']Char
+ret foo[0:2] 
+}

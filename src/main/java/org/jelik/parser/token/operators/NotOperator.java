@@ -14,8 +14,8 @@ import org.jetbrains.annotations.Nullable;
  */
 public class NotOperator extends AbstractOperator {
 
-    public NotOperator(int row, int col) {
-        super("!", row, col, ElementType.notOperator);
+    public NotOperator(int offset) {
+        super("!", offset, ElementType.notOperator);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package org.jelik.parser.ast
 
-import org.jelik.compiler.config.CompilationContext
-import org.jelik.parser.ast.expression.ExpressionWithType
+import org.jelik.compiler.CompilationContext
+import org.jelik.parser.ast.expression.TypedExpression
 import org.jelik.parser.ast.visitors.AstVisitor
 import org.jelik.parser.token.NullToken
 import org.jelik.types.JVMNullType
@@ -11,7 +11,7 @@ import org.jelik.types.JVMNullType
  *
  * @author Marcin Bukowiecki
  */
-class NullExpr(val literal: NullToken) : ExpressionWithType() {
+class NullExpr(val literal: NullToken) : TypedExpression() {
 
     var ignore: Boolean = false
 
@@ -28,20 +28,12 @@ class NullExpr(val literal: NullToken) : ExpressionWithType() {
         astVisitor.visit(this, compilationContext)
     }
 
-    override fun getStartCol(): Int {
-        return literal.col
+    override fun getStartOffset(): Int {
+        return literal.startOffset
     }
 
-    override fun getStartRow(): Int {
-        return literal.row
-    }
-
-    override fun getEndCol(): Int {
-        return literal.col + literal.text.length
-    }
-
-    override fun getEndRow(): Int {
-        return literal.row
+    override fun getEndOffset(): Int {
+        return literal.endOffset
     }
 
     override fun toString(): String {

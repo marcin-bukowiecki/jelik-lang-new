@@ -1,5 +1,2 @@
-fun expr()->Boolean {
-    var a =!(12 > 5
-     )
-    ret a
-}
+import java.util.List
+fun expr() -> Boolean { ret 123 in [1,2,3,4,5] }

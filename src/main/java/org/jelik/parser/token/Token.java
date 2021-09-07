@@ -11,41 +11,26 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class Token {
 
-    private final int row;
-
-    private final int col;
+    private final int startOffset;
 
     protected final String text;
 
     private final ElementType elementType;
 
-    public Token(@NotNull String text, int row, int col, @NotNull ElementType elementType) {
-        this.row = row;
-        this.col = col;
+    public Token(@NotNull String text, int startOffset, @NotNull ElementType elementType) {
+        this.startOffset = startOffset;
         this.text = text;
         this.elementType = elementType;
     }
 
-    public boolean isDummy() {
-        return row == -1;
-    }
-
     public abstract void accept(@NotNull TokenVisitor<?> tokenVisitor, @NotNull ParseContext parseContext);
 
-    public int getRow() {
-        return row;
+    public int getStartOffset() {
+        return startOffset;
     }
 
-    public int getCol() {
-        return col;
-    }
-
-    public int getEndCol() {
-        return col + getText().length();
-    }
-
-    public int getEndRow() {
-        return row;
+    public int getEndOffset() {
+        return startOffset + text.length();
     }
 
     public @NotNull String getText() {
@@ -61,8 +46,8 @@ public abstract class Token {
         return text;
     }
 
-    public boolean isWhiteSpace() {
-        return elementType == ElementType.whitespace;
+    public final boolean isWhiteSpace() {
+        return elementType == ElementType.whitespace || elementType == ElementType.newLine;
     }
 
     public boolean isOperator() {

@@ -1,1 +1,7 @@
-fun expr(a Int, b Int) -> Int { ret a xor b }
+import java.util.Collection
+import java.util.Map
+fun expr() -> Map<Int, Any> {
+   val map Map<Int, Any> = mapOf{}
+   map[2] = 100
+   map[3] = "100"
+   ret map}

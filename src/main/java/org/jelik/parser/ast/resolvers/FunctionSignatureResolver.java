@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.resolvers;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.compiler.exceptions.CompileException;
 import org.jelik.compiler.functions.ExtensionFunctionRegister;
 import org.jelik.compiler.locals.LocalVariable;

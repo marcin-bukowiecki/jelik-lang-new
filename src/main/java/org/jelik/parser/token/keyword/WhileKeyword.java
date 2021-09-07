@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class WhileKeyword extends Token {
 
-    public WhileKeyword(int row, int col) {
-        super("while", row, col, ElementType.whileKeyword);
+    public WhileKeyword(int offset) {
+        super("while", offset, ElementType.whileKeyword);
     }
 
     @Override

@@ -1,2 +1,2 @@
-fun expr(a Int) -> Int { val b = 10 
- ret Integer.valueOf(a) - Integer.valueOf(b) }
+fun expr(a Char) -> Long { val b = 10 
+ ret a - b as Long }

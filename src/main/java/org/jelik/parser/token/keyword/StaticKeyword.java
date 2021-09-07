@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class StaticKeyword extends Token {
 
-    public StaticKeyword(int row, int col) {
-        super("static", row, col, ElementType.staticKeyword);
+    public StaticKeyword(int offset) {
+        super("static", offset, ElementType.staticKeyword);
     }
 
     @Override

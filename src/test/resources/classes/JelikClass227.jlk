@@ -1,1 +1,1 @@
-fun expr(a Long, b Long) -> Long { ret a ushr b }
+fun expr(a Object) -> Boolean { ret a is String }

@@ -44,7 +44,7 @@ public final class ExceptionQueue {
     }
 
     public static void enqueue(CompileException ex) {
-        compileExceptions.put(new Entry(ex.getFileName()), ex);
+        compileExceptions.put(new Entry(ex.getAbsoluteFilePath()), ex);
     }
 
     public static void error(CompileException ex) {

@@ -2,7 +2,7 @@ package org.jelik.parser.ast.operators;
 
 import org.jelik.parser.ast.ASTNode;
 import org.jelik.parser.ast.expression.Expression;
-import org.jelik.parser.ast.expression.ExpressionWithType;
+import org.jelik.parser.ast.expression.TypedExpression;
 import org.jelik.parser.token.operators.AbstractOperator;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * @author Marcin Bukowiecki
  */
-public abstract class AbstractOpExpr extends ExpressionWithType {
+public abstract class AbstractOpExpr extends TypedExpression {
 
     protected Expression left;
 
@@ -68,23 +68,13 @@ public abstract class AbstractOpExpr extends ExpressionWithType {
     }
 
     @Override
-    public int getStartRow() {
-        return left.getStartRow();
+    public int getStartOffset() {
+        return left.getStartOffset();
     }
 
     @Override
-    public int getEndRow() {
-        return right.getEndRow();
-    }
-
-    @Override
-    public int getStartCol() {
-        return left.getStartCol();
-    }
-
-    @Override
-    public int getEndCol() {
-        return right.getEndCol();
+    public int getEndOffset() {
+        return right.getEndOffset();
     }
 
     @Override

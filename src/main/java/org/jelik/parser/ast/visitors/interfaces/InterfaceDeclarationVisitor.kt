@@ -87,11 +87,11 @@ class InterfaceDeclarationVisitor(val keyword: InterfaceKeyword) : TokenVisitor<
             super.visitMetKeyword(metKeyword, parseContext)
         }
         methodDeclarations.add(
-            MethodDeclarationVisitor(
+            InterfaceMethodVisitor(
                 metKeyword
             ).visit(parseContext) as MethodDeclaration
         )
-        parseContext.lexer.nextToken().accept(this, parseContext)
+        parseContext.lexer.current.accept(this, parseContext)
     }
 
     override fun visitFunKeyword(funKeyword: FunKeyword, parseContext: ParseContext) {

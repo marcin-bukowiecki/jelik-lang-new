@@ -1,4 +1,2 @@
-fun expr() -> String? {
-    val a Integer = Null
-    ret a?.toString()
-}
+import java.util.List
+fun expr() -> Boolean { ret 123 in [1,2,3,4,5]Double }

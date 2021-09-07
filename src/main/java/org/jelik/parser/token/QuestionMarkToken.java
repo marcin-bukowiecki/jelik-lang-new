@@ -9,8 +9,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class QuestionMarkToken extends Token {
 
-    public QuestionMarkToken(int row, int col) {
-        super("?", row, col, ElementType.questionMark);
+    public QuestionMarkToken(int offset) {
+        super("?", offset, ElementType.questionMark);
     }
 
     @Override

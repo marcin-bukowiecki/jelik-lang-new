@@ -1,9 +1,12 @@
 package org.jelik.types;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.compiler.asm.visitor.TypeVisitor;
-import org.jelik.compiler.common.TypeEnum;
+import org.jelik.compiler.runtime.TypeEnum;
 
+/**
+ * @author Marcin Bukowiecki
+ */
 public class JVMStringType extends Type {
 
     public static final JVMStringType INSTANCE = new JVMStringType();
@@ -15,6 +18,11 @@ public class JVMStringType extends Type {
     @Override
     public void accept(TypeVisitor typeVisitor, CompilationContext compilationContext) {
         typeVisitor.visit(this, compilationContext);
+    }
+
+    @Override
+    public boolean isString() {
+        return true;
     }
 
     @Override

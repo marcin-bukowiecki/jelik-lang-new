@@ -1,11 +1,10 @@
 package org.jelik.parser.ast.resolvers.types;
 
-import org.jelik.compiler.common.TypeEnum;
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.runtime.TypeEnum;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.compiler.exceptions.CompileException;
 import org.jelik.compiler.exceptions.SyntaxException;
 import org.jelik.compiler.helper.CompilerHelper;
-import org.jelik.compiler.passes.PrimitiveTypeLifter;
 import org.jelik.compiler.passes.TypeChecker;
 import org.jelik.parser.ast.GetFieldNode;
 import org.jelik.parser.ast.KeyValueExpr;
@@ -18,7 +17,7 @@ import org.jelik.parser.ast.arrays.ArrayCreateExpr;
 import org.jelik.parser.ast.arrays.ArrayOrMapGetExpr;
 import org.jelik.parser.ast.arrays.ArrayOrMapSetExpr;
 import org.jelik.parser.ast.arrays.TypedArrayCreateExpr;
-import org.jelik.parser.ast.arrays.TypedArrayCreateWithSizeExpr;
+import org.jelik.parser.ast.arrays.TypedArrayCreateWithSizeExprTyped;
 import org.jelik.parser.ast.expression.Expression;
 import org.jelik.parser.ast.functions.FunctionBodyBlock;
 import org.jelik.parser.ast.functions.FunctionCallExpr;
@@ -29,28 +28,12 @@ import org.jelik.parser.ast.functions.FunctionReturn;
 import org.jelik.parser.ast.functions.LambdaDeclarationExpression;
 import org.jelik.parser.ast.locals.GetLocalNode;
 import org.jelik.parser.ast.locals.ValueDeclaration;
+import org.jelik.parser.ast.locals.ValueOrVariableDeclaration;
 import org.jelik.parser.ast.locals.VariableDeclaration;
-import org.jelik.parser.ast.locals.WithLocalVariableDeclaration;
 import org.jelik.parser.ast.loops.ForEachLoop;
 import org.jelik.parser.ast.nullsafe.NullSafeCallExpr;
 import org.jelik.parser.ast.numbers.Int32Node;
-import org.jelik.parser.ast.operators.AddExpr;
-import org.jelik.parser.ast.operators.AsExpr;
-import org.jelik.parser.ast.operators.AssignExpr;
-import org.jelik.parser.ast.operators.BitAndExpr;
-import org.jelik.parser.ast.operators.BitOrExpr;
-import org.jelik.parser.ast.operators.BitShlExpr;
-import org.jelik.parser.ast.operators.BitShrExpr;
-import org.jelik.parser.ast.operators.BitUshrExpr;
-import org.jelik.parser.ast.operators.DecrExpr;
-import org.jelik.parser.ast.operators.DivExpr;
-import org.jelik.parser.ast.operators.EqualExpr;
-import org.jelik.parser.ast.operators.IncrExpr;
-import org.jelik.parser.ast.operators.MulExpr;
-import org.jelik.parser.ast.operators.NegExpr;
-import org.jelik.parser.ast.operators.RemExpr;
-import org.jelik.parser.ast.operators.SubExpr;
-import org.jelik.parser.ast.operators.XorExpr;
+import org.jelik.parser.ast.operators.*;
 import org.jelik.parser.ast.resolvers.BuiltinTypeResolver;
 import org.jelik.parser.ast.resolvers.DefaultImportedTypeResolver;
 import org.jelik.parser.ast.resolvers.FunctionCallResolver;
@@ -146,7 +129,7 @@ public class TypeResolver extends AstVisitor {
     }
 
     @Override
-    public void visitWithLocalVariable(@NotNull WithLocalVariableDeclaration withLocalVariable,
+    public void visitWithLocalVariable(@NotNull ValueOrVariableDeclaration withLocalVariable,
                                        @NotNull CompilationContext compilationContext) {
         withLocalVariable.getExpression().accept(this, compilationContext);
         withLocalVariable.getTypeNode().accept(this, compilationContext);
@@ -178,7 +161,8 @@ public class TypeResolver extends AstVisitor {
     @Override
     public void visitReturnExpr(@NotNull ReturnExpr re, @NotNull CompilationContext compilationContext) {
         re.getExpression().accept(this, compilationContext);
-        if (compilationContext.getConfig().isReplMode()) {
+        if (compilationContext.getSession().isReplMode()) {
+            //TODO handle repl mode
             var functionDeclaration = Objects.requireNonNull(ASTUtils.getFunctionDeclaration(re));
 
         }
@@ -357,7 +341,6 @@ public class TypeResolver extends AstVisitor {
     public void visitNullSafeCall(@NotNull NullSafeCallExpr nullSafeCall, @NotNull CompilationContext compilationContext) {
         nullSafeCall.getReference().accept(this, compilationContext);
         nullSafeCall.getFurtherExpression().accept(this, compilationContext);
-        nullSafeCall.accept(PrimitiveTypeLifter.INSTANCE, compilationContext);
     }
 
     @Override
@@ -447,7 +430,7 @@ public class TypeResolver extends AstVisitor {
     }
 
     @Override
-    public void visitTypedArrayCreateWithSizeExpr(@NotNull TypedArrayCreateWithSizeExpr arrayCreateExpr,
+    public void visitTypedArrayCreateWithSizeExpr(@NotNull TypedArrayCreateWithSizeExprTyped arrayCreateExpr,
                                                   @NotNull CompilationContext compilationContext) {
         arrayCreateExpr.getTypeNode().accept(this, compilationContext);
         arrayCreateExpr.getNodeContext()
@@ -490,10 +473,22 @@ public class TypeResolver extends AstVisitor {
                 arrayOrMapGetExpr.setType(JVMObjectType.INSTANCE);
                 arrayOrMapGetExpr.setGenericType(arrayOrMapGetExpr.getLeftExpr()
                         .getGenericReturnType().getTypeVariables().get(1).deepGenericCopy());
+            } else if (arrayOrMapGetExpr.getLeftExpr() instanceof FunctionCallExpr) {
+                FunctionCallExpr parent = (FunctionCallExpr) arrayOrMapGetExpr.getLeftExpr();
+                Type genericReturnType = parent.getGenericType();
+                if (genericReturnType.isArray()) {
+                    final JVMArrayType arrayType = (JVMArrayType) genericReturnType;
+                    final Type elementType = arrayType.getElementType();
+                    arrayOrMapGetExpr.arrayGet = true;
+                    arrayOrMapGetExpr.setType(elementType);
+                    arrayOrMapGetExpr.setGenericType(elementType.deepGenericCopy());
+                }
             } else {
-                throw new SyntaxException("Unexpected expression",
+                throw new SyntaxException(
+                        "Unexpected expression",
                         arrayOrMapGetExpr,
-                        compilationContext.getCurrentModule());
+                        compilationContext.getCurrentModule()
+                );
             }
         }
     }
@@ -571,7 +566,17 @@ public class TypeResolver extends AstVisitor {
     }
 
     @Override
-    public void visitLambdaDeclarationExpression(@NotNull LambdaDeclarationExpression lambdaDeclarationExpression,
-                                                 @NotNull CompilationContext compilationContext) {
+    public void visitDefaultValueExpr(@NotNull DefaultValueExpr defaultValueExpr,
+                                      @NotNull CompilationContext compilationContext) {
+        defaultValueExpr.getLeft().accept(this, compilationContext);
+        defaultValueExpr.getRight().accept(this, compilationContext);
+        final Type returnType = defaultValueExpr.getRight().getReturnType();
+        final Type genericReturnType = defaultValueExpr.getRight().getGenericReturnType();
+        defaultValueExpr.setType(returnType);
+        defaultValueExpr.setGenericType(genericReturnType.deepGenericCopy());
     }
+
+    @Override
+    public void visitLambdaDeclarationExpression(@NotNull LambdaDeclarationExpression lambdaDeclarationExpression,
+                                                 @NotNull CompilationContext compilationContext) { }
 }

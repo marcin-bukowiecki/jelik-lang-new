@@ -16,11 +16,11 @@
 
 package org.jelik.parser.ast.loops
 
-import org.jelik.compiler.config.CompilationContext
+import org.jelik.compiler.CompilationContext
 import org.jelik.parser.ast.blocks.BasicBlockImpl
 import org.jelik.parser.ast.branching.WhileConditionExpression
 import org.jelik.parser.ast.expression.Expression
-import org.jelik.parser.ast.expression.ExpressionWithType
+import org.jelik.parser.ast.expression.TypedExpression
 import org.jelik.parser.ast.labels.LabelNode
 import org.jelik.parser.ast.visitors.AstVisitor
 import org.jelik.parser.token.Token
@@ -40,7 +40,7 @@ class WhileLoopImpl(
     private val left: Token,
     override var block: BasicBlockImpl,
     val right: Token
-) : ExpressionWithType(), WhileLoop {
+) : TypedExpression(), WhileLoop {
 
     override lateinit var loopStart: LabelNode
 
@@ -74,20 +74,12 @@ class WhileLoopImpl(
         }
     }
 
-    override fun getStartRow(): Int {
-        return whileKeyword.row
+    override fun getStartOffset(): Int {
+        return whileKeyword.startOffset
     }
 
-    override fun getStartCol(): Int {
-        return whileKeyword.col
-    }
-
-    override fun getEndCol(): Int {
-        return right.endCol
-    }
-
-    override fun getEndRow(): Int {
-        return right.endRow
+    override fun getEndOffset(): Int {
+        return right.endOffset
     }
 
     fun getCondition(): Expression {

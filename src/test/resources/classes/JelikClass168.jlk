@@ -1,2 +1,1 @@
-fun expr(a Integer) -> Int { ++a 
- ret a }
+fun expr(a Int) -> Long { ret a as Long }

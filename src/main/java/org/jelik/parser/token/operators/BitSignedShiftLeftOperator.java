@@ -13,8 +13,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class BitSignedShiftLeftOperator extends AbstractOperator {
 
-    public BitSignedShiftLeftOperator(int row, int col) {
-        super("shl", row, col, ElementType.bitwiseShl);
+    public BitSignedShiftLeftOperator(int offset) {
+        super("shl", offset, ElementType.bitwiseShl);
     }
 
     @Override

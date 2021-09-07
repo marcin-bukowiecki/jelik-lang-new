@@ -1,3 +1,2 @@
-fun expr(a Integer?) -> String? {
-    ret a?.toString()
-}
+import java.util.List
+fun expr(a Long) -> Boolean { ret a in [1,2,3,4,5]Long }

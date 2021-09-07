@@ -1,7 +1,7 @@
 package org.jelik.parser.ast.resolvers.decoders
 
-import org.jelik.compiler.config.CompilationContext
-import org.jelik.compiler.common.TypeEnum
+import org.jelik.compiler.CompilationContext
+import org.jelik.compiler.runtime.TypeEnum
 import org.jelik.parser.ast.expression.Expression
 import org.jelik.parser.ast.numbers.Int32ToFloat32Node
 import org.jelik.parser.ast.operators.JumpInstruction

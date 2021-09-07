@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ConstructorKeyword extends Token {
 
-    public ConstructorKeyword(int row, int col) {
-        super("constructor", row, col, ElementType.constructorKeyword);
+    public ConstructorKeyword(int offset) {
+        super("constructor", offset, ElementType.constructorKeyword);
     }
 
     @Override

@@ -25,8 +25,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class CommaToken extends Token {
 
-    public CommaToken(int lineNumber, int columnNumber) {
-        super(",", lineNumber, columnNumber, ElementType.comma);
+    public CommaToken(int offset) {
+        super(",", offset, ElementType.comma);
     }
 
     @Override

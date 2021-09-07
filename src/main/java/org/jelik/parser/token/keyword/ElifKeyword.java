@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ElifKeyword extends Token {
 
-    public ElifKeyword(int row, int col) {
-        super("elif", row, col, ElementType.elifKeyword);
+    public ElifKeyword(int offset) {
+        super("elif", offset, ElementType.elifKeyword);
     }
 
     @Override

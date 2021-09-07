@@ -40,16 +40,12 @@ public interface Expression extends ASTNode {
      */
     Type getGenericType();
 
+    default void replace(Expression expression) {
+        getParent().replaceWith(this, expression);
+    }
+
     @NotNull
     default InferredTypeRef createInferredTypeRef() {
         return new InferredTypeRef(this);
-    }
-
-    default void setType(@NotNull Type type) {
-        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
-    }
-
-    default void setGenericType(@NotNull Type type) {
-        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 }

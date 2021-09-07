@@ -1,12 +1,12 @@
 package org.jelik.parser.ast.resolvers;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.compiler.locals.LocalVariable;
 import org.jelik.parser.ast.ReferenceExpressionImpl;
 import org.jelik.parser.ast.arguments.Argument;
 import org.jelik.parser.ast.functions.FunctionCallExpr;
 import org.jelik.parser.ast.locals.GetLocalNode;
-import org.jelik.parser.ast.types.TypeAccessNode;
+import org.jelik.parser.ast.types.TypeAccessNodeTyped;
 import org.jelik.parser.ast.types.TypeMappingContext;
 import org.jelik.parser.ast.types.TypeNode;
 import org.jelik.parser.ast.visitors.AstVisitor;
@@ -53,8 +53,8 @@ public class GenericTypeResolver extends AstVisitor {
                     }
                 }
             }
-        } else if (caller instanceof TypeAccessNode) {
-            Type type = ((TypeAccessNode) caller).getGenericReturnType();
+        } else if (caller instanceof TypeAccessNodeTyped) {
+            Type type = ((TypeAccessNodeTyped) caller).getGenericReturnType();
             TypeMappingContext mappings = type.getMappings();
 
             for (Argument argument : functionCallExpr.getArgumentList().getArguments()) {

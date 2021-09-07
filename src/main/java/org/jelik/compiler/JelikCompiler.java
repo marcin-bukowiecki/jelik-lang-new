@@ -5,14 +5,14 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.jelik.compiler.asm.visitor.ToByteCodeResult;
 import org.jelik.compiler.asm.visitor.ToByteCodeVisitor;
-import org.jelik.compiler.config.CompilationContext;
-import org.jelik.compiler.passes.BasePass;
-import org.jelik.compiler.passes.TypeChecker;
+import org.jelik.compiler.cl.JelikClassLoader;
 import org.jelik.compiler.data.ClassData;
 import org.jelik.compiler.data.JavaClassData;
 import org.jelik.compiler.helper.JelikSourceFile;
 import org.jelik.compiler.helper.SourceFiles;
 import org.jelik.compiler.helper.SourceFilesProvider;
+import org.jelik.compiler.passes.BasePass;
+import org.jelik.compiler.passes.TypeChecker;
 import org.jelik.compiler.utils.CompilationWrapper;
 import org.jelik.parser.CharPointer;
 import org.jelik.parser.Lexer;
@@ -20,28 +20,22 @@ import org.jelik.parser.ParseContext;
 import org.jelik.parser.Scanner;
 import org.jelik.parser.ast.ModuleParser;
 import org.jelik.parser.ast.classes.ModuleDeclaration;
-import org.jelik.parser.ast.resolvers.BlockLabelsResolver;
-import org.jelik.parser.ast.resolvers.FunctionSignatureResolver;
-import org.jelik.parser.ast.resolvers.ImportsResolver;
-import org.jelik.parser.ast.resolvers.JumpLabelsResolver;
-import org.jelik.parser.ast.resolvers.LocalVariableAndLiteralResolver;
-import org.jelik.parser.ast.resolvers.ModuleSignatureResolver;
+import org.jelik.parser.ast.resolvers.*;
 import org.jelik.parser.ast.resolvers.types.TypeCastResolver;
 import org.jelik.parser.ast.resolvers.types.TypeResolver;
 import org.jelik.types.Type;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.objectweb.asm.ClassReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -50,6 +44,8 @@ import java.util.stream.Collectors;
 public enum JelikCompiler {
 
     INSTANCE;
+
+    private static final Logger log = LoggerFactory.getLogger(Jlkc.class);
 
     public final Map<String /*canonical name*/, ClassData> classDataRegister = Maps.newHashMap();
 
@@ -194,17 +190,61 @@ public enum JelikCompiler {
     public Type getTypeOrLoad(Class<?> clazz, CompilationContext compilationContext) {
         final String canonicalName = clazz.getCanonicalName();
         final ClassData classData = classDataRegister.get(canonicalName);
-        if (classData == null) {
-            return Objects.requireNonNull(createJavaClassData(clazz, compilationContext)).getType();
-        } else {
-            return classData.getType();
-        }
+        return Objects.requireNonNullElseGet(classData, () -> Objects.requireNonNull(createJavaClassData(clazz, compilationContext))).getType();
     }
 
     public PrintStream getErrOut() {
         return System.err;
     }
 
+    public boolean isInterface(Type type) {
+        if (classDataRegister.containsKey(type.getCanonicalName())) {
+            return classDataRegister.get(type.getCanonicalName()).isInterface();
+        }
+        try {
+            return Class.forName(type.getCanonicalName()).isInterface();
+        } catch (Exception ignored) {
+
+        }
+        return false;
+    }
+
+    /**
+     * Load Jelik libs
+     *
+     * @param session given compiler session
+     */
+    public void loadJelikDependencies(JelikCompileSession session) {
+
+    }
+
+    public void findMainAndRun(List<ToByteCodeResult> compilationResult, JelikCompileSession session) {
+        for (ToByteCodeResult toByteCodeResult : compilationResult) {
+            if (toByteCodeResult.isMain()) {
+                final JelikClassLoader jelikClassLoader = session.getJelikClassLoader();
+                final Class<?> aClass = jelikClassLoader.defineClass(
+                        toByteCodeResult.getNameForClassLoader(),
+                        toByteCodeResult.getBytes()
+                );
+                Arrays.stream(aClass.getMethods()).filter(m -> m.getName().equals("main")).findFirst().ifPresent(m -> {
+                    try {
+                        m.invoke(null, (Object) new String[]{});
+                    } catch (Exception e) {
+                        log.error("Could not invoke main", e);
+                    }
+                });
+                break;
+            }
+        }
+    }
+
+    private boolean checkForProblems(CompilationContext compilationContext) {
+        if (compilationContext.getProblemHolder().hasProblems()) {
+            compilationContext.getProblemHolder().markProblems();
+            return true;
+        }
+        return false;
+    }
 
     @VisibleForTesting
     public List<ToByteCodeResult> compile(File fileToCompile) {
@@ -221,23 +261,20 @@ public enum JelikCompiler {
         return compile(filesToCompile, new CompilationContext());
     }
 
-    public boolean isInterface(Type type) {
-        if (classDataRegister.containsKey(type.getCanonicalName())) {
-            return classDataRegister.get(type.getCanonicalName()).isInterface();
+    //TODO recursive load
+    @VisibleForTesting
+    public void loadSdk(JelikClassLoader jelikClassLoader) {
+        final File file = new File("./sdk/build/jelik/lang/JelikUtils.class");
+        if (!file.exists()) {
+            throw new IllegalArgumentException("Unresolved sdk file JelikUtils.class in sdk/build");
         }
         try {
-            return Class.forName(type.getCanonicalName()).isInterface();
-        } catch (Exception ignored) {
-
+            var bytes = Files.readAllBytes(file.toPath());
+            final ClassReader classReader = new ClassReader(bytes);
+            final String className = classReader.getClassName();
+            jelikClassLoader.defineClass(className.replace('/', '.'), bytes);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        return false;
-    }
-
-    private boolean checkForProblems(CompilationContext compilationContext) {
-        if (compilationContext.getProblemHolder().hasProblems()) {
-            compilationContext.getProblemHolder().markProblems();
-            return true;
-        }
-        return false;
     }
 }

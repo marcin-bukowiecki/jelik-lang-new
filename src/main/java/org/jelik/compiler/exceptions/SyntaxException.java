@@ -1,6 +1,6 @@
 package org.jelik.compiler.exceptions;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ParseContext;
 import org.jelik.parser.ast.ASTNode;
 import org.jelik.parser.ast.classes.ClassDeclaration;

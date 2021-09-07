@@ -1,7 +1,7 @@
 package org.jelik.compiler.helper
 
 import org.apache.commons.collections4.iterators.ReverseListIterator
-import org.jelik.compiler.config.CompilationContext
+import org.jelik.compiler.CompilationContext
 import org.jelik.compiler.locals.LocalVariable
 import org.jelik.compiler.locals.OuterLocalVariable
 import org.jelik.parser.ast.blocks.BasicBlock

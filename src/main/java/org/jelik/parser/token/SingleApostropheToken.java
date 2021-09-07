@@ -9,8 +9,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class SingleApostropheToken extends Token {
 
-    public SingleApostropheToken(int row, int col) {
-        super("'", row, col, ElementType.singleApostrophe);
+    public SingleApostropheToken(int offset) {
+        super("'", offset, ElementType.singleApostrophe);
     }
 
     @Override

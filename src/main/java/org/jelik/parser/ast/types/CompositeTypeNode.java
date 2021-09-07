@@ -1,6 +1,6 @@
 package org.jelik.parser.ast.types;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.parser.ast.visitors.AstVisitor;
 import org.jelik.parser.token.LiteralToken;
 import org.jelik.parser.token.Token;
@@ -49,22 +49,12 @@ public class CompositeTypeNode extends TypeNode {
     }
 
     @Override
-    public int getStartRow() {
-        return paths.get(0).getRow();
+    public int getStartOffset() {
+        return paths.get(0).getStartOffset();
     }
 
     @Override
-    public int getStartCol() {
-        return paths.get(0).getCol();
-    }
-
-    @Override
-    public int getEndRow() {
-        return typeNode.getEndRow();
-    }
-
-    @Override
-    public int getEndCol() {
-        return typeNode.getEndCol();
+    public int getEndOffset() {
+        return typeNode.getEndOffset();
     }
 }

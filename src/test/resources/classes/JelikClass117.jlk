@@ -1,1 +1,1 @@
-fun expr(a Object, b Object) -> Boolean { ret a.equals(b) or b.equals(a) }
+fun expr(a Float) -> Double { ret a as Double }

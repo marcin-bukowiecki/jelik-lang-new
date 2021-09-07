@@ -2,7 +2,6 @@ package org.jelik.compiler.integration;
 
 import org.jelik.compiler.utils.FunctionCompiler;
 import org.jelik.utils.DependencyLoader;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**

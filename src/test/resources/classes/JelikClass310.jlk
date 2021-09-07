@@ -1,4 +1,2 @@
-fun expr()->Boolean {
-    var a = false != true
-    ret a
-}
+import java.util.List
+fun expr(list List<Int>, b Int) -> Int { ret 10 + list.size() + b }

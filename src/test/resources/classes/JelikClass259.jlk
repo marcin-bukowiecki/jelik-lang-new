@@ -1,1 +1,1 @@
-fun expr(a Int, b String) -> String { ret a + b }
+fun expr() { print(123) }

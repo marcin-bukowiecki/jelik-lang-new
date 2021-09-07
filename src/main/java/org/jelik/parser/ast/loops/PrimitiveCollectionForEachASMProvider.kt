@@ -16,7 +16,7 @@
 
 package org.jelik.parser.ast.loops
 
-import org.jelik.compiler.config.CompilationContext
+import org.jelik.compiler.CompilationContext
 import org.jelik.compiler.asm.MethodVisitorAdapter
 import org.jelik.compiler.asm.utils.ASMUtils
 import org.jelik.compiler.asm.visitor.StoreLocalByteCodeVisitor
@@ -44,7 +44,7 @@ class PrimitiveCollectionForEachASMProvider(forEachLoop: ForEachLoop) : Collecti
 
         forEachLoop.castToSite.forEach { n-> n.accept(visit, mv.compilationContext) }
 
-        val storeLocalByteCodeVisitor = StoreLocalByteCodeVisitor({ forEachLoop.locals[1] }, mv)
+        val storeLocalByteCodeVisitor = StoreLocalByteCodeVisitor(forEachLoop.locals[1], mv)
         val target: Type = forEachLoop.locals[1].type
         target.accept(storeLocalByteCodeVisitor, mv.compilationContext)
     }

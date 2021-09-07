@@ -1,8 +1,8 @@
 package org.jelik.compiler.asm.visitor;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.compiler.asm.MethodVisitorAdapter;
-import org.jelik.parser.ast.locals.WithLocalVariable;
+import org.jelik.compiler.locals.LocalVariable;
 import org.jelik.types.JVMBooleanType;
 import org.jelik.types.JVMIntType;
 import org.jelik.types.JVMObjectType;
@@ -20,72 +20,72 @@ import org.jetbrains.annotations.NotNull;
  */
 public class StoreLocalByteCodeVisitor extends TypeVisitor {
 
-    private final WithLocalVariable storeLocalNode;
+    private final LocalVariable localVariable;
 
     private final MethodVisitorAdapter methodVisitorAdapter;
 
-    public StoreLocalByteCodeVisitor(WithLocalVariable storeLocalNode, MethodVisitorAdapter methodVisitorAdapter) {
-        this.storeLocalNode = storeLocalNode;
+    public StoreLocalByteCodeVisitor(LocalVariable localVariable, MethodVisitorAdapter methodVisitorAdapter) {
+        this.localVariable = localVariable;
         this.methodVisitorAdapter = methodVisitorAdapter;
     }
 
     @Override
     public void visit(@NotNull JVMIntType type, @NotNull CompilationContext compilationContext) {
-        int index = storeLocalNode.getLocalVariable().getIndex();
+        int index = localVariable.getIndex();
         methodVisitorAdapter.intStore(index);
     }
 
     @Override
     public void visit(@NotNull JVMCharType type, @NotNull CompilationContext compilationContext) {
-        int index = storeLocalNode.getLocalVariable().getIndex();
+        int index = localVariable.getIndex();
         methodVisitorAdapter.intStore(index);
     }
 
     @Override
     public void visit(@NotNull JVMBooleanType type, @NotNull CompilationContext compilationContext) {
-        int index = storeLocalNode.getLocalVariable().getIndex();
+        int index = localVariable.getIndex();
         methodVisitorAdapter.intStore(index);
     }
 
     @Override
     public void visit(@NotNull JVMDoubleType type, @NotNull CompilationContext compilationContext) {
-        int index = storeLocalNode.getLocalVariable().getIndex();
+        int index = localVariable.getIndex();
         methodVisitorAdapter.doubleStore(index);
     }
 
     @Override
     public void visit(@NotNull JVMLongType type, @NotNull CompilationContext compilationContext) {
-        int index = storeLocalNode.getLocalVariable().getIndex();
+        int index = localVariable.getIndex();
         methodVisitorAdapter.longStore(index);
     }
 
     @Override
     public void visit(@NotNull JVMShortType type, @NotNull CompilationContext compilationContext) {
-        int index = storeLocalNode.getLocalVariable().getIndex();
+        int index = localVariable.getIndex();
         methodVisitorAdapter.intStore(index);
     }
 
     @Override
     public void visit(@NotNull JVMByteType type, @NotNull CompilationContext compilationContext) {
-        int index = storeLocalNode.getLocalVariable().getIndex();
+        int index = localVariable.getIndex();
         methodVisitorAdapter.intStore(index);
     }
 
     @Override
     public void visit(@NotNull JVMFloatType type, @NotNull CompilationContext compilationContext) {
-        int index = storeLocalNode.getLocalVariable().getIndex();
+        int index = localVariable.getIndex();
         methodVisitorAdapter.floatStore(index);
     }
 
     @Override
     public void visit(@NotNull JVMObjectType type, @NotNull CompilationContext compilationContext) {
-        int index = storeLocalNode.getLocalVariable().getIndex();
+        int index = localVariable.getIndex();
         methodVisitorAdapter.objectStore(index);
     }
 
     @Override
     public void visit(@NotNull Type type, @NotNull CompilationContext compilationContext) {
-        int index = storeLocalNode.getLocalVariable().getIndex();
+        int index = localVariable.getIndex();
         methodVisitorAdapter.objectStore(index);
     }
 }

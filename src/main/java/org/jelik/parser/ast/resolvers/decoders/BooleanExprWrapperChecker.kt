@@ -54,9 +54,9 @@ object BooleanExprWrapperChecker {
     fun checkConditionForBooleanExpression(conditionExpression: IfConditionExpression) {
         val furtherExpression = conditionExpression.expression
         if (furtherExpression !is AbstractLogicalOpExpr) {
-            val trueNode = TrueNode(TrueToken(-1, -1))
+            val trueNode = TrueNode(TrueToken(-1))
             trueNode.isIgnore = true
-            val newExpr = BooleanExprWrapper(furtherExpression, EqualOperator(-1, -1), trueNode)
+            val newExpr = BooleanExprWrapper(furtherExpression, EqualOperator(-1), trueNode)
             conditionExpression.replaceWith(furtherExpression, newExpr)
             newExpr.instructionToCall = JumpInstruction.isTrue
         }
@@ -64,9 +64,9 @@ object BooleanExprWrapperChecker {
 
     fun checkForBooleanExpression(conditionExpression: Expression) {
         if (conditionExpression !is AbstractLogicalOpExpr) {
-            val trueNode = TrueNode(TrueToken(-1, -1))
+            val trueNode = TrueNode(TrueToken(-1))
             trueNode.isIgnore = true
-            val newExpr = BooleanExprWrapper(conditionExpression, EqualOperator(-1, -1), trueNode)
+            val newExpr = BooleanExprWrapper(conditionExpression, EqualOperator(-1), trueNode)
             conditionExpression.parent.replaceWith(conditionExpression, newExpr)
             newExpr.instructionToCall = JumpInstruction.isTrue
         }

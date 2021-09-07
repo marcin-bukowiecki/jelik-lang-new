@@ -16,10 +16,7 @@
 
 package org.jelik.compiler.cl;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.jetbrains.annotations.NotNull;
-
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -38,29 +35,23 @@ public class JelikClassLoader extends URLClassLoader {
 
     private final Map<String, Class<?>> loadedClasses = new HashMap<>();
 
-    public JelikClassLoader() {
-        this("");
-    }
-
-    public JelikClassLoader(@NotNull String jelikHome) {
+    public JelikClassLoader(String ...classPaths) {
         super(new URL[] { getDefaultPath() });
 
         try {
             var f = new File("./lib/bin");
-            addURL(f.toURL());
+            addURL(f.toURI().toURL());
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
 
-        if (StringUtils.isEmpty(jelikHome)) {
-            return;
-        }
-
-        try {
-            var f = new File(jelikHome + "/api/jelik-lib/".replace("/", File.separator));
-            addURL(f.toURL());
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
+        for (String classPath : classPaths) {
+            try {
+                var f = new File(classPath.replace("/", File.separator));
+                addURL(f.toURI().toURL());
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
         }
     }
 

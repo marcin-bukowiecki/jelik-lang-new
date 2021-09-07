@@ -25,17 +25,12 @@ import org.jetbrains.annotations.NotNull;
  */
 public class NewLineToken extends Token {
 
-    public NewLineToken(int lineNumber, int columnNumber) {
-        super("\n", lineNumber, columnNumber, ElementType.newLine);
+    public NewLineToken(int offset) {
+        super("\n", offset, ElementType.newLine);
     }
 
     @Override
     public void accept(@NotNull TokenVisitor<?> parseVisitor, @NotNull ParseContext parseContext) {
         parseVisitor.visitNewLine(this, parseContext);
-    }
-
-    @Override
-    public boolean isWhiteSpace() {
-        return true;
     }
 }

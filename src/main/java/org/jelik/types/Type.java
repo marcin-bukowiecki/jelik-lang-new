@@ -1,9 +1,9 @@
 package org.jelik.types;
 
-import org.jelik.compiler.config.CompilationContext;
+import org.jelik.compiler.CompilationContext;
 import org.jelik.compiler.JelikCompiler;
 import org.jelik.compiler.asm.visitor.TypeVisitor;
-import org.jelik.compiler.common.TypeEnum;
+import org.jelik.compiler.runtime.TypeEnum;
 import org.jelik.compiler.data.ClassData;
 import org.jelik.compiler.data.MethodData;
 import org.jelik.parser.ast.expression.Expression;
@@ -389,5 +389,9 @@ public class Type {
 
     public Type getWrapperType() {
         return this;
+    }
+
+    public boolean isString() {
+        return false;
     }
 }
